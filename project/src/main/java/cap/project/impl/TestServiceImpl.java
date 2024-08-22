@@ -13,9 +13,9 @@ import cap.project.service.TestService;
 @Service
 public class TestServiceImpl implements TestService {
 
-    private final TestRepository testRepository;
-
     @Autowired
+    private TestRepository testRepository;
+
     public TestServiceImpl(TestRepository testRepository) {
         this.testRepository = testRepository;
     }
