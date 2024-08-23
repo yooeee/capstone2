@@ -16,10 +16,6 @@ public class TestServiceImpl implements TestService {
     @Autowired
     private TestRepository testRepository;
 
-    public TestServiceImpl(TestRepository testRepository) {
-        this.testRepository = testRepository;
-    }
-
     @Override
     public List<Test> getAllTests() {
         return testRepository.findAll();
