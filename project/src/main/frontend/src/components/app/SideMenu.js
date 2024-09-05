@@ -1,9 +1,10 @@
-// SideMenu.js
 import React from 'react';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Select, Input } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
 
 const { Sider } = Layout;
+const { Option } = Select;
+const { Search } = Input;
 
 function SideMenu({ collapsed, toggle }) {
   return (
@@ -11,14 +12,27 @@ function SideMenu({ collapsed, toggle }) {
       <div className="logo" style={{ height: '32px', margin: '16px', color: 'white', textAlign: 'center' }}>
         LOGO
       </div>
-      <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
-        <Menu.Item key="1" icon={<HomeOutlined />}>
-          Home
-        </Menu.Item>
-        {/* 추가 메뉴 항목들 */}
-        <Menu.Item key="2">Menu Item 2</Menu.Item>
-        <Menu.Item key="3">Menu Item 3</Menu.Item>
-      </Menu>
+      
+      {/* Select 박스 */}
+      <div style={{ margin: '16px' }}>
+        <Select defaultValue="option1" style={{ width: '100%' }}>
+          <Option value="option1">Option 1</Option>
+          <Option value="option2">Option 2</Option>
+          <Option value="option3">Option 3</Option>
+        </Select>
+      </div>
+
+      {/* 검색 기능 */}
+      <div style={{ margin: '16px' }}>
+        <Search
+          placeholder="검색어를 입력하세요"
+          onSearch={value => console.log(value)}
+          enterButton
+        />
+      </div>
+
+      {/* 메뉴 항목들 */}
+     
     </Sider>
   );
 }
