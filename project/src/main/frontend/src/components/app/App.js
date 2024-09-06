@@ -1,34 +1,27 @@
-import React from 'react';
-import { Layout } from 'antd';
-import SideMenu from './SideMenu';
-import TopBar from './TopBar';
-import OLMap from './OLMap';
-
-const { Content } = Layout;
+import React from "react";
+import { Layout } from "antd";
+import SideMenu from "./SideMenu";
+import TopBar from "./TopBar";
+import OLMap from "./OLMap";
 
 function App() {
-  const [collapsed, setCollapsed] = React.useState(false);
-
-  // 사이드바 접기/펴기 핸들러
-  const toggle = () => {
-    setCollapsed(!collapsed);
-  };
-
   return (
-    <Layout style={{ height: '100vh' }}>
+    <Layout style={{ height: "100vh" }}>
       {/* 좌측 사이드바 */}
-      <SideMenu collapsed={collapsed} toggle={toggle} />
+      <SideMenu />
 
-      {/* 우측 컨텐츠 */}
+      {/* 우측 레이아웃 */}
       <Layout className="site-layout">
-        {/* 상단 메뉴바 */}
-        <TopBar collapsed={collapsed} toggle={toggle} />
+        {/* 헤더에 상단 메뉴바 추가 */}
+        <header>
+          <TopBar />
+        </header>
 
-        {/* 중앙 및 우측 지도 영역 */}
-        <Content style={{ background: '#fff' }}>
+        {/* 중앙 콘텐츠 영역 */}
+        <content style={{ background: "#fff", flex: 1 }}>
           {/* 지도 컴포넌트 */}
           <OLMap />
-        </Content>
+        </content>
       </Layout>
     </Layout>
   );
