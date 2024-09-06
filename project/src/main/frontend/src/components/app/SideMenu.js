@@ -1,21 +1,19 @@
-import React from 'react';
-import { Layout, Menu, Select, Input } from 'antd';
-import { HomeOutlined } from '@ant-design/icons';
+import React from "react";
+import { Layout, Select, Input } from "antd";
+import "../../assets/styles/SideMenu.css";
 
 const { Sider } = Layout;
 const { Option } = Select;
 const { Search } = Input;
 
-function SideMenu({ collapsed, toggle }) {
+const SideMenu = () => {
   return (
-    <Sider trigger={null} collapsible collapsed={collapsed} width={250}>
-      <div className="logo" style={{ height: '32px', margin: '16px', color: 'white', textAlign: 'center' }}>
-        LOGO
-      </div>
-      
+    <Sider width={280}>
+      <div className="logo">전국 응급의료기관 정보 조회 서비스</div>
+
       {/* Select 박스 */}
-      <div style={{ margin: '16px' }}>
-        <Select defaultValue="option1" style={{ width: '100%' }}>
+      <div className="sidemenu-select-box">
+        <Select defaultValue="option1" style={{ width: "100%" }}>
           <Option value="option1">분류</Option>
           <Option value="option2">Option 2</Option>
           <Option value="option3">Option 3</Option>
@@ -23,18 +21,18 @@ function SideMenu({ collapsed, toggle }) {
       </div>
 
       {/* 검색 기능 */}
-      <div style={{ margin: '16px' }}>
+      <div className="sidemenu-search-box">
         <Search
           placeholder="검색어를 입력하세요"
-          onSearch={value => console.log(value)}
+          onSearch={(value) => console.log(value)}
           enterButton
         />
       </div>
 
-      {/* 메뉴 항목들 */}
-     
+      {/* 사이드바 하단 Footer 추가 */}
+      <div className="sidemenu-footer">Copyright © 2024</div>
     </Sider>
   );
-}
+};
 
 export default SideMenu;

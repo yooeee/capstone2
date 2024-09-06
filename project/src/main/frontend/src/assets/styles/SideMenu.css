@@ -1,0 +1,26 @@
+.logo {
+    font-size: 15px;
+    height: 32px;
+    margin: 16px;
+    color: white;
+    text-align: center;
+  }
+  
+  .sidemenu-select-box {
+    margin: 16px;
+  }
+  
+  .sidemenu-search-box {
+    margin: 16px;
+  }
+  
+  .sidemenu-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 16px;
+    background: #001529;
+    color: white;
+    text-align: center;
+  }
+  

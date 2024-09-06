@@ -13,9 +13,9 @@ function App() {
       {/* 우측 레이아웃 */}
       <Layout className="site-layout">
         {/* 헤더에 상단 메뉴바 추가 */}
-        <header>
+        {/* <header>
           <TopBar />
-        </header>
+        </header> */}
 
         {/* 중앙 콘텐츠 영역 */}
         <content style={{ background: "#fff", flex: 1 }}>
