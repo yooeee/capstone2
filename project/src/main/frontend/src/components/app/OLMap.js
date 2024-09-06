@@ -39,9 +39,9 @@ const OLMap = () => {
         }),
       ],
       view: new View({
-        center: fromLonLat([126.9780, 37.5665]), 
-        zoom: 7, 
-        minZoom : 7,
+        center: fromLonLat([128.04544021875, 35.6988685552633]), 
+        zoom: 7.6, 
+        minZoom : 7.6,
       }),
     });
 

@@ -8,7 +8,7 @@ const { Search } = Input;
 
 function SideMenu({ collapsed, toggle }) {
   return (
-    <Sider trigger={null} collapsible collapsed={collapsed}>
+    <Sider trigger={null} collapsible collapsed={collapsed} width={250}>
       <div className="logo" style={{ height: '32px', margin: '16px', color: 'white', textAlign: 'center' }}>
         LOGO
       </div>
@@ -16,7 +16,7 @@ function SideMenu({ collapsed, toggle }) {
       {/* Select 박스 */}
       <div style={{ margin: '16px' }}>
         <Select defaultValue="option1" style={{ width: '100%' }}>
-          <Option value="option1">Option 1</Option>
+          <Option value="option1">분류</Option>
           <Option value="option2">Option 2</Option>
           <Option value="option3">Option 3</Option>
         </Select>
