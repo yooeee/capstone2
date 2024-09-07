@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+# API KEY
+application.properties
+application-API-KEY.properties

@@ -1,19 +1,39 @@
+.sidemenu-box{
+  margin: 5%;
+  border: whitesmoke 1px solid;
+}
+
 .logo {
-    font-size: 15px;
+    font-size: 16px;
     height: 32px;
     margin: 16px;
     color: white;
     text-align: center;
+    font-weight: bolder;
+    
   }
   
   .sidemenu-select-box {
     margin: 16px;
-  }
+  } 
   
   .sidemenu-search-box {
+    display: flex;
     margin: 16px;
   }
   
+  .sidemenu-search-box .select{
+    margin-left: 1%;
+    margin-right: 1%;
+  }
+
+  .result-list{
+    margin : 5%;
+    border : whitesmoke 1px solid;
+    color: white;
+  }
+
+
   .sidemenu-footer {
     position: absolute;
     bottom: 0;

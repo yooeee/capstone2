@@ -14,7 +14,7 @@ import cap.project.service.TestService;
 
 
 @RestController
-@RequestMapping("/api/tests")
+@RequestMapping("/api/proxy")
 public class TestApiController {
 
     @Autowired
