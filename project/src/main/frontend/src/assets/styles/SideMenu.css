@@ -12,6 +12,15 @@
     font-weight: bolder;
     
   }
+
+  .sidemenu-admcode{
+    display: flex;
+    margin: 16px;
+  }
+  .sidemenu-admcode Select{
+    margin-left: 5%; /* 기존 2%에서 5%로 변경 */
+    margin-right: 5%; /* 기존 2%에서 5%로 변경 */
+  }
   
   .sidemenu-select-box {
     margin: 16px;
