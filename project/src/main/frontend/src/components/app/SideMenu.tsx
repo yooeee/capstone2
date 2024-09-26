@@ -1,36 +1,101 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Select, Input } from "antd";
 import "../../assets/styles/SideMenu.css";
+import axios from "axios";
 
 const { Sider } = Layout;
 const { Option } = Select;
 const { Search } = Input;
 
 const SideMenu: React.FC = () => {
+  const [urlType, setUrlType] = useState('getEgytListInfoInqire');
+  const [sido, setSido] = useState("sido"); 
+  const [sigungu, setSigungu] = useState("sigungu"); 
+  const [name, setName] = useState("");
+  
+
+  /**
+   *  검색버튼 클릭시 OPEN API 호출
+   */
+  const requestApi = async () => {
+
+    if(sido === 'sido' || sigungu == 'sigungu') {
+      alert("지역을 선택해주세요.");
+      return false;
+    }
+
+    try {
+      const serviceKey = "Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D";
+      const params = {
+        Q0: sido,
+        Q1: sigungu,
+        pageNo: 1,
+        numOfRows: 10,
+        QN: name,
+      };
+
+      const response = await axios.get(
+        `https://apis.data.go.kr/B552657/ErmctInfoInqireService/${urlType}?serviceKey=${serviceKey}`,
+        { params }
+      );
+      // TODO : 검색결과 장소들 위치 마커 찍어야 한다.
+
+      console.log(response.data.response.body);
+    } catch (error) {
+      console.error("Error fetching the data:", error);
+    }
+  };
+
+
   return (
     <Sider width={300}>
       <div className="logo">전국 응급의료기관 정보 조회 서비스</div>
 
-      <div className="sidemenu-box"> 
+      <div className="sidemenu-box">
         {/* Select 박스 - 시도 및 시군구 */}
         <div className="sidemenu-admcode">
           <div>
-            <Select defaultValue="sido" >
-              <Option value="sido">시도 선택</Option>
-              {/* 여기에 시도 옵션들을 추가하세요 */}
+            <Select defaultValue="sido" className="sdsgg" onChange={(value) => setSido(value)}>
+              <Option value="sido" disabled>
+                시도 선택
+              </Option>
+              <Option value="">전체</Option>
+              <Option value="서울특별시">서울특별시</Option>
+              <Option value="부산광역시">부산광역시</Option>
+              <Option value="대구광역시">대구광역시</Option>
+              <Option value="인천광역시">인천광역시</Option>
+              <Option value="광주광역시">광주광역시</Option>
+              <Option value="대전광역시">대전광역시</Option>
+              <Option value="울산광역시">울산광역시</Option>
+              <Option value="세종특별자치시">세종특별자치시</Option>
+              <Option value="경기도">경기도</Option>
+              <Option value="강원도">강원도</Option>
+              <Option value="충청북도">충청북도</Option>
+              <Option value="충청남도">충청남도</Option>
+              <Option value="전라북도">전라북도</Option>
+              <Option value="전라남도">전라남도</Option>
+              <Option value="경상북도">경상북도</Option>
+              <Option value="경상남도">경상남도</Option>
+              <Option value="제주특별자치도">제주특별자치도</Option>
             </Select>
-            <Select defaultValue="sigungu" >
-              <Option value="sigungu">시군구 선택</Option>
-              {/* 여기에 시군구 옵션들을 추가하세요 */}
+            <Select defaultValue="sigungu" className="sdsgg" onChange={(value) => setSigungu(value)}>
+              <Option value="sigungu" disabled>시군구 선택</Option>
+              <Option value="">전체</Option>
+              <Option value="강남구">강남구</Option>
+              {/* TODO : 시도에 따른 시군구 외부API 호출하여 Option 추가 필요 */}
             </Select>
           </div>
-          
         </div>
 
         {/* Select 박스 - 분류 */}
         <div className="sidemenu-select-box">
-          <Select defaultValue="category" style={{ width: "100%" }}>
-            <Option value="category">선택</Option>
+          <Select defaultValue="getEgytListInfoInqire" style={{ width: "100%" }} onChange={(value) => setUrlType(value)}>
+            <Option value="getEgytListInfoInqire">
+              응급의료기관 목록정보 조회
+            </Option>
+            <Option value="getStrmListInfoInqire">
+              외상센터 목록정보 조회
+            </Option>
             {/* 여기에 분류 옵션들을 추가하세요 */}
           </Select>
         </div>
@@ -38,13 +103,15 @@ const SideMenu: React.FC = () => {
         {/* 검색 기능 */}
         <div className="sidemenu-search-box">
           <Search
-            placeholder="검색어를 입력하세요"
-            onSearch={(value) => console.log(value)}
+            placeholder="기관명을 입력하세요"
+            onSearch={(value) => {
+              setName(value);
+              requestApi();
+            }}
             enterButton
           />
         </div>
       </div>
-
 
       {/* 검색 결과 */}
       <div className="sidemenu-search-result"></div>

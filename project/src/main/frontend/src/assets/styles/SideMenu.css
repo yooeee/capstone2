@@ -1,6 +1,6 @@
+
 .sidemenu-box{
   margin: 5%;
-  border: whitesmoke 1px solid;
 }
 
 .logo {
@@ -17,9 +17,11 @@
     display: flex;
     margin: 16px;
   }
-  .sidemenu-admcode Select{
-    margin-left: 5%; /* 기존 2%에서 5%로 변경 */
-    margin-right: 5%; /* 기존 2%에서 5%로 변경 */
+
+  .sidemenu-admcode .sdsgg{
+    margin-left: 5px;
+    width: auto;
+    max-width: 100%;
   }
   
   .sidemenu-select-box {

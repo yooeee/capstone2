@@ -6,24 +6,12 @@ import XYZ from "ol/source/XYZ";
 import { fromLonLat } from "ol/proj";
 import axios from "axios";
 import "../../assets/styles/OLMap.css";
+import { Button } from "antd";
+import { AimOutlined } from '@ant-design/icons';
+import ReactDOM from 'react-dom';
 
 const OLMap: React.FC = () => {
   const mapRef = useRef<HTMLDivElement | null>(null);
-
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(
-        "https://apis.data.go.kr/B552657/ErmctInfoInqireService/getEmrrmRltmUsefulSckbdInfoInqire?serviceKey=Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D&STAGE1=%EC%84%9C%EC%9A%B8&STAGE2=%EA%B0%95%EB%82%A8%EA%B5%AC&pageNo=1&numOfRows=10"
-      );
-      console.log(response.data); // 응답 데이터 출력
-    } catch (error) {
-      console.error("Error fetching the data:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -51,6 +39,39 @@ const OLMap: React.FC = () => {
         minZoom: 7.6,
       }),
     });
+
+    // 내 위치 조회 버튼 추가
+    const locateButton = document.createElement("div");
+    locateButton.style.position = "absolute";
+    locateButton.style.top = "10px";
+    locateButton.style.right = "10px";
+    locateButton.style.zIndex = "1000";
+
+    const handleLocate = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            map.getView().setCenter(fromLonLat([longitude, latitude]));
+            map.getView().setZoom(12);
+          },
+          (error) => {
+            console.error("Error getting location:", error);
+          }
+        );
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    };
+
+    const antdButton = (
+      <Button type="primary" onClick={handleLocate}>
+        <AimOutlined /> 내 위치 조회
+      </Button>
+    );
+
+    ReactDOM.render(antdButton, locateButton);
+    mapRef.current.appendChild(locateButton);
 
     return () => {
       map.setTarget(undefined); // 컴포넌트 언마운트 시 지도 제거

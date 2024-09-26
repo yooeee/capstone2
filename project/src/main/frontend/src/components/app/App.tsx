@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Layout } from "antd";
 import SideMenu from "./SideMenu.tsx";
 import OLMap from "./OLMap.tsx";
+import axios from "axios";
 
 const { Content } = Layout;
 
 const App: React.FC = () => {
+
   return (
     <Layout style={{ height: "100vh" }}>
       {/* 좌측 사이드바 */}
