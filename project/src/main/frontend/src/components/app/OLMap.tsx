@@ -109,7 +109,7 @@ const OLMap: React.FC<OLMapProps> = ({ locations }) => {
                 anchorXUnits: 'fraction',
                 anchorYUnits: 'pixels',
                 src: '/images/location.png',
-                scale: 0.05,
+                scale: 0.07,
             }),
             })
           );

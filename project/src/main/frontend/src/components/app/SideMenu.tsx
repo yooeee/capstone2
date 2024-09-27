@@ -20,7 +20,7 @@ const SideMenu: React.FC<{ updateLocations: (locations: any[]) => void }> = ({ u
    *  검색버튼 클릭시 OPEN API 호출
    */
   const requestApi = async () => {
-
+    
     if(sido === 'sido' || sigungu == 'sigungu') {
       alert("지역을 선택해주세요.");
       return false;
@@ -32,16 +32,21 @@ const SideMenu: React.FC<{ updateLocations: (locations: any[]) => void }> = ({ u
         Q0: sido,
         Q1: sigungu,
         pageNo: 1,
-        numOfRows: 10,
+        numOfRows: 999,
         QN: name,
       };
-
       const response = await axios.get(
         `https://apis.data.go.kr/B552657/ErmctInfoInqireService/${urlType}?serviceKey=${serviceKey}`,
         { params }
       );
       const items = response.data.response.body.items.item;
-      updateLocations(items); // 위치 데이터 전달
+      if(items){
+        updateLocations(items); // 위치 데이터 전달
+      } else{
+        alert("조회 결과 없습니다.");
+        return;
+      }
+      
 
     } catch (error) {
       console.error("Error fetching the data:", error);
@@ -84,6 +89,7 @@ const SideMenu: React.FC<{ updateLocations: (locations: any[]) => void }> = ({ u
               <Option value="sigungu" disabled>시군구 선택</Option>
               <Option value="">전체</Option>
               <Option value="강남구">강남구</Option>
+              <Option value="서초구">서초구</Option>
               {/* TODO : 시도에 따른 시군구 외부API 호출하여 Option 추가 필요 */}
             </Select>
           </div>
