@@ -2,16 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Layout, Select, Input } from "antd";
 import "../../assets/styles/SideMenu.css";
 import axios from "axios";
+import { Location } from "./../../types/types";
 
 const { Sider } = Layout;
 const { Option } = Select;
 const { Search } = Input;
 
-const SideMenu: React.FC = () => {
+const SideMenu: React.FC<{ updateLocations: (locations: any[]) => void }> = ({ updateLocations }) => {
   const [urlType, setUrlType] = useState('getEgytListInfoInqire');
   const [sido, setSido] = useState("sido"); 
   const [sigungu, setSigungu] = useState("sigungu"); 
   const [name, setName] = useState("");
+  
   
 
   /**
@@ -38,9 +40,9 @@ const SideMenu: React.FC = () => {
         `https://apis.data.go.kr/B552657/ErmctInfoInqireService/${urlType}?serviceKey=${serviceKey}`,
         { params }
       );
-      // TODO : 검색결과 장소들 위치 마커 찍어야 한다.
+      const items = response.data.response.body.items.item;
+      updateLocations(items); // 위치 데이터 전달
 
-      console.log(response.data.response.body);
     } catch (error) {
       console.error("Error fetching the data:", error);
     }

@@ -7,27 +7,27 @@ import axios from "axios";
 const { Content } = Layout;
 
 const App: React.FC = () => {
+  const [locations, setLocations] = useState<any[]>([]); // 위치 데이터를 저장할 상태
+
+  // 위치 데이터를 설정하는 함수
+  const updateLocations = (data: any[]) => {
+    setLocations(data);
+  };
 
   return (
     <Layout style={{ height: "100vh" }}>
       {/* 좌측 사이드바 */}
-      <SideMenu />
+      <SideMenu updateLocations={updateLocations} />
 
       {/* 우측 레이아웃 */}
       <Layout className="site-layout">
-        {/* 헤더에 상단 메뉴바 추가 */}
-        {/* <header>
-          <TopBar />
-        </header> */}
-
-        {/* 중앙 콘텐츠 영역 */}
         <Content style={{ background: "#fff", flex: 1 }}>
           {/* 지도 컴포넌트 */}
-          <OLMap />
+          <OLMap locations={locations} />
         </Content>
       </Layout>
     </Layout>
   );
-}
+};
 
 export default App;
