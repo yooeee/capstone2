@@ -22,7 +22,7 @@ interface OLMapProps {
 const OLMap: React.FC<OLMapProps> = ({ locations }) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const vectorSourceRef = useRef<VectorSource | null>(null); // VectorSource를 저장할 ref
-  console.log(locations);
+  
   useEffect(() => {
     if (!mapRef.current) return;
 

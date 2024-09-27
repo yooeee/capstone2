@@ -8,26 +8,27 @@ const { Sider } = Layout;
 const { Option } = Select;
 const { Search } = Input;
 
-const SideMenu: React.FC<{ updateLocations: (locations: any[]) => void }> = ({ updateLocations }) => {
-  const [urlType, setUrlType] = useState('getEgytListInfoInqire');
-  const [sido, setSido] = useState("sido"); 
-  const [sigungu, setSigungu] = useState("sigungu"); 
+const SideMenu: React.FC<{ updateLocations: (locations: any[]) => void }> = ({
+  updateLocations,
+}) => {
+  const [urlType, setUrlType] = useState("getEgytListInfoInqire");
+  const [sido, setSido] = useState("sido");
+  const [sigungu, setSigungu] = useState("sigungu");
   const [name, setName] = useState("");
-  
-  
+  const [sigunguOptions, setSigunguOptions] = useState<string[]>([]);
 
   /**
    *  검색버튼 클릭시 OPEN API 호출
    */
-  const requestApi = async () => {
-    
-    if(sido === 'sido' || sigungu == 'sigungu') {
+  const searchApi = async () => {
+    if (sido === "sido" || sigungu == "sigungu") {
       alert("지역을 선택해주세요.");
       return false;
     }
 
     try {
-      const serviceKey = "Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D";
+      const serviceKey =
+        "Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D";
       const params = {
         Q0: sido,
         Q1: sigungu,
@@ -40,19 +41,49 @@ const SideMenu: React.FC<{ updateLocations: (locations: any[]) => void }> = ({ u
         { params }
       );
       const items = response.data.response.body.items.item;
-      if(items){
+      if (items) {
         updateLocations(items); // 위치 데이터 전달
-      } else{
+      } else {
         alert("조회 결과 없습니다.");
         return;
       }
-      
-
     } catch (error) {
       console.error("Error fetching the data:", error);
     }
   };
 
+  // 시도 변경 시 API 호출하여 시군구 데이터 업데이트
+  useEffect(() => {
+    if (sido && sido !== "sido") {
+      fetchSigunguData(sido);
+    } else {
+      //setSigunguOptions([]); // 시도 선택 해제 시 시군구 리스트 초기화
+    }
+  }, [sido]);
+
+
+  const fetchSigunguData = async (sido: string) => {
+    try {
+      const serviceKey = 'Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D';
+      const params ={
+        pageNo : 1,
+        numOfRowsA : 50,
+        type : 'json',
+        locatadd_nm : sido,
+      };
+      const response = await axios.get(
+        `http://apis.data.go.kr/1741000/StanReginCd/getStanReginCdList?serviceKey=${serviceKey}`, {params}
+      );
+      const items = response.data.StanReginCd[1].row;
+      if (items) {
+        console.log(items);
+      } else {
+        setSigunguOptions([]);
+      }
+    } catch (error) {
+      console.error("Error fetching the data:", error);
+    }
+  };
 
   return (
     <Sider width={300}>
@@ -62,7 +93,11 @@ const SideMenu: React.FC<{ updateLocations: (locations: any[]) => void }> = ({ u
         {/* Select 박스 - 시도 및 시군구 */}
         <div className="sidemenu-admcode">
           <div>
-            <Select defaultValue="sido" className="sdsgg" onChange={(value) => setSido(value)}>
+            <Select
+              defaultValue="sido"
+              className="sdsgg"
+              onChange={(value) => setSido(value)}
+            >
               <Option value="sido" disabled>
                 시도 선택
               </Option>
@@ -85,19 +120,31 @@ const SideMenu: React.FC<{ updateLocations: (locations: any[]) => void }> = ({ u
               <Option value="경상남도">경상남도</Option>
               <Option value="제주특별자치도">제주특별자치도</Option>
             </Select>
-            <Select defaultValue="sigungu" className="sdsgg" onChange={(value) => setSigungu(value)}>
-              <Option value="sigungu" disabled>시군구 선택</Option>
+            <Select
+              defaultValue="sigungu"
+              className="sdsgg"
+              onChange={(value) => setSigungu(value)}
+            >
+              <Option value="sigungu" disabled>
+                시군구 선택
+              </Option>
               <Option value="">전체</Option>
-              <Option value="강남구">강남구</Option>
-              <Option value="서초구">서초구</Option>
-              {/* TODO : 시도에 따른 시군구 외부API 호출하여 Option 추가 필요 */}
+              {sigunguOptions.map((sigungu) => (
+                <Option key={sigungu} value={sigungu}>
+                  {sigungu}
+                </Option>
+              ))}
             </Select>
           </div>
         </div>
 
         {/* Select 박스 - 분류 */}
         <div className="sidemenu-select-box">
-          <Select defaultValue="getEgytListInfoInqire" style={{ width: "100%" }} onChange={(value) => setUrlType(value)}>
+          <Select
+            defaultValue="getEgytListInfoInqire"
+            style={{ width: "100%" }}
+            onChange={(value) => setUrlType(value)}
+          >
             <Option value="getEgytListInfoInqire">
               응급의료기관 목록정보 조회
             </Option>
@@ -114,7 +161,7 @@ const SideMenu: React.FC<{ updateLocations: (locations: any[]) => void }> = ({ u
             placeholder="기관명을 입력하세요"
             onSearch={(value) => {
               setName(value);
-              requestApi();
+              searchApi();
             }}
             enterButton
           />
