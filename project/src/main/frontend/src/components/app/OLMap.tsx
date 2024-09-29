@@ -9,18 +9,20 @@ import Point from "ol/geom/Point";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Style, Icon } from "ol/style";
-import { Button, Popover } from "antd"; // Popover 컴포넌트 import
+import { Button } from "antd"; // Popover 컴포넌트 import
 import { AimOutlined } from "@ant-design/icons";
 import { createRoot } from "react-dom/client";
 import { boundingExtent } from "ol/extent";
 
 interface OLMapProps {
   searchResult: any[];
+  onItemSelect: (item: any) => void;
 }
 
-const OLMap: React.FC<OLMapProps> = ({ searchResult }) => {
+const OLMap: React.FC<OLMapProps> = ({ searchResult, onItemSelect }) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const vectorSourceRef = useRef<VectorSource | null>(null);
+  const popupOverlayRef = useRef<Overlay | null>(null); // 팝업 오버레이 참조 추가
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -95,6 +97,8 @@ const OLMap: React.FC<OLMapProps> = ({ searchResult }) => {
 
           const marker = new Feature({
             geometry: new Point(fromLonLat([wgs84Lon, wgs84Lat])),
+            name: 'marker',
+            datas: item,
           });
 
           marker.setStyle(
@@ -111,10 +115,11 @@ const OLMap: React.FC<OLMapProps> = ({ searchResult }) => {
 
           vectorSourceRef.current!.addFeature(marker);
           coords.push([wgs84Lon, wgs84Lat]);
-          // Popover 대신 Overlay로 팝업 표시
+
+          // 팝업 오버레이 생성
           const popupOverlay = new Overlay({
             positioning: 'bottom-center',
-            stopEvent: false,
+            stopEvent: true, // 클릭 이벤트를 전파할지 설정
             offset: [0, -10],
           });
 
@@ -126,13 +131,20 @@ const OLMap: React.FC<OLMapProps> = ({ searchResult }) => {
           popoverDiv.style.border = "1px solid #ccc";
           popoverDiv.style.borderRadius = "4px";
           popoverDiv.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
-          popupOverlay.setElement(popoverDiv);
+          popoverDiv.style.cursor = "pointer"; // 커서 변경
 
+          // 팝업 클릭 시 사이드바에 데이터 전달
+          popoverDiv.onclick = () => {
+            onItemSelect(item); // 아이템 선택
+          };
+
+          popupOverlay.setElement(popoverDiv);
           map.addOverlay(popupOverlay);
 
           // 팝업 위치 설정
           const coordinate = fromLonLat([wgs84Lon, wgs84Lat]);
           popupOverlay.setPosition(coordinate);
+          popupOverlayRef.current = popupOverlay; // 팝업 오버레이 참조 저장
         });
 
         const filteredCoords = coords.filter(
@@ -152,6 +164,21 @@ const OLMap: React.FC<OLMapProps> = ({ searchResult }) => {
     };
 
     addMarkers();
+
+    map.on('singleclick', event => {
+      const clickedPixel = map.getEventPixel(event.originalEvent);
+      const clickedFeatures = map.getFeaturesAtPixel(clickedPixel);
+      const markerFeature = Array.from(clickedFeatures).filter(
+        clickFeature => {
+          return clickFeature.getProperties().name === "marker";
+        }
+      );
+
+      if (markerFeature.length > 0) {
+        console.log(markerFeature[0].getProperties())
+        onItemSelect(markerFeature[0].getProperties().datas);
+      }
+    });
 
     return () => {
       map.setTarget(undefined);
