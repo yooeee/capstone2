@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import "ol/ol.css";
-import { Map, View } from "ol";
+import { Map, View, Overlay } from "ol";
 import Tile from "ol/layer/Tile";
 import XYZ from "ol/source/XYZ";
 import { fromLonLat } from "ol/proj";
@@ -8,29 +8,26 @@ import { Feature } from "ol";
 import Point from "ol/geom/Point";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { Style, Circle as CircleStyle, Fill, Stroke, Icon } from "ol/style";
-import { Button } from "antd";
+import { Style, Icon } from "ol/style";
+import { Button, Popover } from "antd"; // Popover 컴포넌트 import
 import { AimOutlined } from "@ant-design/icons";
-import ReactDOM from "react-dom";
 import { createRoot } from "react-dom/client";
-import { boundingExtent } from "ol/extent";  // extent 모듈 import 추가
+import { boundingExtent } from "ol/extent";
 
 interface OLMapProps {
-  locations: any[]; // Location 구조를 명시하지 않고 any[]로 설정
+  searchResult: any[];
 }
 
-const OLMap: React.FC<OLMapProps> = ({ locations }) => {
+const OLMap: React.FC<OLMapProps> = ({ searchResult }) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const vectorSourceRef = useRef<VectorSource | null>(null); // VectorSource를 저장할 ref
-  
+  const vectorSourceRef = useRef<VectorSource | null>(null);
+
   useEffect(() => {
     if (!mapRef.current) return;
 
     const baseMap = new XYZ({
       url:
-        "http://api.vworld.kr/req/wmts/1.0.0/" +
-        "F9DAD4D2-2AEA-343D-A6AA-CD5521D300EF" +
-        "/Base/{z}/{y}/{x}.png",
+        "http://api.vworld.kr/req/wmts/1.0.0/F9DAD4D2-2AEA-343D-A6AA-CD5521D300EF/Base/{z}/{y}/{x}.png",
       crossOrigin: "anonymous",
       transition: 0,
     });
@@ -42,9 +39,8 @@ const OLMap: React.FC<OLMapProps> = ({ locations }) => {
           source: baseMap,
           preload: 20,
         }),
-        // 벡터 레이어 추가
         new VectorLayer({
-          source: (vectorSourceRef.current = new VectorSource()), // VectorSource 초기화
+          source: (vectorSourceRef.current = new VectorSource()),
         }),
       ],
       view: new View({
@@ -67,7 +63,7 @@ const OLMap: React.FC<OLMapProps> = ({ locations }) => {
           (position) => {
             const { latitude, longitude } = position.coords;
             map.getView().setCenter(fromLonLat([longitude, latitude]));
-            map.getView().setZoom(12);
+            map.getView().setZoom(15);
           },
           (error) => {
             console.error("Error getting location:", error);
@@ -84,24 +80,23 @@ const OLMap: React.FC<OLMapProps> = ({ locations }) => {
       </Button>
     );
 
-    // createRoot로 버튼 렌더링
-    const root = createRoot(locateButton); // createRoot 사용
-    root.render(antdButton); // 버튼 렌더링
+    const root = createRoot(locateButton);
+    root.render(antdButton);
     mapRef.current.appendChild(locateButton);
 
     const addMarkers = () => {
       if (vectorSourceRef.current) {
         vectorSourceRef.current.clear();
-        const coords: [number, number][] = []; 
+        const coords: [number, number][] = [];
+        console.log(searchResult);
 
-        locations.forEach((location) => {
-          const { wgs84Lon, wgs84Lat } = location;
+        searchResult.forEach((item) => {
+          const { wgs84Lon, wgs84Lat, dutyName } = item;
 
           const marker = new Feature({
             geometry: new Point(fromLonLat([wgs84Lon, wgs84Lat])),
           });
 
-          // 마커 스타일 설정
           marker.setStyle(
             new Style({
               image: new Icon({
@@ -110,36 +105,69 @@ const OLMap: React.FC<OLMapProps> = ({ locations }) => {
                 anchorYUnits: 'pixels',
                 src: '/images/location.png',
                 scale: 0.07,
-            }),
+              }),
             })
           );
 
-          vectorSourceRef.current!.addFeature(marker); // 벡터 소스에 마커 추가
-          coords.push([wgs84Lon, wgs84Lat]);  // coords 리스트에 좌표 추가
+          vectorSourceRef.current!.addFeature(marker);
+          coords.push([wgs84Lon, wgs84Lat]);
 
-          
+          // Popover 내용 설정
+          const popoverContent = (
+            <div style={{ padding: "10px" }}>
+              <strong>{dutyName}</strong>
+            </div>
+          );
+
+          // Popover 오버레이 설정
+          const popupOverlay = new Overlay({
+            positioning: 'bottom-center',
+            stopEvent: false,
+            offset: [0, -10],
+          });
+          map.addOverlay(popupOverlay);
+
+          // 팝업 위치 설정
+          const coordinate = fromLonLat([wgs84Lon, wgs84Lat]);
+          popupOverlay.setPosition(coordinate);
+
+          // Popover 렌더링
+          const popoverDiv = document.createElement("div");
+          popoverDiv.className = "ol-popup";
+          const root = createRoot(popoverDiv);
+          root.render(<Popover content={popoverContent} trigger="hover" placement="top">
+            <div style={{ cursor: "pointer", color: "blue" }}>{dutyName}</div>
+          </Popover>);
+          popupOverlay.setElement(popoverDiv);
         });
+
         const filteredCoords = coords.filter(
           (item) => item[0] != null && item[1] != null
         );
-    
+
         if (filteredCoords.length > 0) {
-          const extent = boundingExtent(filteredCoords.map((coord) => fromLonLat(coord))); // extent 계산
+          const extent = boundingExtent(filteredCoords.map((coord) => fromLonLat(coord)));
           map.getView().fit(extent, {
             size: map.getSize(),
             padding: [300, 300, 300, 300],
           });
         }
-
       }
     };
 
-    addMarkers(); // 컴포넌트가 마운트될 때 처음 마커 추가
+    addMarkers();
+
+    // 지도 클릭 시 팝업 닫기
+    map.on('singleclick', () => {
+      map.getOverlays().forEach((overlay) => {
+        overlay.setPosition(undefined);
+      });
+    });
 
     return () => {
-      map.setTarget(undefined); // 컴포넌트 언마운트 시 지도 제거
+      map.setTarget(undefined);
     };
-  }, [locations]); // locations prop이 변경될 때마다 effect 실행
+  }, [searchResult]);
 
   return (
     <div
