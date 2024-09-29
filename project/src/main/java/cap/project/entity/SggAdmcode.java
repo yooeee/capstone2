@@ -3,23 +3,22 @@ package cap.project.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "test")
-public class Test {
+@Table(name = "sgg_admcode")
+public class SggAdmcode {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer seq;
+    @Column(nullable = false)
+    private String bjcd;
 
     @Column(nullable = false)
     private String name;
 
-    // Getters and Setters
-    public Integer getSeq() {
-        return seq;
+    public String getBjcd() {
+        return bjcd;
     }
 
-    public void setSeq(Integer seq) {
-        this.seq = seq;
+    public void setBjcd(String bjcd) {
+        this.bjcd = bjcd;
     }
 
     public String getName() {
@@ -29,4 +28,6 @@ public class Test {
     public void setName(String name) {
         this.name = name;
     }
+
+ 
 }

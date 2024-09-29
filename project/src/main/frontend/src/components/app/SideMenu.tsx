@@ -12,6 +12,7 @@ const SideMenu: React.FC<{ updateLocations: (locations: any[]) => void }> = ({
   updateLocations,
 }) => {
   const [urlType, setUrlType] = useState("getEgytListInfoInqire");
+  const [bjcd, setBjcd] = useState("");
   const [sido, setSido] = useState("sido");
   const [sigungu, setSigungu] = useState("sigungu");
   const [name, setName] = useState("");
@@ -57,28 +58,26 @@ const SideMenu: React.FC<{ updateLocations: (locations: any[]) => void }> = ({
     if (sido && sido !== "sido") {
       fetchSigunguData(sido);
     } else {
-      //setSigunguOptions([]); // 시도 선택 해제 시 시군구 리스트 초기화
+      setSigunguOptions([]); // 시도 선택 해제 시 시군구 리스트 초기화
     }
   }, [sido]);
 
 
   const fetchSigunguData = async (sido: string) => {
     try {
-      const serviceKey = 'Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D';
-      const params ={
-        pageNo : 1,
-        numOfRowsA : 50,
-        type : 'json',
-        locatadd_nm : sido,
+    
+      const params = {
+        bjcd: bjcd,
       };
       const response = await axios.get(
-        `http://apis.data.go.kr/1741000/StanReginCd/getStanReginCdList?serviceKey=${serviceKey}`, {params}
+        '/api/admcode', { params }
       );
-      const items = response.data.StanReginCd[1].row;
-      if (items) {
-        console.log(items);
-      } else {
-        setSigunguOptions([]);
+      const data = response;
+      if (data) {
+        const data = response.data;
+
+        const sigunguList = data.map((item: any) => item.name);
+        setSigunguOptions(sigunguList);  // 상태 업데이트
       }
     } catch (error) {
       console.error("Error fetching the data:", error);
@@ -96,29 +95,34 @@ const SideMenu: React.FC<{ updateLocations: (locations: any[]) => void }> = ({
             <Select
               defaultValue="sido"
               className="sdsgg"
-              onChange={(value) => setSido(value)}
+              onChange={(value, option) => {
+                const sidoBjcd = option['data-bjcd']; 
+                setBjcd(sidoBjcd); 
+                setSido(value);
+              }}
             >
               <Option value="sido" disabled>
                 시도 선택
               </Option>
               <Option value="">전체</Option>
-              <Option value="서울특별시">서울특별시</Option>
-              <Option value="부산광역시">부산광역시</Option>
-              <Option value="대구광역시">대구광역시</Option>
-              <Option value="인천광역시">인천광역시</Option>
-              <Option value="광주광역시">광주광역시</Option>
-              <Option value="대전광역시">대전광역시</Option>
-              <Option value="울산광역시">울산광역시</Option>
-              <Option value="세종특별자치시">세종특별자치시</Option>
-              <Option value="경기도">경기도</Option>
-              <Option value="강원도">강원도</Option>
-              <Option value="충청북도">충청북도</Option>
-              <Option value="충청남도">충청남도</Option>
-              <Option value="전라북도">전라북도</Option>
-              <Option value="전라남도">전라남도</Option>
-              <Option value="경상북도">경상북도</Option>
-              <Option value="경상남도">경상남도</Option>
-              <Option value="제주특별자치도">제주특별자치도</Option>
+              <Option data-bjcd="11" value="서울특별시">서울특별시</Option>
+              <Option data-bjcd="26" value="부산광역시">부산광역시</Option>
+              <Option data-bjcd="27" value="대구광역시">대구광역시</Option>
+              <Option data-bjcd="28" value="인천광역시">인천광역시</Option>
+              <Option data-bjcd="29" value="광주광역시">광주광역시</Option>
+              <Option data-bjcd="30" value="대전광역시">대전광역시</Option>
+              <Option data-bjcd="31" value="울산광역시">울산광역시</Option>
+              <Option data-bjcd="36" value="세종특별자치시">세종특별자치시</Option>
+              <Option data-bjcd="41" value="경기도">경기도</Option>
+              <Option data-bjcd="51" value="강원도">강원도</Option>
+              <Option data-bjcd="43" value="충청북도">충청북도</Option>
+              <Option data-bjcd="44" value="충청남도">충청남도</Option>
+              <Option data-bjcd="52" value="전라북도">전라북도</Option>
+              <Option data-bjcd="46" value="전라남도">전라남도</Option>
+              <Option data-bjcd="47" value="경상북도">경상북도</Option>
+              <Option data-bjcd="48" value="경상남도">경상남도</Option>
+              <Option data-bjcd="50" value="제주특별자치도">제주특별자치도</Option>
+
             </Select>
             <Select
               defaultValue="sigungu"
