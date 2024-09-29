@@ -7,11 +7,11 @@ import axios from "axios";
 const { Content } = Layout;
 
 const App: React.FC = () => {
-  const [locations, setLocations] = useState<any[]>([]); // 위치 데이터를 저장할 상태
+  const [searchResult, setSearchResult] = useState<any[]>([]); // 위치 데이터를 저장할 상태
 
   // 위치 데이터를 설정하는 함수
   const updateLocations = (data: any[]) => {
-    setLocations(data);
+    setSearchResult(data);
   };
 
   return (
@@ -23,7 +23,7 @@ const App: React.FC = () => {
       <Layout className="site-layout">
         <Content style={{ background: "#fff", flex: 1 }}>
           {/* 지도 컴포넌트 */}
-          <OLMap locations={locations} />
+          <OLMap searchResult={searchResult} />
         </Content>
       </Layout>
     </Layout>
