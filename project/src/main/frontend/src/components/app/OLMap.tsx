@@ -16,10 +16,11 @@ import { boundingExtent } from "ol/extent";
 
 interface OLMapProps {
   searchResult: any[];
-  onItemSelect: (item: any) => void;
+  urlType: string;
+  onItemSelect: (item: any, urlType: string) => void;
 }
 
-const OLMap: React.FC<OLMapProps> = ({ searchResult, onItemSelect }) => {
+const OLMap: React.FC<OLMapProps> = ({ searchResult, onItemSelect, urlType }) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const vectorSourceRef = useRef<VectorSource | null>(null);
   const popupOverlayRef = useRef<Overlay | null>(null); // 팝업 오버레이 참조 추가
@@ -90,7 +91,7 @@ const OLMap: React.FC<OLMapProps> = ({ searchResult, onItemSelect }) => {
       if (vectorSourceRef.current) {
         vectorSourceRef.current.clear();
         const coords: [number, number][] = [];
-        console.log(searchResult);
+ 
 
         searchResult.forEach((item) => {
           const { wgs84Lon, wgs84Lat, dutyName } = item;
@@ -135,7 +136,7 @@ const OLMap: React.FC<OLMapProps> = ({ searchResult, onItemSelect }) => {
 
           // 팝업 클릭 시 사이드바에 데이터 전달
           popoverDiv.onclick = () => {
-            onItemSelect(item); // 아이템 선택
+            onItemSelect(item, urlType); // 아이템 선택
           };
 
           popupOverlay.setElement(popoverDiv);
@@ -175,8 +176,8 @@ const OLMap: React.FC<OLMapProps> = ({ searchResult, onItemSelect }) => {
       );
 
       if (markerFeature.length > 0) {
-        console.log(markerFeature[0].getProperties())
-        onItemSelect(markerFeature[0].getProperties().datas);
+
+        onItemSelect(markerFeature[0].getProperties().datas, urlType);
       }
     });
 

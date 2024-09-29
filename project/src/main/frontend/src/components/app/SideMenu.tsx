@@ -8,7 +8,9 @@ const { Sider } = Layout;
 const { Option } = Select;
 const { Search } = Input;
 
-const SideMenu: React.FC<{ updateLocations: (locations: any[]) => void }> = ({
+
+
+const SideMenu: React.FC<{ updateLocations: (locations: any[], urlType: string) => void }> = ({
   updateLocations,
 }) => {
   const [urlType, setUrlType] = useState("getEgytListInfoInqire");
@@ -43,7 +45,7 @@ const SideMenu: React.FC<{ updateLocations: (locations: any[]) => void }> = ({
       );
       const items = response.data.response.body.items.item;
       if (items) {
-        updateLocations(items); // 위치 데이터 전달
+        updateLocations(items, urlType); // 위치 데이터 전달
       } else {
         alert("조회 결과 없습니다.");
         return;
