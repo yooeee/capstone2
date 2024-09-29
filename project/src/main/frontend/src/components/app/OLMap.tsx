@@ -111,34 +111,28 @@ const OLMap: React.FC<OLMapProps> = ({ searchResult }) => {
 
           vectorSourceRef.current!.addFeature(marker);
           coords.push([wgs84Lon, wgs84Lat]);
-
-          // Popover 내용 설정
-          const popoverContent = (
-            <div style={{ padding: "10px" }}>
-              <strong>{dutyName}</strong>
-            </div>
-          );
-
-          // Popover 오버레이 설정
+          // Popover 대신 Overlay로 팝업 표시
           const popupOverlay = new Overlay({
             positioning: 'bottom-center',
             stopEvent: false,
             offset: [0, -10],
           });
+
+          const popoverDiv = document.createElement("div");
+          popoverDiv.className = "ol-popup";
+          popoverDiv.innerHTML = `<strong>${dutyName}</strong>`;
+          popoverDiv.style.backgroundColor = "white";
+          popoverDiv.style.padding = "5px 10px";
+          popoverDiv.style.border = "1px solid #ccc";
+          popoverDiv.style.borderRadius = "4px";
+          popoverDiv.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
+          popupOverlay.setElement(popoverDiv);
+
           map.addOverlay(popupOverlay);
 
           // 팝업 위치 설정
           const coordinate = fromLonLat([wgs84Lon, wgs84Lat]);
           popupOverlay.setPosition(coordinate);
-
-          // Popover 렌더링
-          const popoverDiv = document.createElement("div");
-          popoverDiv.className = "ol-popup";
-          const root = createRoot(popoverDiv);
-          root.render(<Popover content={popoverContent} trigger="hover" placement="top">
-            <div style={{ cursor: "pointer", color: "blue" }}>{dutyName}</div>
-          </Popover>);
-          popupOverlay.setElement(popoverDiv);
         });
 
         const filteredCoords = coords.filter(
@@ -146,7 +140,9 @@ const OLMap: React.FC<OLMapProps> = ({ searchResult }) => {
         );
 
         if (filteredCoords.length > 0) {
-          const extent = boundingExtent(filteredCoords.map((coord) => fromLonLat(coord)));
+          const extent = boundingExtent(
+            filteredCoords.map((coord) => fromLonLat(coord))
+          );
           map.getView().fit(extent, {
             size: map.getSize(),
             padding: [300, 300, 300, 300],
@@ -156,13 +152,6 @@ const OLMap: React.FC<OLMapProps> = ({ searchResult }) => {
     };
 
     addMarkers();
-
-    // 지도 클릭 시 팝업 닫기
-    map.on('singleclick', () => {
-      map.getOverlays().forEach((overlay) => {
-        overlay.setPosition(undefined);
-      });
-    });
 
     return () => {
       map.setTarget(undefined);
