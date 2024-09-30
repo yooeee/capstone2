@@ -5,6 +5,7 @@ import SideMenu from "./SideMenu.tsx";
 import OLMap from "./OLMap.tsx";
 import RightBar from "./RightBar.tsx"; // RightBar 컴포넌트 import
 import axios from "axios";
+import ModalComponent from "./ModalComponent.tsx";
 
 const { Content } = Layout;
 
@@ -22,7 +23,7 @@ const App: React.FC = () => {
   };
 
   // RightBar의 정보를 업데이트하는 함수
-  const handleItemSelect = (item: any) => {
+  const handleItemSelect = (item: any, urlType: string) => {
     setSelectedItem(item);
     setRightBarVisible(true);
     setUrlType(urlType); // 선택된 아이템의 urlType 설정
@@ -42,7 +43,7 @@ const App: React.FC = () => {
       </Layout>
 
       {/* RightBar 컴포넌트 */}
-      <RightBar
+      <ModalComponent
         visible={rightBarVisible}
         onClose={() => setRightBarVisible(false)}
         itemData={selectedItem}
