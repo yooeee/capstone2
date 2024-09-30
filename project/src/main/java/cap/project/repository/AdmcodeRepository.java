@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import cap.project.entity.SggAdmcode;
 
 @Repository
-public interface AdmcodeRepository extends JpaRepository<SggAdmcode, Integer> {
+public interface AdmcodeRepository extends JpaRepository<SggAdmcode, String> {
     List<SggAdmcode> findByBjcdStartingWith(String bjcd);
 }
