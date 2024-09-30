@@ -63,22 +63,53 @@ const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, itemD
 
     const columns = [
         { title: '구분', dataIndex: 'name', key: 'name' },
-        { title: '수', dataIndex: 'value', key: 'value' },
+        { title: '가용/전체(수)', dataIndex: 'value', key: 'value' },
     ];
 
     const data = [
-        { key: '1', name: '응급실', value: displayData?.hvec },
-        { key: '2', name: '수술실', value: displayData?.hvoc },
-        { key: '3', name: '신경중환자실', value: displayData?.hvcc },
-        { key: '4', name: '신생중환자실', value: displayData?.hvncc },
-        { key: '5', name: '흉부중환자실', value: displayData?.hvccc },
-        { key: '6', name: '일반중환자실', value: displayData?.hvicc },
-        { key: '7', name: '입원실', value: displayData?.hvgc },
-        { key: '8', name: '내과중환자실', value: displayData?.hv2 },
-        { key: '9', name: '외과중환자실', value: displayData?.hv3 },
-        { key: '10', name: '신경과입원실', value: displayData?.hv5 },
-        { key: '11', name: '신경외과중환자실', value: displayData?.hv6 },
-    ];
+        { key: '1', name: '[중환자실] 내과', value: displayData?.hv2 },
+        { key: '2', name: '[중환자실] 외과', value: displayData?.hv3 },
+        { key: '3', name: '외과입원실(정형외과)', value: displayData?.hv4 },
+        { key: '4', name: '신경과입원실', value: displayData?.hv5 },
+        { key: '5', name: '[중환자실] 신경외과', value: displayData?.hv6 },
+        { key: '6', name: '약물중환자', value: displayData?.hv7 },
+        { key: '7', name: '[중환자실] 화상', value: displayData?.hv8 },
+        { key: '8', name: '[중환자실] 외상', value: displayData?.hv9 },
+        { key: '9', name: 'VENTI(소아)', value: displayData?.hv10 },
+        { key: '10', name: '인큐베이터(보육기)', value: displayData?.hv11 },
+        { key: '11', name: '소아당직의 직통연락처', value: displayData?.hv12 },
+        { key: '12', name: '격리진료구역 음압격리병상', value: displayData?.hv13 },
+        { key: '13', name: '격리진료구역 일반격리병상', value: displayData?.hv14 },
+        { key: '14', name: '소아음압격리', value: displayData?.hv15 },
+        { key: '15', name: '소아일반격리', value: displayData?.hv16 },
+        { key: '16', name: '[응급전용] 중환자실 음압격리', value: displayData?.hv17 },
+        { key: '17', name: '[응급전용] 중환자실 일반격리', value: displayData?.hv18 },
+        { key: '18', name: '[응급전용] 입원실 음압격리', value: displayData?.hv19 },
+        { key: '19', name: '[응급전용] 입원실 일반격리', value: displayData?.hv21 },
+        { key: '20', name: '감염병 전담병상 중환자실', value: displayData?.hv22 },
+        { key: '21', name: '감염병 전담병상 중환자실 내 음압격리병상', value: displayData?.hv23 },
+        { key: '22', name: '[감염] 중증 병상', value: displayData?.hv24 },
+        { key: '23', name: '[감염] 준-중증 병상', value: displayData?.hv25 },
+        { key: '24', name: '[감염] 중등증 병상', value: displayData?.hv26 },
+        { key: '25', name: '코호트 격리', value: displayData?.hv27 },
+        { key: '26', name: '소아', value: displayData?.hv28 },
+        { key: '27', name: '응급실 음압 격리 병상', value: displayData?.hv29 },
+        { key: '28', name: '응급실 일반 격리 병상', value: displayData?.hv30 },
+        { key: '29', name: '[응급전용] 중환자실', value: displayData?.hv31 },
+        { key: '30', name: '[중환자실] 소아', value: displayData?.hv32 },
+        { key: '31', name: '[응급전용] 소아중환자실', value: displayData?.hv33 },
+        { key: '32', name: '[중환자실] 심장내과', value: displayData?.hv34 },
+        { key: '33', name: '[중환자실] 음압격리', value: displayData?.hv35 },
+        { key: '34', name: '[응급전용] 입원실', value: displayData?.hv36 },
+        { key: '35', name: '[응급전용] 소아입원실', value: displayData?.hv37 },
+        { key: '36', name: '[입원실] 외상전용', value: displayData?.hv38 },
+        { key: '37', name: '[기타] 외상전용 수술실', value: displayData?.hv39 },
+        { key: '38', name: '[입원실] 정신과 폐쇄병동', value: displayData?.hv40 },
+        { key: '39', name: '[입원실] 음압격리', value: displayData?.hv41 },
+        { key: '40', name: '[기타] 분만실', value: displayData?.hv42 },
+        { key: '41', name: '[기타] 화상전용처치실', value: displayData?.hv43 }
+      ];
+      
 
     return (
         <Modal
@@ -117,6 +148,7 @@ const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, itemD
                         <p>조영촬영기 가용: {displayData?.hvangioayn === 'Y' ? '가능' : '불가능'}</p>
                         <p>인공호흡기 가용: {displayData?.hvventiayn === 'Y' ? '가능' : '불가능'}</p>
                         <p>구급차 가용: {displayData?.hvamyn === 'Y' ? '가능' : '불가능'}</p>
+                        <p>업데이트 시간: {displayData?.hvidate}</p>
                     </div>
                     <Table columns={columns} dataSource={data} pagination={false} />
                 </div>
