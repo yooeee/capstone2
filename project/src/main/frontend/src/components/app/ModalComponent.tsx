@@ -106,27 +106,27 @@ const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, itemD
     const data3 = [
         // 중환자실
         { key: '16', name: '[중환자실] 일반', value: `${displayData?.hvicc ?? '-'}/${displayData?.hvs17 ?? '-'}` },
-        { key: '16', name: '[중환자실] 내과', value: `${displayData?.hv2 ?? '-'}/${displayData?.hvs06 ?? '-'}` },
-        { key: '17', name: '[중환자실] 외과', value: `${displayData?.hv3 ?? '-'}/${displayData?.hvs07 ?? '-'}` },
-        { key: '16', name: '[중환자실] 흉부외과', value: `${displayData?.hvccc ?? '-'}/${displayData?.hvs16 ?? '-'}` },
-        { key: '16', name: '[중환자실] 신경과', value: `${displayData?.hvcc ?? '-'}/${displayData?.hvs11 ?? '-'}` },
-        { key: '16', name: '[중환자실] 신경외과', value: `${displayData?.hv6 ?? '-'}/${displayData?.hvs12 ?? '-'}` },
-        { key: '18', name: '[중환자실] 외상', value: `${displayData?.hv9 ?? '-'}/${displayData?.hvs14 ?? '-'}` },
-        { key: '19', name: '[중환자실] 화상', value: `${displayData?.hv8 ?? '-'}/${displayData?.hvs13 ?? '-'}` },
-        { key: '21', name: '[중환자실] 소아', value: `${displayData?.hv32 ?? '-'}/${displayData?.hvs09 ?? '-'}` },
-        { key: '22', name: '[중환자실] 신생아', value: `${displayData?.hvncc ?? '-'}/${displayData?.hvs08 ?? '-'}` },
-        { key: '23', name: '[중환자실] 심장내과', value: `${displayData?.hv34 ?? '-'}/${displayData?.hvs15 ?? '-'}` },
-        { key: '24', name: '[중환자실] 음압격리', value: `${displayData?.hv35 ?? '-'}/${displayData?.hvs18 ?? '-'}` },
+        { key: '17', name: '[중환자실] 내과', value: `${displayData?.hv2 ?? '-'}/${displayData?.hvs06 ?? '-'}` },
+        { key: '18', name: '[중환자실] 외과', value: `${displayData?.hv3 ?? '-'}/${displayData?.hvs07 ?? '-'}` },
+        { key: '19', name: '[중환자실] 흉부외과', value: `${displayData?.hvccc ?? '-'}/${displayData?.hvs16 ?? '-'}` },
+        { key: '20', name: '[중환자실] 신경과', value: `${displayData?.hvcc ?? '-'}/${displayData?.hvs11 ?? '-'}` },
+        { key: '21', name: '[중환자실] 신경외과', value: `${displayData?.hv6 ?? '-'}/${displayData?.hvs12 ?? '-'}` },
+        { key: '22', name: '[중환자실] 외상', value: `${displayData?.hv9 ?? '-'}/${displayData?.hvs14 ?? '-'}` },
+        { key: '23', name: '[중환자실] 화상', value: `${displayData?.hv8 ?? '-'}/${displayData?.hvs13 ?? '-'}` },
+        { key: '24', name: '[중환자실] 소아', value: `${displayData?.hv32 ?? '-'}/${displayData?.hvs09 ?? '-'}` },
+        { key: '25', name: '[중환자실] 신생아', value: `${displayData?.hvncc ?? '-'}/${displayData?.hvs08 ?? '-'}` },
+        { key: '26', name: '[중환자실] 심장내과', value: `${displayData?.hv34 ?? '-'}/${displayData?.hvs15 ?? '-'}` },
+        { key: '27', name: '[중환자실] 음압격리', value: `${displayData?.hv35 ?? '-'}/${displayData?.hvs18 ?? '-'}` },
 
 
     ]
 
     const data4 = [
-        { key: '25', name: '[입원실] 일반', value: `${displayData?.hvgc ?? '-'}/${displayData?.hvs38 ?? '-'}` },
-        { key: '25', name: '[입원실] 음압격리', value: `${displayData?.hv41 ?? '-'}/${displayData?.hvs25 ?? '-'}` },
-        { key: '25', name: '[입원실] 정신과 폐쇄병동', value: `${displayData?.hv40 ?? '-'}/${displayData?.hvs24 ?? '-'}` },
-        { key: '25', name: '[입원실] 분만실', value: `${displayData?.hv42 ?? '-'}/${displayData?.hvs26 ?? '-'}` },
-        { key: '26', name: '[기타] 수술실', value: `${displayData?.hvoc ?? '-'}/${displayData?.hvs22 ?? '-'}` },
+        { key: '28', name: '[입원실] 일반', value: `${displayData?.hvgc ?? '-'}/${displayData?.hvs38 ?? '-'}` },
+        { key: '29', name: '[입원실] 음압격리', value: `${displayData?.hv41 ?? '-'}/${displayData?.hvs25 ?? '-'}` },
+        { key: '30', name: '[입원실] 정신과 폐쇄병동', value: `${displayData?.hv40 ?? '-'}/${displayData?.hvs24 ?? '-'}` },
+        { key: '31', name: '[입원실] 분만실', value: `${displayData?.hv42 ?? '-'}/${displayData?.hvs26 ?? '-'}` },
+        { key: '32', name: '[기타] 수술실', value: `${displayData?.hvoc ?? '-'}/${displayData?.hvs22 ?? '-'}` },
 
 
         // 기타

@@ -8,11 +8,12 @@ import { Feature } from "ol";
 import Point from "ol/geom/Point";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { Style, Icon } from "ol/style";
+import { Style, Icon, Fill } from "ol/style";
 import { Button } from "antd"; // Popover 컴포넌트 import
 import { AimOutlined } from "@ant-design/icons";
 import { createRoot } from "react-dom/client";
 import { boundingExtent } from "ol/extent";
+import CircleStyle from "ol/style/Circle";
 
 interface OLMapProps {
   searchResult: any[];
@@ -67,6 +68,36 @@ const OLMap: React.FC<OLMapProps> = ({ searchResult, onItemSelect, urlType }) =>
             const { latitude, longitude } = position.coords;
             map.getView().setCenter(fromLonLat([longitude, latitude]));
             map.getView().setZoom(15);
+            // 빨간색 포인트 마커 생성
+            const marker = new Feature({
+              geometry: new Point(fromLonLat([longitude, latitude]))
+            });
+
+              // 빨간색 점 생성
+        const point = new Feature({
+          geometry: new Point(fromLonLat([longitude, latitude]))
+        });
+
+        // 점 스타일 설정 (빨간색 원형 점)
+        point.setStyle(new Style({
+          image: new CircleStyle({
+            radius: 7, // 점의 반지름
+            fill: new Fill({
+              color: 'red' // 빨간색
+            })
+          })
+        }));
+
+        // 벡터 소스와 레이어 추가
+        const vectorSource = new VectorSource({
+          features: [point]
+        });
+
+        const markerLayer = new VectorLayer({
+          source: vectorSource
+        });
+
+        map.addLayer(markerLayer);
           },
           (error) => {
             console.error("Error getting location:", error);
@@ -91,7 +122,7 @@ const OLMap: React.FC<OLMapProps> = ({ searchResult, onItemSelect, urlType }) =>
       if (vectorSourceRef.current) {
         vectorSourceRef.current.clear();
         const coords: [number, number][] = [];
- 
+
 
         searchResult.forEach((item) => {
           const { wgs84Lon, wgs84Lat, dutyName } = item;
