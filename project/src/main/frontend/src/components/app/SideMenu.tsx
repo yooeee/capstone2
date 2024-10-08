@@ -20,6 +20,8 @@ const SideMenu: React.FC<{ updateLocations: (locations: any[], urlType: string) 
   const [name, setName] = useState("");
   const [sigunguOptions, setSigunguOptions] = useState<string[]>([]);
 
+  
+
   /**
    *  검색버튼 클릭시 OPEN API 호출
    */
