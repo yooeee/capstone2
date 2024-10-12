@@ -1,13 +1,7 @@
 import { useState, useCallback } from 'react';
 
-interface GeolocationState {
-  latitude: number | null;
-  longitude: number | null;
-  error: string | null;
-}
-
 export const useGeolocation = () => {
-  const [state, setState] = useState<GeolocationState>({
+  const [state, setState] = useState({
     latitude: null,
     longitude: null,
     error: null,
