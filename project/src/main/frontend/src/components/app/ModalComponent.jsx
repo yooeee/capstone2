@@ -3,16 +3,10 @@ import axios from "axios";
 import { Modal, Table, Descriptions, Badge } from "antd";
 import { PhoneOutlined, EnvironmentOutlined, MedicineBoxOutlined, NumberOutlined, ClockCircleTwoTone } from '@ant-design/icons';
 import "../../assets/styles/ModalComponent.css";
-interface ModalComponentProps {
-    visible: boolean;
-    onClose: () => void;
-    itemData: any | null;
-    urlType: string;
-}
 
-const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, itemData, urlType }) => {
-    const [detailedData, setDetailedData] = useState<any>(null);
-    console.log(itemData);
+const ModalComponent = ({ visible, onClose, itemData, urlType }) => {
+    const [detailedData, setDetailedData] = useState(null);
+
     useEffect(() => {
         const fetchDetailedData = async () => {
             try {
@@ -28,7 +22,6 @@ const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, itemD
                     `https://apis.data.go.kr/B552657/ErmctInfoInqireService/getEmrrmRltmUsefulSckbdInfoInqire?serviceKey=${serviceKey}`,
                     { params }
                 );
-                // 응답에서 item 배열 가져오기
                 const items = response.data.response.body.items.item;
                 if (items.length < 1) {
                     alert("해당 병원의 실시간 응급실 정보가 존재하지 않습니다.");
@@ -41,8 +34,6 @@ const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, itemD
                 } else {
                     for (const item of items) {
                         if (item.hpid === itemData.hpid) {
-                            console.log("상세값:");
-                            console.log(item);
                             setDetailedData(item);
                             break;
                         }
@@ -77,7 +68,6 @@ const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, itemD
         { title: '가용/전체(수)', dataIndex: 'value', key: 'value' },
     ];
     const data1 = [
-        // 응급실
         { key: '1', name: '[응급실] 일반(응급실일반병상)', value: `${displayData?.hvec ?? '-'}/${displayData?.hvs01 ?? '-'}` },
         { key: '2', name: '[응급실] 코호트 격리', value: `${displayData?.hv27 ?? '-'}/${displayData?.hvs59 ?? '-'}` },
         { key: '3', name: '[응급실] 음압 격리 병상', value: `${displayData?.hv29 ?? '-'}/${displayData?.hvs03 ?? '-'}` },
@@ -85,12 +75,9 @@ const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, itemD
         { key: '5', name: '[응급실] 소아', value: `${displayData?.hv28 ?? '-'}/${displayData?.hvs02 ?? '-'}` },
         { key: '6', name: '[응급실] 소아 음압 격리', value: `${displayData?.hv15 ?? '-'}/${displayData?.hvs48 ?? '-'}` },
         { key: '7', name: '[응급실] 소아일반격리', value: `${displayData?.hv16 ?? '-'}/${displayData?.hvs49 ?? '-'}` },
-
-
     ];
 
     const data2 = [
-        // 응급전용
         { key: '8', name: '[응급전용] 중환자실 음압격리', value: `${displayData?.hv17 ?? '-'}/${displayData?.hvs50 ?? '-'}` },
         { key: '9', name: '[응급전용] 중환자실 일반격리', value: `${displayData?.hv18 ?? '-'}/${displayData?.hvs51 ?? '-'}` },
         { key: '10', name: '[응급전용] 입원실 음압격리', value: `${displayData?.hv19 ?? '-'}/${displayData?.hvs52 ?? '-'}` },
@@ -99,12 +86,9 @@ const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, itemD
         { key: '13', name: '[응급전용] 소아중환자실', value: `${displayData?.hv33 ?? '-'}/${displayData?.hvs10 ?? '-'}` },
         { key: '14', name: '[응급전용] 입원실', value: `${displayData?.hv36 ?? '-'}/${displayData?.hvs19 ?? '-'}` },
         { key: '15', name: '[응급전용] 소아입원실', value: `${displayData?.hv37 ?? '-'}/${displayData?.hvs20 ?? '-'}` },
-
-
-    ]
+    ];
 
     const data3 = [
-        // 중환자실
         { key: '16', name: '[중환자실] 일반', value: `${displayData?.hvicc ?? '-'}/${displayData?.hvs17 ?? '-'}` },
         { key: '17', name: '[중환자실] 내과', value: `${displayData?.hv2 ?? '-'}/${displayData?.hvs06 ?? '-'}` },
         { key: '18', name: '[중환자실] 외과', value: `${displayData?.hv3 ?? '-'}/${displayData?.hvs07 ?? '-'}` },
@@ -117,9 +101,7 @@ const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, itemD
         { key: '25', name: '[중환자실] 신생아', value: `${displayData?.hvncc ?? '-'}/${displayData?.hvs08 ?? '-'}` },
         { key: '26', name: '[중환자실] 심장내과', value: `${displayData?.hv34 ?? '-'}/${displayData?.hvs15 ?? '-'}` },
         { key: '27', name: '[중환자실] 음압격리', value: `${displayData?.hv35 ?? '-'}/${displayData?.hvs18 ?? '-'}` },
-
-
-    ]
+    ];
 
     const data4 = [
         { key: '28', name: '[입원실] 일반', value: `${displayData?.hvgc ?? '-'}/${displayData?.hvs38 ?? '-'}` },
@@ -127,26 +109,7 @@ const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, itemD
         { key: '30', name: '[입원실] 정신과 폐쇄병동', value: `${displayData?.hv40 ?? '-'}/${displayData?.hvs24 ?? '-'}` },
         { key: '31', name: '[입원실] 분만실', value: `${displayData?.hv42 ?? '-'}/${displayData?.hvs26 ?? '-'}` },
         { key: '32', name: '[기타] 수술실', value: `${displayData?.hvoc ?? '-'}/${displayData?.hvs22 ?? '-'}` },
-
-
-        // 기타
-        // { key: '12', name: '격리진료구역 음압격리병상', value: displayData?.hv13 },
-        // { key: '13', name: '격리진료구역 일반격리병상', value: displayData?.hv14 },
-        // { key: '20', name: '감염병 전담병상 중환자실', value: displayData?.hv22 },
-        // { key: '21', name: '감염병 전담병상 중환자실 내 음압격리병상', value: displayData?.hv23 },
-        // { key: '22', name: '[감염] 중증 병상', value: displayData?.hv24 },
-        // { key: '23', name: '[감염] 준-중증 병상', value: displayData?.hv25 },
-        // { key: '24', name: '[감염] 중등증 병상', value: displayData?.hv26 },
-        // { key: '36', name: '[입원실] 외상전용', value: displayData?.hv38 },
-        // { key: '37', name: '[기타] 외상전용 수술실', value: displayData?.hv39 },
-        // { key: '38', name: '[입원실] 정신과 폐쇄병동', value: displayData?.hv40 },
-        // { key: '39', name: '[입원실] 음압격리', value: displayData?.hv41 },
-        // { key: '40', name: '[기타] 분만실', value: displayData?.hv42 },
-        // { key: '41', name: '[기타] 화상전용처치실', value: displayData?.hv43 }
-
-    ]
-
-
+    ];
 
     return (
         <Modal
@@ -186,8 +149,6 @@ const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, itemD
                                 `${String(displayData.hvidate).slice(0, 4)}.${String(displayData.hvidate).slice(4, 6)}.${String(displayData.hvidate).slice(6, 8)} ${String(displayData.hvidate).slice(8, 10)}:${String(displayData.hvidate).slice(10, 12)}:${String(displayData.hvidate).slice(12, 14)}` :
                                 '-'}
                         </p>
-
-
                     </div>
 
                     <div className="info-item">
@@ -281,15 +242,13 @@ const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, itemD
     );
 };
 
-function extractSidoSigungu(dutyAddr: string): { sidoData: string, sigunguData: string } {
+function extractSidoSigungu(dutyAddr) {
     const addrParts = dutyAddr.split(' ');
 
-    // 첫 번째 값이 시도, 두 번째 값이 시군구
-    const sidoData: string = addrParts[0];
-    const sigunguData: string = addrParts[1];
+    const sidoData = addrParts[0];
+    const sigunguData = addrParts[1];
 
     return { sidoData, sigunguData };
 }
-
 
 export default ModalComponent;

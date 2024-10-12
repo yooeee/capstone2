@@ -2,31 +2,24 @@ import React, { useEffect, useState } from "react";
 import { Layout, Select, Input } from "antd";
 import "../../assets/styles/SideMenu.css";
 import axios from "axios";
-import { Location } from "./../../types/types";
 
 const { Sider } = Layout;
 const { Option } = Select;
 const { Search } = Input;
 
-
-
-const SideMenu: React.FC<{ updateLocations: (locations: any[], urlType: string) => void }> = ({
-  updateLocations,
-}) => {
+const SideMenu = ({ updateLocations }) => {
   const [urlType, setUrlType] = useState("getEgytListInfoInqire");
   const [bjcd, setBjcd] = useState("");
   const [sido, setSido] = useState("sido");
   const [sigungu, setSigungu] = useState("sigungu");
   const [name, setName] = useState("");
-  const [sigunguOptions, setSigunguOptions] = useState<string[]>([]);
-
-  
+  const [sigunguOptions, setSigunguOptions] = useState([]);
 
   /**
    *  검색버튼 클릭시 OPEN API 호출
    */
   const searchApi = async () => {
-    if (sido === "sido" || sigungu == "sigungu") {
+    if (sido === "sido" || sigungu === "sigungu") {
       alert("지역을 선택해주세요.");
       return false;
     }
@@ -66,22 +59,16 @@ const SideMenu: React.FC<{ updateLocations: (locations: any[], urlType: string) 
     }
   }, [sido]);
 
-
-  const fetchSigunguData = async (sido: string) => {
+  const fetchSigunguData = async (sido) => {
     try {
-    
       const params = {
         bjcd: bjcd,
       };
-      const response = await axios.get(
-        '/api/admcode', { params }
-      );
+      const response = await axios.get("/api/admcode", { params });
       const data = response;
       if (data) {
-        const data = response.data;
-
-        const sigunguList = data.map((item: any) => item.name);
-        setSigunguOptions(sigunguList);  // 상태 업데이트
+        const sigunguList = response.data.map((item) => item.name);
+        setSigunguOptions(sigunguList); // 상태 업데이트
       }
     } catch (error) {
       console.error("Error fetching the data:", error);
@@ -100,8 +87,8 @@ const SideMenu: React.FC<{ updateLocations: (locations: any[], urlType: string) 
               defaultValue="sido"
               className="sdsgg"
               onChange={(value, option) => {
-                const sidoBjcd = option['data-bjcd']; 
-                setBjcd(sidoBjcd); 
+                const sidoBjcd = option["data-bjcd"];
+                setBjcd(sidoBjcd);
                 setSido(value);
               }}
             >
@@ -109,24 +96,57 @@ const SideMenu: React.FC<{ updateLocations: (locations: any[], urlType: string) 
                 시도 선택
               </Option>
               <Option value="">전체</Option>
-              <Option data-bjcd="11" value="서울특별시">서울특별시</Option>
-              <Option data-bjcd="26" value="부산광역시">부산광역시</Option>
-              <Option data-bjcd="27" value="대구광역시">대구광역시</Option>
-              <Option data-bjcd="28" value="인천광역시">인천광역시</Option>
-              <Option data-bjcd="29" value="광주광역시">광주광역시</Option>
-              <Option data-bjcd="30" value="대전광역시">대전광역시</Option>
-              <Option data-bjcd="31" value="울산광역시">울산광역시</Option>
-              <Option data-bjcd="36" value="세종특별자치시">세종특별자치시</Option>
-              <Option data-bjcd="41" value="경기도">경기도</Option>
-              <Option data-bjcd="51" value="강원도">강원도</Option>
-              <Option data-bjcd="43" value="충청북도">충청북도</Option>
-              <Option data-bjcd="44" value="충청남도">충청남도</Option>
-              <Option data-bjcd="52" value="전라북도">전라북도</Option>
-              <Option data-bjcd="46" value="전라남도">전라남도</Option>
-              <Option data-bjcd="47" value="경상북도">경상북도</Option>
-              <Option data-bjcd="48" value="경상남도">경상남도</Option>
-              <Option data-bjcd="50" value="제주특별자치도">제주특별자치도</Option>
-
+              <Option data-bjcd="11" value="서울특별시">
+                서울특별시
+              </Option>
+              <Option data-bjcd="26" value="부산광역시">
+                부산광역시
+              </Option>
+              <Option data-bjcd="27" value="대구광역시">
+                대구광역시
+              </Option>
+              <Option data-bjcd="28" value="인천광역시">
+                인천광역시
+              </Option>
+              <Option data-bjcd="29" value="광주광역시">
+                광주광역시
+              </Option>
+              <Option data-bjcd="30" value="대전광역시">
+                대전광역시
+              </Option>
+              <Option data-bjcd="31" value="울산광역시">
+                울산광역시
+              </Option>
+              <Option data-bjcd="36" value="세종특별자치시">
+                세종특별자치시
+              </Option>
+              <Option data-bjcd="41" value="경기도">
+                경기도
+              </Option>
+              <Option data-bjcd="51" value="강원도">
+                강원도
+              </Option>
+              <Option data-bjcd="43" value="충청북도">
+                충청북도
+              </Option>
+              <Option data-bjcd="44" value="충청남도">
+                충청남도
+              </Option>
+              <Option data-bjcd="52" value="전라북도">
+                전라북도
+              </Option>
+              <Option data-bjcd="46" value="전라남도">
+                전라남도
+              </Option>
+              <Option data-bjcd="47" value="경상북도">
+                경상북도
+              </Option>
+              <Option data-bjcd="48" value="경상남도">
+                경상남도
+              </Option>
+              <Option data-bjcd="50" value="제주특별자치도">
+                제주특별자치도
+              </Option>
             </Select>
             <Select
               defaultValue="sigungu"

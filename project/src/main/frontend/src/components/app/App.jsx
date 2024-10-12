@@ -1,29 +1,27 @@
-// App.tsx
+// App.jsx
 import React, { useEffect, useState } from "react";
 import { Layout } from "antd";
-import SideMenu from "./SideMenu.tsx";
-import OLMap from "./OLMap.tsx";
-import RightBar from "./RightBar.tsx"; // RightBar 컴포넌트 import
+import SideMenu from "./SideMenu";
+import OLMap from "./OLMap";
 import axios from "axios";
-import ModalComponent from "./ModalComponent.tsx";
+import ModalComponent from "./ModalComponent";
 
 const { Content } = Layout;
 
-const App: React.FC = () => {
-  const [searchResult, setSearchResult] = useState<any[]>([]); // 위치 데이터를 저장할 상태
+const App = () => {
+  const [searchResult, setSearchResult] = useState([]); // 위치 데이터를 저장할 상태
   const [rightBarVisible, setRightBarVisible] = useState(false); // RightBar 상태 관리
-  const [selectedItem, setSelectedItem] = useState<any | null>(null); // 클릭한 마커의 정보
-  const [urlType, setUrlType] = useState<string>(""); // urlType 상태 추가
+  const [selectedItem, setSelectedItem] = useState(null); // 클릭한 마커의 정보
+  const [urlType, setUrlType] = useState(""); // urlType 상태 추가
 
   // 위치 데이터를 설정하는 함수
-  const updateLocations = (data: any[], urlType:string) => {
-
+  const updateLocations = (data, urlType) => {
     setSearchResult(data);
     setUrlType(urlType); 
   };
 
   // RightBar의 정보를 업데이트하는 함수
-  const handleItemSelect = (item: any, urlType: string) => {
+  const handleItemSelect = (item, urlType) => {
     setSelectedItem(item);
     setRightBarVisible(true);
     setUrlType(urlType); // 선택된 아이템의 urlType 설정

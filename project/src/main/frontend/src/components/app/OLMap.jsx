@@ -17,20 +17,10 @@ import CircleStyle from "ol/style/Circle";
 import axios from "axios";
 import { LineString } from "ol/geom";
 
-interface OLMapProps {
-  searchResult: any[];
-  urlType: string;
-  onItemSelect: (item: any, urlType: string) => void;
-}
-
-const OLMap: React.FC<OLMapProps> = ({
-  searchResult,
-  onItemSelect,
-  urlType,
-}) => {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const vectorSourceRef = useRef<VectorSource | null>(null);
-  const popupOverlayRef = useRef<Overlay | null>(null); // 팝업 오버레이 참조 추가
+const OLMap = ({ searchResult, onItemSelect, urlType }) => {
+  const mapRef = useRef(null);
+  const vectorSourceRef = useRef(null);
+  const popupOverlayRef = useRef(null); // 팝업 오버레이 참조 추가
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -130,7 +120,7 @@ const OLMap: React.FC<OLMapProps> = ({
     const addMarkers = () => {
       if (vectorSourceRef.current) {
         vectorSourceRef.current.clear();
-        const coords: [number, number][] = [];
+        const coords = [];
 
         searchResult.forEach((item) => {
           const { wgs84Lon, wgs84Lat, dutyName } = item;
@@ -153,7 +143,7 @@ const OLMap: React.FC<OLMapProps> = ({
             })
           );
 
-          vectorSourceRef.current!.addFeature(marker);
+          vectorSourceRef.current.addFeature(marker);
           coords.push([wgs84Lon, wgs84Lat]);
 
           // 팝업 오버레이 생성
@@ -204,6 +194,7 @@ const OLMap: React.FC<OLMapProps> = ({
     };
 
     addMarkers();
+
     const getRouteData = async () => {
       try {
         const response = await axios.get(
@@ -216,7 +207,7 @@ const OLMap: React.FC<OLMapProps> = ({
           }
         );
 
-        let routePoints: any[] = [];
+        let routePoints = [];
 
         if (response.data) {
           const sections = response.data.routes[0].sections;
