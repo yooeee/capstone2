@@ -101,6 +101,7 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
               locationVectorSourceRef.current.clear();
               locationVectorSourceRef.current.addFeature(point);
             }
+            
           },
           (error) => {
             console.error("Error getting location:", error);
@@ -203,7 +204,21 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
           <Button
             type="primary"
             onClick={() => {
-              if (myLocation) {
+              if (myLocation && myLocation.latitude && myLocation.longitude) {
+                // 나머지 마커와 팝업 삭제
+                markerVectorSourceRef.current.getFeatures().forEach((feature) => {
+                  if (feature !== marker) {
+                    markerVectorSourceRef.current.removeFeature(feature);
+                  }
+                });
+        
+                document.querySelectorAll(".ol-popup-custom").forEach((element) => {
+                  if (element !== popoverDiv) {
+                    element.remove();
+                  }
+                });
+        
+                // 선택된 마커 경로 찾기 실행
                 getRouteData(myLocation, { latitude: wgs84Lat, longitude: wgs84Lon });
               } else {
                 alert("내 위치를 먼저 조회해주세요.");
