@@ -16,6 +16,9 @@ import CircleStyle from "ol/style/Circle";
 import axios from "axios";
 import { LineString } from "ol/geom";
 
+
+
+
 const OLMap = ({ searchResult, onItemSelect, urlType }) => {
   const mapRef = useRef(null);
   const locationVectorSourceRef = useRef(null);
@@ -23,6 +26,8 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
   const routeVectorSourceRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const [myLocation, setMyLocation] = useState(null);
+
+  
 
   // 지도 초기화용 useEffect
   useEffect(() => {
@@ -119,75 +124,92 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
       map.setTarget(undefined);
     };
   }, []); // 빈 배열로 처음 마운트될 때 한 번만 실행
+// 마커 추가용 useEffect
+useEffect(() => {
+  const map = mapInstanceRef.current;
+  if (map) {
 
-  // 마커 추가용 useEffect
-  useEffect(() => {
-    const map = mapInstanceRef.current;
-    if (map) {
-      const markerVectorSource = new VectorSource();
-      markerVectorSourceRef.current = markerVectorSource;
+    removeLayer('markerLayer');
+    document.querySelectorAll(".ol-popup-custom").forEach(element => {
+      element.remove();
+    });
+    
 
-      const markerVectorLayer = new VectorLayer({
-        source: markerVectorSource,
+
+    const markerVectorSource = new VectorSource();
+    markerVectorSourceRef.current = markerVectorSource;
+    
+
+    const markerVectorLayer = new VectorLayer({
+      source: markerVectorSource,
+      name: 'markerLayer'
+    });
+
+    map.addLayer(markerVectorLayer);
+
+    const markerCoords = [];
+
+    searchResult.forEach((item) => {
+      const { wgs84Lon, wgs84Lat, dutyName } = item;
+      const marker = new Feature({
+        geometry: new Point(fromLonLat([wgs84Lon, wgs84Lat])),
+        name: "marker",
+        datas: item,
       });
 
-      map.addLayer(markerVectorLayer);
+      marker.setStyle(
+        new Style({
+          image: new Icon({
+            anchor: [0.5, 25],
+            anchorXUnits: "fraction",
+            anchorYUnits: "pixels",
+            src: "/images/location.png",
+            scale: 0.07,
+          }),
+        })
+      );
 
-      markerVectorSource.clear();
+      markerVectorSource.addFeature(marker);
+      // 마커 좌표 추가
+      markerCoords.push(fromLonLat([wgs84Lon, wgs84Lat]));
 
-      searchResult.forEach((item) => {
-        const { wgs84Lon, wgs84Lat, dutyName } = item;
-        const marker = new Feature({
-          geometry: new Point(fromLonLat([wgs84Lon, wgs84Lat])),
-          name: "marker",
-          datas: item,
-        });
-
-        marker.setStyle(
-          new Style({
-            image: new Icon({
-              anchor: [0.5, 25],
-              anchorXUnits: "fraction",
-              anchorYUnits: "pixels",
-              src: "/images/location.png",
-              scale: 0.07,
-            }),
-          })
-        );
-
-        markerVectorSource.addFeature(marker);
-
-        // 팝업 오버레이 생성
-        const popupOverlay = new Overlay({
-          positioning: "bottom-center",
-          stopEvent: true,
-          offset: [0, -10],
-        });
-
-        const popoverDiv = document.createElement("div");
-        popoverDiv.className = "ol-popup";
-        popoverDiv.innerHTML = `<strong>${dutyName}</strong>`;
-        popoverDiv.style.backgroundColor = "white";
-        popoverDiv.style.padding = "5px 10px";
-        popoverDiv.style.border = "1px solid #ccc";
-        popoverDiv.style.borderRadius = "4px";
-        popoverDiv.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
-        popoverDiv.style.cursor = "pointer";
-
-        // 팝업 클릭 시 사이드바에 데이터 전달
-        popoverDiv.onclick = () => {
-          onItemSelect(item, urlType);
-        };
-
-        popupOverlay.setElement(popoverDiv);
-        map.addOverlay(popupOverlay);
-
-        // 팝업 위치 설정
-        const coordinate = fromLonLat([wgs84Lon, wgs84Lat]);
-        popupOverlay.setPosition(coordinate);
+      // 팝업 오버레이 생성
+      const popupOverlay = new Overlay({
+        positioning: "bottom-center",
+        stopEvent: true,
+        offset: [0, -10],
       });
+
+      const popoverDiv = document.createElement("div");
+      popoverDiv.className = "ol-popup-custom";
+      popoverDiv.innerHTML = `<strong>${dutyName}</strong>`;
+      popoverDiv.style.backgroundColor = "white";
+      popoverDiv.style.padding = "5px 10px";
+      popoverDiv.style.border = "1px solid #ccc";
+      popoverDiv.style.borderRadius = "4px";
+      popoverDiv.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
+      popoverDiv.style.cursor = "pointer";
+
+      // 팝업 클릭 시 사이드바에 데이터 전달
+      popoverDiv.onclick = () => {
+        onItemSelect(item, urlType);
+      };
+
+      popupOverlay.setElement(popoverDiv);
+      map.addOverlay(popupOverlay);
+
+      // 팝업 위치 설정
+      const coordinate = fromLonLat([wgs84Lon, wgs84Lat]);
+      popupOverlay.setPosition(coordinate);
+    });
+
+    if (markerCoords.length > 0) {
+      const extent = markerVectorSource.getExtent(); // 마커들의 경계 범위
+      map.getView().fit(extent, { padding: [300, 300, 300, 300] }); // 지도의 뷰를 범위에 맞춰 조정
     }
-  }, [searchResult]); // searchResult가 변경될 때마다 실행
+  }
+}, [searchResult]); // searchResult가 변경될 때마다 실행
+
 
   // 길찾기 데이터 추가용 useEffect
   const getRouteData = async () => {
@@ -267,7 +289,13 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
     }
   };
 
-
+  const removeLayer = (name) => {
+    mapInstanceRef.current.getAllLayers().forEach(layer => {
+        if (layer && layer.get('name') == name) {
+          mapInstanceRef.current.removeLayer(layer);
+        }
+    });
+  }
 
 
   return <div ref={mapRef} style={{ width: "100%", height: "100vh" }} />;
