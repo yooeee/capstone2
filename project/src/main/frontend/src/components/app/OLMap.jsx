@@ -9,8 +9,8 @@ import Point from "ol/geom/Point";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Style, Icon, Fill, Stroke } from "ol/style";
-import { Button } from "antd";
-import { AimOutlined } from "@ant-design/icons";
+import { Button, Flex } from "antd";
+import { AimOutlined, InfoCircleTwoTone } from "@ant-design/icons";
 import { createRoot } from "react-dom/client";
 import CircleStyle from "ol/style/Circle";
 import axios from "axios";
@@ -27,7 +27,7 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
   const mapInstanceRef = useRef(null);
   const [myLocation, setMyLocation] = useState(null);
 
-  
+
 
   // 지도 초기화용 useEffect
   useEffect(() => {
@@ -44,6 +44,7 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
 
     const locationVectorLayer = new VectorLayer({
       source: locationVectorSource,
+      zIndex: 1000,
     });
 
     const map = new Map({
@@ -124,98 +125,131 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
       map.setTarget(undefined);
     };
   }, []); // 빈 배열로 처음 마운트될 때 한 번만 실행
-// 마커 추가용 useEffect
-useEffect(() => {
-  const map = mapInstanceRef.current;
-  if (map) {
+  // 마커 추가용 useEffect
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (map) {
 
-    removeLayer('markerLayer');
-    document.querySelectorAll(".ol-popup-custom").forEach(element => {
-      element.remove();
-    });
-    
-
-
-    const markerVectorSource = new VectorSource();
-    markerVectorSourceRef.current = markerVectorSource;
-    
-
-    const markerVectorLayer = new VectorLayer({
-      source: markerVectorSource,
-      name: 'markerLayer'
-    });
-
-    map.addLayer(markerVectorLayer);
-
-    const markerCoords = [];
-
-    searchResult.forEach((item) => {
-      const { wgs84Lon, wgs84Lat, dutyName } = item;
-      const marker = new Feature({
-        geometry: new Point(fromLonLat([wgs84Lon, wgs84Lat])),
-        name: "marker",
-        datas: item,
+      removeLayer('markerLayer');
+      document.querySelectorAll(".ol-popup-custom").forEach(element => {
+        element.remove();
       });
 
-      marker.setStyle(
-        new Style({
-          image: new Icon({
-            anchor: [0.5, 25],
-            anchorXUnits: "fraction",
-            anchorYUnits: "pixels",
-            src: "/images/location.png",
-            scale: 0.07,
-          }),
-        })
-      );
 
-      markerVectorSource.addFeature(marker);
-      // 마커 좌표 추가
-      markerCoords.push(fromLonLat([wgs84Lon, wgs84Lat]));
 
-      // 팝업 오버레이 생성
-      const popupOverlay = new Overlay({
-        positioning: "bottom-center",
-        stopEvent: true,
-        offset: [0, -10],
+      const markerVectorSource = new VectorSource();
+      markerVectorSourceRef.current = markerVectorSource;
+
+
+      const markerVectorLayer = new VectorLayer({
+        source: markerVectorSource,
+        name: 'markerLayer'
       });
 
-      const popoverDiv = document.createElement("div");
-      popoverDiv.className = "ol-popup-custom";
-      popoverDiv.innerHTML = `<strong>${dutyName}</strong>`;
-      popoverDiv.style.backgroundColor = "white";
-      popoverDiv.style.padding = "5px 10px";
-      popoverDiv.style.border = "1px solid #ccc";
-      popoverDiv.style.borderRadius = "4px";
-      popoverDiv.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
-      popoverDiv.style.cursor = "pointer";
+      map.addLayer(markerVectorLayer);
 
-      // 팝업 클릭 시 사이드바에 데이터 전달
-      popoverDiv.onclick = () => {
-        onItemSelect(item, urlType);
-      };
+      const markerCoords = [];
 
-      popupOverlay.setElement(popoverDiv);
-      map.addOverlay(popupOverlay);
+      searchResult.forEach((item) => {
+        const { wgs84Lon, wgs84Lat, dutyName } = item;
+        const marker = new Feature({
+          geometry: new Point(fromLonLat([wgs84Lon, wgs84Lat])),
+          name: "marker",
+          datas: item,
+        });
 
-      // 팝업 위치 설정
-      const coordinate = fromLonLat([wgs84Lon, wgs84Lat]);
-      popupOverlay.setPosition(coordinate);
-    });
+        marker.setStyle(
+          new Style({
+            image: new Icon({
+              anchor: [0.5, 25],
+              anchorXUnits: "fraction",
+              anchorYUnits: "pixels",
+              src: "/images/location.png",
+              scale: 0.07,
+            }),
+          })
+        );
 
-    if (markerCoords.length > 0) {
-      const extent = markerVectorSource.getExtent(); // 마커들의 경계 범위
-      map.getView().fit(extent, { padding: [300, 300, 300, 300] }); // 지도의 뷰를 범위에 맞춰 조정
+        markerVectorSource.addFeature(marker);
+        // 마커 좌표 추가
+        markerCoords.push(fromLonLat([wgs84Lon, wgs84Lat]));
+
+        // 팝업 오버레이 생성
+        const popupOverlay = new Overlay({
+          positioning: "bottom-center",
+          stopEvent: true,
+          offset: [0, -10],
+        });
+
+        const popoverDiv = document.createElement("div");
+        popoverDiv.className = "ol-popup-custom";
+        popoverDiv.style.backgroundColor = "white";
+        popoverDiv.style.padding = "5px 10px";
+        popoverDiv.style.border = "1px solid #ccc";
+        popoverDiv.style.borderRadius = "4px";
+        popoverDiv.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
+        popoverDiv.style.cursor = "pointer";
+        popoverDiv.style.display = "flex";
+        popoverDiv.style.justifyContent = "space-between";
+        popoverDiv.style.alignItems = "center";
+
+        // 이름을 표시하는 div
+        const nameDiv = document.createElement("div");
+        nameDiv.innerHTML = `<strong>${dutyName}</strong>`;
+        nameDiv.style.flex = "1"; // 좌측에 위치
+        nameDiv.style.marginRight = "10px";
+
+        const routeButtonDiv = (
+          <Button
+            type="primary"
+            onClick={() => {
+              if (myLocation) {
+                getRouteData(myLocation, { latitude: wgs84Lat, longitude: wgs84Lon });
+              } else {
+                alert("내 위치를 먼저 조회해주세요.");
+              }
+            }}
+          >
+            도착
+          </Button>
+        );
+
+        // React 요소를 DOM에 추가
+        const container = document.createElement("div");
+        const root = createRoot(container);
+        root.render(routeButtonDiv);
+
+
+        // 팝업에 nameDiv와 routeButtonDiv를 추가
+        popoverDiv.appendChild(nameDiv);
+        popoverDiv.appendChild(container);
+
+        // 팝업 클릭 시 사이드바에 데이터 전달
+        nameDiv.addEventListener('click', () => {
+          onItemSelect(item, urlType);
+        });
+
+        popupOverlay.setElement(popoverDiv);
+        map.addOverlay(popupOverlay);
+
+        // 팝업 위치 설정
+        const coordinate = fromLonLat([wgs84Lon, wgs84Lat]);
+        popupOverlay.setPosition(coordinate);
+      });
+
+      if (markerCoords.length > 0) {
+        const extent = markerVectorSource.getExtent(); // 마커들의 경계 범위
+        map.getView().fit(extent, { padding: [200, 200, 200, 200] }); // 지도의 뷰를 범위에 맞춰 조정
+      }
     }
-  }
-}, [searchResult]); // searchResult가 변경될 때마다 실행
+  }, [searchResult]); // searchResult가 변경될 때마다 실행
 
 
   // 길찾기 데이터 추가용 useEffect
-  const getRouteData = async () => {
+  const getRouteData = async (myLocation, destination) => {
     try {
       const response = await axios.get(
-        `https://apis-navi.kakaomobility.com/v1/directions?origin=126.656267,37.451294&destination=126.884459,37.480069`,
+        `https://apis-navi.kakaomobility.com/v1/directions?origin=${myLocation.longitude},${myLocation.latitude}&destination=${destination.longitude},${destination.latitude}`,
         {
           headers: {
             Authorization: `KakaoAK bacf6d9a107d628abaf4e76e10a1409e`,
@@ -227,6 +261,8 @@ useEffect(() => {
       let routePoints = [];
 
       if (response.data) {
+        removeLayer('routeLayer');
+
         const sections = response.data.routes[0].sections;
         let totalDistance = 0; // 총 거리
         let totalDuration = 0; // 총 시간
@@ -263,25 +299,42 @@ useEffect(() => {
           name: "routeLine",
         });
 
-        routeLine.setStyle(
+        routeLine.setStyle([
           new Style({
             stroke: new Stroke({
-              color: "blue",
-              width: 5,
+              color: "black", // 외부 검정색
+              width: 5, // 외곽선 두께
             }),
-          })
-        );
+          }),
+          new Style({
+            stroke: new Stroke({
+              color: "green", // 내부 녹색
+              width: 2, // 내부선 두께
+            }),
+          }),
+        ]);
+        
+
 
         const routeVectorSource = new VectorSource();
         routeVectorSourceRef.current = routeVectorSource;
 
         const routeVectorLayer = new VectorLayer({
+          name: 'routeLayer',
           source: routeVectorSource,
+          zIndex: 10,
         });
 
         if (mapInstanceRef.current) {
           mapInstanceRef.current.addLayer(routeVectorLayer);
           routeVectorSource.addFeature(routeLine);
+
+          // 경로의 범위를 계산하여 지도의 뷰를 그 범위에 맞춤
+          const routeExtent = routeVectorSource.getExtent();
+          mapInstanceRef.current.getView().fit(routeExtent, {
+            padding: [150, 150, 150, 150], // 지도의 여백을 설정
+            maxZoom: 16, // 최대 줌 레벨 설정
+          });
         }
       }
     } catch (error) {
@@ -291,9 +344,9 @@ useEffect(() => {
 
   const removeLayer = (name) => {
     mapInstanceRef.current.getAllLayers().forEach(layer => {
-        if (layer && layer.get('name') == name) {
-          mapInstanceRef.current.removeLayer(layer);
-        }
+      if (layer && layer.get('name') == name) {
+        mapInstanceRef.current.removeLayer(layer);
+      }
     });
   }
 
