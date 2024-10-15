@@ -9,12 +9,14 @@ import Point from "ol/geom/Point";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Style, Icon, Fill, Stroke } from "ol/style";
-import { Button } from "antd";
-import { AimOutlined } from "@ant-design/icons";
+import { Button, Typography, Tag, Space } from "antd";
+import { AimOutlined, ClockCircleOutlined, EnvironmentOutlined } from "@ant-design/icons";
 import { createRoot } from "react-dom/client";
 import CircleStyle from "ol/style/Circle";
 import axios from "axios";
 import { LineString } from "ol/geom";
+
+const { Text } = Typography;
 
 const OLMap = ({ searchResult, onItemSelect, urlType }) => {
   const mapRef = useRef(null);
@@ -23,9 +25,6 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
   const routeVectorSourceRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const [myLocation, setMyLocation] = useState(null);
-  const [routeInfo, setRouteInfo] = useState({ distance: "", time: "" });
-  const [isRouteInfoVisible, setRouteInfoVisible] = useState(false); // 경로 정보 보이기 상태
-
   // 지도 초기화용 useEffect
   useEffect(() => {
     if (!mapRef.current) return;
@@ -125,10 +124,6 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
     routeInfoDiv.style.top = "60px";
     routeInfoDiv.style.right = "10px";
     routeInfoDiv.style.zIndex = "1000";
-    routeInfoDiv.style.backgroundColor = "white";
-    routeInfoDiv.style.padding = "10px";
-    routeInfoDiv.style.borderRadius = "5px";
-    routeInfoDiv.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.3)";
     routeInfoDiv.style.display = "none"; // 처음에는 숨김
     mapRef.current.appendChild(routeInfoDiv);
 
@@ -142,6 +137,9 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
     const map = mapInstanceRef.current;
     if (map) {
       removeLayer("markerLayer");
+      removeLayer("routeLayer");
+
+
       document.querySelectorAll(".ol-popup-custom").forEach((element) => {
         element.remove();
       });
@@ -188,7 +186,7 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
           stopEvent: true,
           offset: [0, -10],
         });
-
+        
         const popoverDiv = document.createElement("div");
         popoverDiv.className = "ol-popup-custom";
         popoverDiv.style.backgroundColor = "white";
@@ -252,6 +250,7 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
 
         popupOverlay.setElement(popoverDiv);
         map.addOverlay(popupOverlay);
+        popupOverlay.getElement().style.zIndex = "9999"
 
         // 팝업 위치 설정
         const coordinate = fromLonLat([wgs84Lon, wgs84Lat]);
@@ -306,19 +305,28 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
         const minutes = Math.floor((totalDuration % 3600) / 60); // 남은 시간에서 분 계산
         const seconds = totalDuration % 60; // 남은 초 계산
 
-        const totalTime = `${hours}시간 ${minutes}분 ${seconds}초`;
+        const totalTime = `${hours}시간 ${minutes}분`;
 
-        setRouteInfo({ distance: totalDistanceInKm, time: totalTime });
-        setRouteInfoVisible(true); // 경로 정보 div 표시
+    
 
         // 경로 정보 div 업데이트
         const routeInfoDiv = document.querySelector(".route-info-div");
         if (routeInfoDiv) {
           routeInfoDiv.style.display = "block";
-          routeInfoDiv.innerHTML = `
-            <div><strong>총 거리:</strong> ${totalDistanceInKm} km</div>
-            <div><strong>소요 시간:</strong> ${totalTime}</div>
-          `;
+          const routeCard = (
+            <div style={{textAlign: "right"}}>
+              <Space direction="vertical">
+                <Tag icon={<EnvironmentOutlined />} color="blue">
+                  총 거리 : {totalDistanceInKm} km
+                </Tag>
+                <Tag icon={<ClockCircleOutlined />} color="green">
+                  도착 예상 : {totalTime}
+                </Tag>
+              </Space>
+            </div>
+          );
+          const root = createRoot(routeInfoDiv);
+          root.render(routeCard);
         }
 
         const vertexes = response.data.routes[0].sections[0].roads.flatMap(
@@ -340,13 +348,13 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
           new Style({
             stroke: new Stroke({
               color: "black", // 외부 검정색
-              width: 5, // 외곽선 두께
+              width: 7, // 외곽선 두께
             }),
           }),
           new Style({
             stroke: new Stroke({
               color: "green", // 내부 녹색
-              width: 2, // 내부선 두께
+              width: 4, // 내부선 두께
             }),
           }),
         ]);
@@ -357,7 +365,7 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
         const routeVectorLayer = new VectorLayer({
           name: "routeLayer",
           source: routeVectorSource,
-          zIndex: 10,
+          zIndex: 1,
         });
 
         if (mapInstanceRef.current) {
