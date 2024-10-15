@@ -186,7 +186,7 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
         popoverDiv.className = "ol-popup-custom";
         popoverDiv.style.backgroundColor = "white";
         popoverDiv.style.padding = "5px 10px";
-        popoverDiv.style.border = "1px solid #ccc";
+        popoverDiv.style.border = "1px solid #4096ff";
         popoverDiv.style.borderRadius = "4px";
         popoverDiv.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
         popoverDiv.style.cursor = "pointer";
