@@ -9,15 +9,12 @@ import Point from "ol/geom/Point";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Style, Icon, Fill, Stroke } from "ol/style";
-import { Button, Flex } from "antd";
-import { AimOutlined, InfoCircleTwoTone } from "@ant-design/icons";
+import { Button } from "antd";
+import { AimOutlined } from "@ant-design/icons";
 import { createRoot } from "react-dom/client";
 import CircleStyle from "ol/style/Circle";
 import axios from "axios";
 import { LineString } from "ol/geom";
-
-
-
 
 const OLMap = ({ searchResult, onItemSelect, urlType }) => {
   const mapRef = useRef(null);
@@ -26,8 +23,8 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
   const routeVectorSourceRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const [myLocation, setMyLocation] = useState(null);
-
-
+  const [routeInfo, setRouteInfo] = useState({ distance: "", time: "" });
+  const [isRouteInfoVisible, setRouteInfoVisible] = useState(false); // 경로 정보 보이기 상태
 
   // 지도 초기화용 useEffect
   useEffect(() => {
@@ -101,7 +98,6 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
               locationVectorSourceRef.current.clear();
               locationVectorSourceRef.current.addFeature(point);
             }
-            
           },
           (error) => {
             console.error("Error getting location:", error);
@@ -122,29 +118,40 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
     root.render(antdButton);
     mapRef.current.appendChild(locateButton);
 
+    // 경로 정보 표시용 div 추가
+    const routeInfoDiv = document.createElement("div");
+    routeInfoDiv.className = "route-info-div"; // 클래스 이름 추가
+    routeInfoDiv.style.position = "absolute";
+    routeInfoDiv.style.top = "60px";
+    routeInfoDiv.style.right = "10px";
+    routeInfoDiv.style.zIndex = "1000";
+    routeInfoDiv.style.backgroundColor = "white";
+    routeInfoDiv.style.padding = "10px";
+    routeInfoDiv.style.borderRadius = "5px";
+    routeInfoDiv.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.3)";
+    routeInfoDiv.style.display = "none"; // 처음에는 숨김
+    mapRef.current.appendChild(routeInfoDiv);
+
     return () => {
       map.setTarget(undefined);
     };
   }, []); // 빈 배열로 처음 마운트될 때 한 번만 실행
+
   // 마커 추가용 useEffect
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (map) {
-
-      removeLayer('markerLayer');
-      document.querySelectorAll(".ol-popup-custom").forEach(element => {
+      removeLayer("markerLayer");
+      document.querySelectorAll(".ol-popup-custom").forEach((element) => {
         element.remove();
       });
-
-
 
       const markerVectorSource = new VectorSource();
       markerVectorSourceRef.current = markerVectorSource;
 
-
       const markerVectorLayer = new VectorLayer({
         source: markerVectorSource,
-        name: 'markerLayer'
+        name: "markerLayer",
       });
 
       map.addLayer(markerVectorLayer);
@@ -211,13 +218,13 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
                     markerVectorSourceRef.current.removeFeature(feature);
                   }
                 });
-        
+
                 document.querySelectorAll(".ol-popup-custom").forEach((element) => {
                   if (element !== popoverDiv) {
                     element.remove();
                   }
                 });
-        
+
                 // 선택된 마커 경로 찾기 실행
                 getRouteData(myLocation, { latitude: wgs84Lat, longitude: wgs84Lon });
               } else {
@@ -234,13 +241,12 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
         const root = createRoot(container);
         root.render(routeButtonDiv);
 
-
         // 팝업에 nameDiv와 routeButtonDiv를 추가
         popoverDiv.appendChild(nameDiv);
         popoverDiv.appendChild(container);
 
         // 팝업 클릭 시 사이드바에 데이터 전달
-        nameDiv.addEventListener('click', () => {
+        nameDiv.addEventListener("click", () => {
           onItemSelect(item, urlType);
         });
 
@@ -256,9 +262,14 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
         const extent = markerVectorSource.getExtent(); // 마커들의 경계 범위
         map.getView().fit(extent, { padding: [200, 200, 200, 200] }); // 지도의 뷰를 범위에 맞춰 조정
       }
+
+      // 경로 정보 div 숨김 처리
+      const routeInfoDiv = document.querySelector(".route-info-div");
+      if (routeInfoDiv) {
+        routeInfoDiv.style.display = "none";
+      }
     }
   }, [searchResult]); // searchResult가 변경될 때마다 실행
-
 
   // 길찾기 데이터 추가용 useEffect
   const getRouteData = async (myLocation, destination) => {
@@ -276,7 +287,7 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
       let routePoints = [];
 
       if (response.data) {
-        removeLayer('routeLayer');
+        removeLayer("routeLayer");
 
         const sections = response.data.routes[0].sections;
         let totalDistance = 0; // 총 거리
@@ -295,9 +306,20 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
         const minutes = Math.floor((totalDuration % 3600) / 60); // 남은 시간에서 분 계산
         const seconds = totalDuration % 60; // 남은 초 계산
 
-        // 결과 출력
-        console.log(`총 거리: ${totalDistanceInKm} km`);
-        console.log(`총 시간: ${hours}시간 ${minutes}분 ${seconds}초`);
+        const totalTime = `${hours}시간 ${minutes}분 ${seconds}초`;
+
+        setRouteInfo({ distance: totalDistanceInKm, time: totalTime });
+        setRouteInfoVisible(true); // 경로 정보 div 표시
+
+        // 경로 정보 div 업데이트
+        const routeInfoDiv = document.querySelector(".route-info-div");
+        if (routeInfoDiv) {
+          routeInfoDiv.style.display = "block";
+          routeInfoDiv.innerHTML = `
+            <div><strong>총 거리:</strong> ${totalDistanceInKm} km</div>
+            <div><strong>소요 시간:</strong> ${totalTime}</div>
+          `;
+        }
 
         const vertexes = response.data.routes[0].sections[0].roads.flatMap(
           (road) => road.vertexes
@@ -328,14 +350,12 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
             }),
           }),
         ]);
-        
-
 
         const routeVectorSource = new VectorSource();
         routeVectorSourceRef.current = routeVectorSource;
 
         const routeVectorLayer = new VectorLayer({
-          name: 'routeLayer',
+          name: "routeLayer",
           source: routeVectorSource,
           zIndex: 10,
         });
@@ -358,13 +378,12 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
   };
 
   const removeLayer = (name) => {
-    mapInstanceRef.current.getAllLayers().forEach(layer => {
-      if (layer && layer.get('name') == name) {
+    mapInstanceRef.current.getAllLayers().forEach((layer) => {
+      if (layer && layer.get("name") == name) {
         mapInstanceRef.current.removeLayer(layer);
       }
     });
-  }
-
+  };
 
   return <div ref={mapRef} style={{ width: "100%", height: "100vh" }} />;
 };
