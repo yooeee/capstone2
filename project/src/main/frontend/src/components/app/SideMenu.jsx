@@ -8,7 +8,7 @@ const { Sider } = Layout;
 const { Option } = Select;
 const { Search } = Input;
 
-const SideMenu = ({ updateLocations }) => {
+const SideMenu = ({ updateLocations , myLocation2}) => {
   const [urlType, setUrlType] = useState("getEgytListInfoInqire");
   const [bjcd, setBjcd] = useState("");
   const [sido, setSido] = useState("sido");
@@ -198,7 +198,7 @@ const SideMenu = ({ updateLocations }) => {
       </div>
        {/* ChatGPT 컴포넌트 추가 */}
        <div className="sidemenu-chatgpt-box">
-          <ChatGPT />
+          <ChatGPT myLocation2={myLocation2} />
         </div>
 
       {/* 검색 결과 */}

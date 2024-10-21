@@ -13,6 +13,8 @@ const App = () => {
   const [rightBarVisible, setRightBarVisible] = useState(false); // RightBar 상태 관리
   const [selectedItem, setSelectedItem] = useState(null); // 클릭한 마커의 정보
   const [urlType, setUrlType] = useState(""); // urlType 상태 추가
+  const [myLocation2, setMyLocation2] = useState(null); // setMyLocation2 상태 정의 추가
+
   
 
   // 위치 데이터를 설정하는 함수
@@ -31,13 +33,14 @@ const App = () => {
   return (
     <Layout style={{ height: "100vh" }}>
       {/* 좌측 사이드바 */}
-      <SideMenu updateLocations={updateLocations} />
+      <SideMenu updateLocations={updateLocations} myLocation2={myLocation2} />
+
 
       {/* 우측 레이아웃 */}
       <Layout className="site-layout">
         <Content style={{ background: "#fff", flex: 1 }}>
           {/* 지도 컴포넌트 */}
-          <OLMap searchResult={searchResult} onItemSelect={handleItemSelect} urlType={urlType} />
+          <OLMap searchResult={searchResult} onItemSelect={handleItemSelect} urlType={urlType} setMyLocation2={setMyLocation2}  />
         </Content>
       </Layout>
 

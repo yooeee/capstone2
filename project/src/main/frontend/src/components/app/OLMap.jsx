@@ -18,7 +18,7 @@ import { LineString } from "ol/geom";
 
 const { Text } = Typography;
 
-const OLMap = ({ searchResult, onItemSelect, urlType }) => {
+const OLMap = ({ searchResult, onItemSelect, urlType, setMyLocation2  }) => {
   const mapRef = useRef(null);
   const locationVectorSourceRef = useRef(null);
   const markerVectorSourceRef = useRef(null);
@@ -74,6 +74,7 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
           (position) => {
             const { latitude, longitude } = position.coords;
             setMyLocation({ latitude, longitude });
+            setMyLocation2({ latitude, longitude });
             map.getView().setCenter(fromLonLat([longitude, latitude]));
             map.getView().setZoom(15);
 
