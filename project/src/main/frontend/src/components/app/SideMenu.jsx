@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Layout, Select, Input } from "antd";
 import "../../assets/styles/SideMenu.css";
 import axios from "axios";
+import ChatGPT from "./ChatGPT.jsx";
 
 const { Sider } = Layout;
 const { Option } = Select;
@@ -195,6 +196,10 @@ const SideMenu = ({ updateLocations }) => {
           />
         </div>
       </div>
+       {/* ChatGPT 컴포넌트 추가 */}
+       <div className="sidemenu-chatgpt-box">
+          <ChatGPT />
+        </div>
 
       {/* 검색 결과 */}
       <div className="sidemenu-search-result"></div>

@@ -13,6 +13,7 @@ const App = () => {
   const [rightBarVisible, setRightBarVisible] = useState(false); // RightBar 상태 관리
   const [selectedItem, setSelectedItem] = useState(null); // 클릭한 마커의 정보
   const [urlType, setUrlType] = useState(""); // urlType 상태 추가
+  
 
   // 위치 데이터를 설정하는 함수
   const updateLocations = (data, urlType) => {

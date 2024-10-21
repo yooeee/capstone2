@@ -55,3 +55,8 @@
     text-align: center;
   }
   
+  .ant-btn[disabled] {
+    background-color: white !important; /* 배경색을 화이트로 설정 */
+    color: rgba(0, 0, 0, 0.25); /* 텍스트 색상을 기본 회색으로 유지 */
+    border-color: #d9d9d9 !important; /* 버튼 테두리색을 유지 */
+  }

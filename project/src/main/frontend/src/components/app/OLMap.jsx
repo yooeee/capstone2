@@ -208,6 +208,7 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
         const routeButtonDiv = (
           <Button
             type="primary"
+            size="small"
             onClick={() => {
               if (myLocation && myLocation.latitude && myLocation.longitude) {
                 // 나머지 마커와 팝업 삭제
@@ -230,7 +231,7 @@ const OLMap = ({ searchResult, onItemSelect, urlType }) => {
               }
             }}
           >
-            도착
+            길찾기
           </Button>
         );
 
