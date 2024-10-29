@@ -18,14 +18,13 @@ import { LineString } from "ol/geom";
 
 const { Text } = Typography;
 
-const OLMap = ({ searchResult, onItemSelect, urlType, setMyLocation2, hospitalLocation   }) => {
+const OLMap = ({ searchResult, onItemSelect, urlType, setMyLocation2  }) => {
   const mapRef = useRef(null);
   const locationVectorSourceRef = useRef(null);
   const markerVectorSourceRef = useRef(null);
   const routeVectorSourceRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const [myLocation, setMyLocation] = useState(null);
-  const hospitalMarkerLayerRef = useRef(null); // 추가: 병원 마커 레이어 참조
   // 지도 초기화용 useEffect
   useEffect(() => {
     if (!mapRef.current) return;
@@ -387,87 +386,6 @@ const OLMap = ({ searchResult, onItemSelect, urlType, setMyLocation2, hospitalLo
       console.error("Error fetching route data:", error);
     }
   };
-
-
-  // 추가: 병원 위치 정보가 변경될 때마다 실행
-  useEffect(() => {
-    const map = mapInstanceRef.current;
-    if (map && hospitalLocation) {
-      // 기존 병원 마커 레이어 제거
-      if (hospitalMarkerLayerRef.current) {
-        map.removeLayer(hospitalMarkerLayerRef.current);
-      }
-
-      const hospitalVectorSource = new VectorSource();
-      const hospitalMarkerLayer = new VectorLayer({
-        source: hospitalVectorSource,
-        name: "hospitalMarkerLayer",
-      });
-
-      hospitalMarkerLayerRef.current = hospitalMarkerLayer;
-      map.addLayer(hospitalMarkerLayer);
-
-      const { longitude, latitude, name } = hospitalLocation;
-
-      const hospitalFeature = new Feature({
-        geometry: new Point(fromLonLat([longitude, latitude])),
-        name: "hospitalMarker",
-        data: hospitalLocation,
-      });
-
-      hospitalFeature.setStyle(
-        new Style({
-          image: new CircleStyle({
-            radius: 10, // 원의 반지름 크기를 설정합니다.
-            fill: new Fill({
-              color: 'red', // 원의 색상을 설정합니다.
-            }),
-            stroke: new Stroke({
-              color: 'white', // 원의 테두리 색상을 설정합니다.
-              width: 2, // 원의 테두리 두께를 설정합니다.
-            }),
-          }),
-        })
-      );
-      
-
-      hospitalVectorSource.addFeature(hospitalFeature);
-
-      // 지도를 병원 위치로 이동
-      map.getView().animate({
-        center: fromLonLat([longitude, latitude]),
-        zoom: 16,
-        duration: 1000,
-      });
-
-      // 팝업 오버레이 생성 (선택 사항)
-      const popupOverlay = new Overlay({
-        positioning: "bottom-center",
-        stopEvent: true,
-        offset: [0, -10],
-      });
-
-      const popoverDiv = document.createElement("div");
-      popoverDiv.className = "ol-popup-custom";
-      popoverDiv.style.backgroundColor = "white";
-      popoverDiv.style.padding = "5px 10px";
-      popoverDiv.style.border = "1px solid #4096ff";
-      popoverDiv.style.borderRadius = "4px";
-      popoverDiv.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
-      popoverDiv.style.cursor = "pointer";
-
-      popoverDiv.innerHTML = `<strong>${name}</strong>`;
-
-      popupOverlay.setElement(popoverDiv);
-      map.addOverlay(popupOverlay);
-      popupOverlay.getElement().style.zIndex = "9999";
-
-      // 팝업 위치 설정
-      const coordinate = fromLonLat([longitude, latitude]);
-      popupOverlay.setPosition(coordinate);
-    }
-  }, [hospitalLocation]);
-
 
   const removeLayer = (name) => {
     mapInstanceRef.current.getAllLayers().forEach((layer) => {
