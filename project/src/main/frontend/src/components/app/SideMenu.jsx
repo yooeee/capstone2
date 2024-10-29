@@ -8,7 +8,7 @@ const { Sider } = Layout;
 const { Option } = Select;
 const { Search } = Input;
 
-const SideMenu = ({ updateLocations , myLocation2}) => {
+const SideMenu = ({ updateLocations , myLocation2, setHospitalLocation }) => {
   const [urlType, setUrlType] = useState("getEgytListInfoInqire");
   const [bjcd, setBjcd] = useState("");
   const [sido, setSido] = useState("sido");
@@ -69,7 +69,7 @@ const SideMenu = ({ updateLocations , myLocation2}) => {
       const data = response;
       if (data) {
         const sigunguList = response.data.map((item) => item.name);
-        setSigunguOptions(sigunguList); // 상태 업데이트
+        setSigunguOptions(sigunguList); // 상태 업데이트a
       }
     } catch (error) {
       console.error("Error fetching the data:", error);
@@ -198,8 +198,8 @@ const SideMenu = ({ updateLocations , myLocation2}) => {
       </div>
        {/* ChatGPT 컴포넌트 추가 */}
        <div className="sidemenu-chatgpt-box">
-          <ChatGPT myLocation2={myLocation2} />
-        </div>
+        <ChatGPT myLocation2={myLocation2} setHospitalLocation={setHospitalLocation} />
+      </div>
 
       {/* 검색 결과 */}
       <div className="sidemenu-search-result"></div>
