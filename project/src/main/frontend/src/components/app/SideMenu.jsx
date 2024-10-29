@@ -196,16 +196,18 @@ const SideMenu = ({ updateLocations , myLocation2}) => {
           />
         </div>
       </div>
-       {/* ChatGPT 컴포넌트 추가 */}
-       <div className="sidemenu-chatgpt-box">
-          <ChatGPT myLocation2={myLocation2} />
-        </div>
+      
 
       {/* 검색 결과 */}
       <div className="sidemenu-search-result"></div>
 
       {/* 사이드바 하단 Footer 추가 */}
-      <div className="sidemenu-footer">Copyright © 2024</div>
+      <div className="sidemenu-footer">
+         {/* ChatGPT 컴포넌트 추가 */}
+       <div className="sidemenu-chatgpt-box">
+          <ChatGPT myLocation2={myLocation2} />
+        </div>
+        Copyright © 2024</div>
     </Sider>
   );
 };

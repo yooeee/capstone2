@@ -80,32 +80,31 @@ const ChatGPT = ({ myLocation2 }) => {
     };
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '8%'} }>
-            <div style={{ width: "100%", maxWidth: "600px", maxHeight : "300px" }}>
-                {response && (
-                    <Alert 
-                        description={response}
-                        type="info"
-                        style={{ marginBottom: "20px", maxHeight: '150px', overflowY: 'auto'}}
-                    />
-                )}
-                <TextArea
-                    placeholder="AI에게 증상을 입력해보세요."
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                    style={{ marginBottom: "20px" }}
-                />
-                
-                <Button
-                    type="primary"
-                    onClick={handleSubmit}
-                    style={{ width: "100%" }}
-                    disabled={loading || question.trim() === ""}
-                >
-                    {loading ? <Spin /> : "질문하기"}
-                </Button>
-            </div>
+      <div style={{ margin: '8%' }}>
+        <div style={{ width: "100%", maxWidth: "600px", maxHeight: "300px" }}>
+          {/* 응답 영역을 항상 표시하도록 수정 */}
+          <Alert
+            description={response || "여기에 AI의 응답이 표시됩니다."}
+            type="info"
+            style={{ marginBottom: "20px", maxHeight: '150px', overflowY: 'auto' }}
+          />
+          <TextArea
+            placeholder="AI에게 증상을 입력해보세요."
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            style={{ marginBottom: "20px" }}
+          />
+  
+          <Button
+            type="primary"
+            onClick={handleSubmit}
+            style={{ width: "100%" }}
+            disabled={loading || question.trim() === ""}
+          >
+            {loading ? <Spin /> : "질문하기"}
+          </Button>
         </div>
+      </div>
     );
 };
 
