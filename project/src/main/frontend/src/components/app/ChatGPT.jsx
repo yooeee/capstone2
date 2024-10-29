@@ -11,13 +11,23 @@ const ChatGPT = ({ myLocation2 }) => {
 
     const handleSubmit = async () => {
         console.log(myLocation2);
+        console.log('Latitude:', myLocation2.latitude, 'Longitude:', myLocation2.longitude);
+
+        const usr_lat = myLocation2.latitude;
+        const usr_lon = myLocation2.longitude;
+
         const API_KEY = ""; // 여기에 OpenAI API 키를 입력하세요
         const apiUrl = "https://api.openai.com/v1/chat/completions";
         const defaultQuestion = `
         너는 대한민국 전국 응급의료기관 정보 조회 서비스에서 사용되는 API 역할을 한다. 사용자가 증상과 병명을 입력하면 다음과 같은 방식으로 응답해야 한다:
 
         1. 사용자의 증상을 바탕으로 가능한 병명을 추측하여 제시해야 한다. 추측한 병명과 함께 그 이유도 설명한다.
-        2. 사용자의 위치 정보 (userLocation=${myLocation2})를 사용해 근처 병원의 이름과 좌표를 알려줘야 한다. 단, 사용자의 위치 정보가 null인 경우 근처 병원을 추천하지 않고, 병원 정보는 null로 응답한다.
+        2. 사용자의 위치 정보는 다음과 같다
+        { "usr_location" : {
+            "usr_lon": ${usr_lon},
+            "usr_lat": ${usr_lat} 
+        }
+            다음 사용자 위치정보(usr_location) 사용해 근처 병원의 이름과 좌표를 알려줘야 한다. 단, 사용자의 위치 정보(usr_lon, usr_lat) null인 경우 근처 병원을 추천하지 않고, 병원 정보는 null로 응답한다.
         3. 사용자의 입력이 병명이나 증상과 관련되지 않은 경우, "병명이나 증상을 입력해주세요."라고 응답한다.
         4. 사용자가 증상을 설명했음에도 추측하기 어렵다면 "해당증상 만으로는 병명을 파악하기 어렵습니다. 더 자세히 설명해주세요" 라고 응답한다.
         응답은 **JSON 형식**이어야 하며, 다음과 같은 구조를 따른다:
