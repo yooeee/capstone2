@@ -84,12 +84,12 @@ const ChatGPT = ({ myLocation2 }) => {
         <div style={{ width: "100%", maxWidth: "600px", maxHeight: "300px" }}>
           {/* 응답 영역을 항상 표시하도록 수정 */}
           <Alert
-            description={response || "여기에 AI의 응답이 표시됩니다."}
+            description={response || "AI의 응답이 표시됩니다."}
             type="info"
             style={{ marginBottom: "20px", maxHeight: '150px', overflowY: 'auto' }}
           />
           <TextArea
-            placeholder="AI에게 증상을 입력해보세요."
+            placeholder="현재 느끼는 증상을 입력해 주세요."
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             style={{ marginBottom: "20px" }}

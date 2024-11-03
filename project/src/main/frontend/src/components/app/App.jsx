@@ -1,3 +1,4 @@
+
 // App.jsx
 import React, { useEffect, useState } from "react";
 import { Layout } from "antd";
@@ -32,7 +33,7 @@ const App = () => {
 
   return (
     <Layout style={{ height: "100vh" }}>
-      {/* 좌측 사이드바 */}
+      {/* 좌측 사이드바 */}A
       <SideMenu updateLocations={updateLocations} myLocation2={myLocation2} />
 
 
