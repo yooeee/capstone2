@@ -1,5 +1,4 @@
-/* index.css */
-
+/* 기본 스타일 */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -30,7 +29,7 @@ code {
 }
 
 .modal-header {
-  background-color: #3498db;
+  background-color: #001f3f;
   color: white;
   padding: 24px;
   position: relative;
@@ -62,33 +61,45 @@ code {
 .modal-body {
   padding: 24px;
   background-color: #f8f9fa;
+  color: black;
 }
 
+/* Modal content styling */
 .info-item {
   display: flex;
+  flex-direction: column; /* 세로 방향 정렬 */
   align-items: flex-start;
-  margin-bottom: 20px;
-  background-color: white;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+  padding: 10px;
+  border-bottom: 1px solid #000000; /* 구분선 */
+  width: 100%; /* 전체 폭 사용 */
+  color: block;
 }
 
-.info-item .icon {
-  font-size: 24px;
-  margin-right: 16px;
-  color: #3498db;
+
+.info-label {
+  font-weight: bold;
+  margin-bottom: 4px; /* 레이블과 텍스트 간격 */
+  color: #3498db; /* 레이블 색상 */
 }
 
-.info-item p {
-  margin: 0;
+.info-item span {
   font-size: 16px;
-  color: #333;
-  line-height: 1.5;
+  color: block;
 }
 
-.hospital-modal .ant-modal-body {
-  padding: 0;
+/* 최근 업데이트 시간 스타일 */
+.update-time {
+  background-color: #3498db;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: inline-block;
+  text-align: center;
+  margin-top: 10px;
+  color: block;
 }
 
 /* OLMap Styles */
@@ -197,3 +208,5 @@ code {
   margin-left: 20px;
   font-size: 18px;
 }
+
+
