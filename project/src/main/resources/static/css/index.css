@@ -20,72 +20,94 @@ code {
 /* Hospital Modal Styles */
 .hospital-modal .ant-modal-content {
   border-radius: 20px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
   overflow: hidden;
 }
 
-.modal-content {
-  padding: 0;
-}
-
+/* 모달 헤더 */
 .modal-header {
-  background-color: #001f3f;
+  background-color: #001f3f; /* 기존 헤더 배경 유지 */
   color: white;
   padding: 24px;
   position: relative;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.modal-header h2 {
-  margin: 0;
-  font-size: 26px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-
-.close-button {
-  position: absolute;
-  top: 20px;
-  right: 24px;
-  background: none;
-  border: none;
-  color: white;
+/* 모달 제목 */
+.modal-header h5 {
   font-size: 28px;
-  cursor: pointer;
-  transition: transform 0.3s ease;
+  font-weight: bold;
+  margin: 0;
 }
 
-.close-button:hover {
-  transform: rotate(90deg);
+/* 닫기 버튼 */
+.modal-header .btn-close {
+  background-color: #ff5e5e; /* 닫기 버튼을 빨간색으로 변경 */
+  color: white;
+  font-size: 20px;
+  border-radius: 50%;
+  padding: 5px;
+  transition: all 0.3s ease;
+}
+.modal-header .btn-close:hover {
+  background-color: #ff3b3b; /* 호버 시 색상 변화 */
 }
 
+/* 모달 본문 */
 .modal-body {
   padding: 24px;
-  background-color: #f8f9fa;
+  background-color: #f8f9fa; /* 기존 본문 배경 유지 */
   color: black;
+  border-radius: 0 0 20px 20px; /* 아래 모서리 둥글게 */
 }
 
-/* Modal content styling */
+/* 정보 항목 스타일 */
 .info-item {
-  display: flex;
-  flex-direction: column; /* 세로 방향 정렬 */
-  align-items: flex-start;
-  margin-bottom: 16px;
   padding: 10px;
-  border-bottom: 1px solid #000000; /* 구분선 */
-  width: 100%; /* 전체 폭 사용 */
-  color: block;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #ddd;
 }
-
-
-.info-label {
+.info-item .info-label {
   font-weight: bold;
-  margin-bottom: 4px; /* 레이블과 텍스트 간격 */
-  color: #3498db; /* 레이블 색상 */
+  color: #3498db;
+  font-size: 14px;
 }
 
-.info-item span {
+/* 장비 가용 여부 스타일 */
+.modal-body ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+.modal-body li {
+  padding: 8px;
+  border-radius: 8px;
+  background-color: #eef2f5;
+  margin-bottom: 5px;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+/* 모달 푸터 */
+.modal-footer {
+  background-color: #001f3f;
+  color: white;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-footer .btn-secondary {
+  background-color: #2ecc71;
+  border: none;
+  padding: 8px 16px;
   font-size: 16px;
-  color: block;
+  border-radius: 8px;
+  font-weight: bold;
+}
+.modal-footer .btn-secondary:hover {
+  background-color: #27ae60;
 }
 
 /* 최근 업데이트 시간 스타일 */
@@ -99,7 +121,6 @@ code {
   display: inline-block;
   text-align: center;
   margin-top: 10px;
-  color: block;
 }
 
 /* OLMap Styles */
@@ -208,5 +229,3 @@ code {
   margin-left: 20px;
   font-size: 18px;
 }
-
-

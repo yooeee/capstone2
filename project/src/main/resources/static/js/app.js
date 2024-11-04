@@ -459,8 +459,6 @@ async function getRouteData(myLocation, destination) {
 }
 
 
-
-
 // 병원 상세 정보 표시 함수
 function showHospitalModal(item) {
   // 병원 데이터 가져오기
@@ -481,22 +479,39 @@ function showHospitalModal(item) {
       </div>
     `;
 
-    // 가용 장비 여부 HTML 생성
+    // 가용 장비 여부 리스트 생성 (Bootstrap 카드와 리스트 그룹 활용)
+    const equipmentList = [
+      { label: "CT 가용", available: displayData.hvctayn },
+      { label: "MRI 가용", available: displayData.hvmriayn },
+      { label: "혈관촬영기 가용", available: displayData.hvangioayn },
+      { label: "조영촬영기 가용", available: displayData.hvangioayn },
+      { label: "인공호흡기 가용", available: displayData.hvventiayn },
+      { label: "인큐베이터 가용", available: displayData.hvincuayn },
+      { label: "CRRT 가용", available: displayData.hvcrrtayn },
+      { label: "ECMO 가용", available: displayData.hvecmoayn },
+      { label: "고압산소치료기 가용", available: displayData.hvoxyayn },
+      { label: "중심체온조절유도기 가용", available: displayData.hvhypoayn },
+      { label: "구급차 가용", available: displayData.hvamyn }
+    ];
+
     const equipmentAvailability = `
-      <h5>장비 가용 여부</h5>
-      <ul>
-        ${createAvailabilityItem("CT 가용", displayData.hvctayn)}
-        ${createAvailabilityItem("MRI 가용", displayData.hvmriayn)}
-        ${createAvailabilityItem("혈관촬영기 가용", displayData.hvangioayn)}
-        ${createAvailabilityItem("조영촬영기 가용", displayData.hvangioayn)}
-        ${createAvailabilityItem("인공호흡기 가용", displayData.hvventiayn)}
-        ${createAvailabilityItem("인큐베이터 가용", displayData.hvincuayn)}
-        ${createAvailabilityItem("CRRT 가용", displayData.hvcrrtayn)}
-        ${createAvailabilityItem("ECMO 가용", displayData.hvecmoayn)}
-        ${createAvailabilityItem("고압산소치료기 가용", displayData.hvoxyayn)}
-        ${createAvailabilityItem("중심체온조절유도기 가용", displayData.hvhypoayn)}
-        ${createAvailabilityItem("구급차 가용", displayData.hvamyn)}
-      </ul>
+      <div class="card mb-3">
+        <div class="card-header text-white" style="background-color: #001f3f;">
+          장비 가용 여부
+        </div>
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            ${equipmentList.map(equipment => `
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                ${equipment.label}
+                <span class="badge bg-${equipment.available === 'Y' ? 'success' : 'danger'}">
+                  ${equipment.available === 'Y' ? '사용 가능' : '사용 불가'}
+                </span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      </div>
     `;
 
     // 병상 정보 테이블 생성
@@ -512,6 +527,7 @@ function showHospitalModal(item) {
     document.getElementById('modalBodyContent').innerHTML = modalBodyContent + equipmentAvailability + tableContent;
 
     // 모달 표시
+    const hospitalModal = new bootstrap.Modal(document.getElementById('hospitalModal'));
     hospitalModal.show();
   });
 }
