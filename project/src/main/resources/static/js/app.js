@@ -36,6 +36,21 @@ let myLocation = {
 // Bootstrap 모달 객체 생성
 const hospitalModal = new bootstrap.Modal(document.getElementById('hospitalModal'));
 
+// 경로 정보 표시용 div 추가 (지도 우측 하단에 위치)
+const routeInfoDiv = document.createElement("div");
+routeInfoDiv.className = "route-info-div";
+routeInfoDiv.style.position = "absolute";
+routeInfoDiv.style.bottom = "10px";  // 하단으로 위치 변경
+routeInfoDiv.style.right = "10px";
+routeInfoDiv.style.backgroundColor = "#001f3f"; // 남색 배경
+routeInfoDiv.style.color = "#ffffff"; // 흰색 글자
+routeInfoDiv.style.padding = "10px";
+routeInfoDiv.style.borderRadius = "8px";
+routeInfoDiv.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+routeInfoDiv.style.display = "none"; // 처음에는 숨김
+routeInfoDiv.style.zIndex = "1000"; // 지도 요소 위에 표시
+document.getElementById("map").appendChild(routeInfoDiv);
+
 
 document.addEventListener('DOMContentLoaded', () => {
   init();
@@ -107,6 +122,7 @@ async function search() {
 
     if (items) {
       drawMarkerWithSearch(items);
+      routeInfoDiv.style.display = "none";
     } else {
       alert("조회 결과 없습니다.");
     }
@@ -372,6 +388,7 @@ function drawMarkerWithSearch(searchList) {
 
 
 
+// 경로 데이터를 가져와 지도에 표시하고, 경로 정보를 routeInfoDiv에 업데이트
 async function getRouteData(myLocation, destination) {
   try {
     const response = await fetch(
@@ -393,7 +410,6 @@ async function getRouteData(myLocation, destination) {
 
     // 경로 데이터를 기반으로 좌표 추출
     const vertexes = data.routes[0].sections[0].roads.flatMap((road) => road.vertexes);
-
     for (let i = 0; i < vertexes.length; i += 2) {
       routePoints.push(ol.proj.fromLonLat([vertexes[i], vertexes[i + 1]]));
     }
@@ -407,13 +423,13 @@ async function getRouteData(myLocation, destination) {
     routeLine.setStyle([
       new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: "black", // 외곽선 색상
+          color: "black",
           width: 7,
         }),
       }),
       new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: "green", // 내부선 색상
+          color: "green",
           width: 4,
         }),
       }),
@@ -421,8 +437,6 @@ async function getRouteData(myLocation, destination) {
 
     // 기존 경로 레이어 제거 후 새 경로 추가
     removeLayer("routeLayer");
-    
-
     const routeVectorSource = new ol.source.Vector();
     const routeVectorLayer = new ol.layer.Vector({
       name: "routeLayer",
@@ -432,6 +446,20 @@ async function getRouteData(myLocation, destination) {
     routeVectorSource.addFeature(routeLine);
     map.addLayer(routeVectorLayer);
 
+    // 경로 정보 계산 (거리 및 예상 시간)
+    const totalDistanceInKm = (data.routes[0].sections[0].distance / 1000).toFixed(2);
+    const totalDurationInMinutes = Math.floor(data.routes[0].sections[0].duration / 60);
+    const hours = Math.floor(totalDurationInMinutes / 60);
+    const minutes = totalDurationInMinutes % 60;
+    const totalTime = `${hours > 0 ? `${hours}시간 ` : ''}${minutes}분`;
+
+    // 경로 정보 표시
+    routeInfoDiv.style.display = "block";
+    routeInfoDiv.innerHTML = `
+      <strong>총 거리:</strong> ${totalDistanceInKm} km<br>
+      <strong>도착 예상 시간:</strong> ${totalTime}
+    `;
+
     // 경로의 범위에 맞게 지도 설정
     const routeExtent = routeVectorSource.getExtent();
     map.getView().fit(routeExtent, {
@@ -439,24 +467,12 @@ async function getRouteData(myLocation, destination) {
       maxZoom: 16,
     });
 
-    // 경로 정보 표시
-    const totalDistanceInKm = (data.routes[0].sections[0].distance / 1000).toFixed(2);
-    const totalDurationInMinutes = Math.floor(data.routes[0].sections[0].duration / 60);
-
-    const routeInfoDiv = document.querySelector(".route-info-div");
-    if (routeInfoDiv) {
-      routeInfoDiv.style.display = "block";
-      routeInfoDiv.innerHTML = `
-        <div style="text-align: right;">
-          <span style="color: blue;">총 거리: ${totalDistanceInKm} km</span><br>
-          <span style="color: green;">도착 예상 시간: ${totalDurationInMinutes} 분</span>
-        </div>
-      `;
-    }
   } catch (error) {
     console.error("Error fetching route data:", error);
   }
 }
+
+
 
 
 // 병원 상세 정보 표시 함수
@@ -471,7 +487,7 @@ function showHospitalModal(item) {
     // 기본 정보 HTML 생성
     const modalBodyContent = `
       <div class="info-item">
-        <p><strong>주소:</strong> ${displayData.dutyAddr || '-'}</p>
+        <p><strong>주소:</strong> ${item.dutyAddr || '-'}</p>
         <p><strong>응급실:</strong> ${displayData.dutyTel3 || '-'}</p>
         <p><strong>당직의:</strong> ${displayData.hv1 || '-'}</p>
         <p><strong>소아 당직의:</strong> ${displayData.hv12 || '-'}</p>
