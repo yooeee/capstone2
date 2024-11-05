@@ -517,7 +517,7 @@ function createBedCardsSection(title, data) {
 
 // 병원 상세 정보 표시 함수 수정
 function showHospitalModal(item) {
-  fetchHospitalData(item.hpid).then((data) => {
+  fetchHospitalData(item).then((data) => {
     const displayData = data || item;
 
     // 모달 헤더 설정
@@ -570,13 +570,22 @@ function showHospitalModal(item) {
       `;
 
     // 병상 정보 카드 생성
-    const bedCardsContent = `
-          <h5>병상 정보</h5>
-          ${createBedCardsSection('응급실', getEmergencyData(displayData))}
-          ${createBedCardsSection('응급전용', getEmergencyExclusiveData(displayData))}
-          ${createBedCardsSection('중환자실', getICUData(displayData))}
-          ${createBedCardsSection('기타', getOtherData(displayData))}
-      `;
+const bedCardsContent = `
+<div class="d-flex justify-content-between align-items-center">
+  <h5>병상 정보</h5>
+  <div class="d-flex align-items-center">
+    <span class="badge card-busy me-1">혼잡</span>
+    <span class="badge card-normal me-1">보통</span>
+    <span class="badge card-available me-1">여유</span>
+    <span class="badge card-no-data">미제공</span>
+  </div>
+</div>
+${createBedCardsSection('응급실', getEmergencyData(displayData))}
+${createBedCardsSection('응급전용', getEmergencyExclusiveData(displayData))}
+${createBedCardsSection('중환자실', getICUData(displayData))}
+${createBedCardsSection('기타', getOtherData(displayData))}
+`;
+
 
     // 모달 내용 삽입
     document.getElementById('modalBodyContent').innerHTML = modalBodyContent + equipmentAvailability + bedCardsContent;
@@ -603,53 +612,53 @@ function createTableSection(title, data) {
 // 병상 정보 데이터 생성 함수들
 function getEmergencyData(displayData) {
   return [
-    { name: '[응급실] 일반(응급실일반병상)', value: `${displayData.hvec ?? '-'}/${displayData.hvs01 ?? '-'}` },
-    { name: '[응급실] 코호트 격리', value: `${displayData.hv27 ?? '-'}/${displayData.hvs59 ?? '-'}` },
-    { name: '[응급실] 음압 격리 병상', value: `${displayData.hv29 ?? '-'}/${displayData.hvs03 ?? '-'}` },
-    { name: '[응급실] 일반 격리 병상', value: `${displayData.hv30 ?? '-'}/${displayData.hvs04 ?? '-'}` },
-    { name: '[응급실] 소아', value: `${displayData.hv28 ?? '-'}/${displayData.hvs02 ?? '-'}` },
-    { name: '[응급실] 소아 음압 격리', value: `${displayData.hv15 ?? '-'}/${displayData.hvs48 ?? '-'}` },
-    { name: '[응급실] 소아일반격리', value: `${displayData.hv16 ?? '-'}/${displayData.hvs49 ?? '-'}` }
+    { name: '일반(응급실일반병상)', value: `${displayData.hvec ?? '-'}/${displayData.hvs01 ?? '-'}` },
+    { name: '코호트 격리', value: `${displayData.hv27 ?? '-'}/${displayData.hvs59 ?? '-'}` },
+    { name: '음압 격리 병상', value: `${displayData.hv29 ?? '-'}/${displayData.hvs03 ?? '-'}` },
+    { name: '일반 격리 병상', value: `${displayData.hv30 ?? '-'}/${displayData.hvs04 ?? '-'}` },
+    { name: '소아', value: `${displayData.hv28 ?? '-'}/${displayData.hvs02 ?? '-'}` },
+    { name: '소아 음압 격리', value: `${displayData.hv15 ?? '-'}/${displayData.hvs48 ?? '-'}` },
+    { name: '소아일반격리', value: `${displayData.hv16 ?? '-'}/${displayData.hvs49 ?? '-'}` }
   ];
 }
 
 function getEmergencyExclusiveData(displayData) {
   return [
-    { name: '[응급전용] 중환자실 음압격리', value: `${displayData.hv17 ?? '-'}/${displayData.hvs50 ?? '-'}` },
-    { name: '[응급전용] 중환자실 일반격리', value: `${displayData.hv18 ?? '-'}/${displayData.hvs51 ?? '-'}` },
-    { name: '[응급전용] 입원실 음압격리', value: `${displayData.hv19 ?? '-'}/${displayData.hvs52 ?? '-'}` },
-    { name: '[응급전용] 입원실 일반격리', value: `${displayData.hv21 ?? '-'}/${displayData.hvs53 ?? '-'}` },
-    { name: '[응급전용] 중환자실', value: `${displayData.hv31 ?? '-'}/${displayData.hvs05 ?? '-'}` },
-    { name: '[응급전용] 소아중환자실', value: `${displayData.hv33 ?? '-'}/${displayData.hvs10 ?? '-'}` },
-    { name: '[응급전용] 입원실', value: `${displayData.hv36 ?? '-'}/${displayData.hvs19 ?? '-'}` },
-    { name: '[응급전용] 소아입원실', value: `${displayData.hv37 ?? '-'}/${displayData.hvs20 ?? '-'}` }
+    { name: '중환자실 음압격리', value: `${displayData.hv17 ?? '-'}/${displayData.hvs50 ?? '-'}` },
+    { name: '중환자실 일반격리', value: `${displayData.hv18 ?? '-'}/${displayData.hvs51 ?? '-'}` },
+    { name: '입원실 음압격리', value: `${displayData.hv19 ?? '-'}/${displayData.hvs52 ?? '-'}` },
+    { name: '입원실 일반격리', value: `${displayData.hv21 ?? '-'}/${displayData.hvs53 ?? '-'}` },
+    { name: '중환자실', value: `${displayData.hv31 ?? '-'}/${displayData.hvs05 ?? '-'}` },
+    { name: '소아중환자실', value: `${displayData.hv33 ?? '-'}/${displayData.hvs10 ?? '-'}` },
+    { name: '입원실', value: `${displayData.hv36 ?? '-'}/${displayData.hvs19 ?? '-'}` },
+    { name: '소아입원실', value: `${displayData.hv37 ?? '-'}/${displayData.hvs20 ?? '-'}` }
   ];
 }
 
 function getICUData(displayData) {
   return [
-    { name: '[중환자실] 일반', value: `${displayData.hvicc ?? '-'}/${displayData.hvs17 ?? '-'}` },
-    { name: '[중환자실] 내과', value: `${displayData.hv2 ?? '-'}/${displayData.hvs06 ?? '-'}` },
-    { name: '[중환자실] 외과', value: `${displayData.hv3 ?? '-'}/${displayData.hvs07 ?? '-'}` },
-    { name: '[중환자실] 흉부외과', value: `${displayData.hvccc ?? '-'}/${displayData.hvs16 ?? '-'}` },
-    { name: '[중환자실] 신경과', value: `${displayData.hvcc ?? '-'}/${displayData.hvs11 ?? '-'}` },
-    { name: '[중환자실] 신경외과', value: `${displayData.hv6 ?? '-'}/${displayData.hvs12 ?? '-'}` },
-    { name: '[중환자실] 외상', value: `${displayData.hv9 ?? '-'}/${displayData.hvs14 ?? '-'}` },
-    { name: '[중환자실] 화상', value: `${displayData.hv8 ?? '-'}/${displayData.hvs13 ?? '-'}` },
-    { name: '[중환자실] 소아', value: `${displayData.hv32 ?? '-'}/${displayData.hvs09 ?? '-'}` },
-    { name: '[중환자실] 신생아', value: `${displayData.hvncc ?? '-'}/${displayData.hvs08 ?? '-'}` },
-    { name: '[중환자실] 심장내과', value: `${displayData.hv34 ?? '-'}/${displayData.hvs15 ?? '-'}` },
-    { name: '[중환자실] 음압격리', value: `${displayData.hv35 ?? '-'}/${displayData.hvs18 ?? '-'}` }
+    { name: '일반', value: `${displayData.hvicc ?? '-'}/${displayData.hvs17 ?? '-'}` },
+    { name: '내과', value: `${displayData.hv2 ?? '-'}/${displayData.hvs06 ?? '-'}` },
+    { name: '외과', value: `${displayData.hv3 ?? '-'}/${displayData.hvs07 ?? '-'}` },
+    { name: '흉부외과', value: `${displayData.hvccc ?? '-'}/${displayData.hvs16 ?? '-'}` },
+    { name: '신경과', value: `${displayData.hvcc ?? '-'}/${displayData.hvs11 ?? '-'}` },
+    { name: '신경외과', value: `${displayData.hv6 ?? '-'}/${displayData.hvs12 ?? '-'}` },
+    { name: '외상', value: `${displayData.hv9 ?? '-'}/${displayData.hvs14 ?? '-'}` },
+    { name: '화상', value: `${displayData.hv8 ?? '-'}/${displayData.hvs13 ?? '-'}` },
+    { name: '소아', value: `${displayData.hv32 ?? '-'}/${displayData.hvs09 ?? '-'}` },
+    { name: '신생아', value: `${displayData.hvncc ?? '-'}/${displayData.hvs08 ?? '-'}` },
+    { name: '심장내과', value: `${displayData.hv34 ?? '-'}/${displayData.hvs15 ?? '-'}` },
+    { name: '음압격리', value: `${displayData.hv35 ?? '-'}/${displayData.hvs18 ?? '-'}` }
   ];
 }
 
 function getOtherData(displayData) {
   return [
-    { name: '[입원실] 일반', value: `${displayData.hvgc ?? '-'}/${displayData.hvs38 ?? '-'}` },
-    { name: '[입원실] 음압격리', value: `${displayData.hv41 ?? '-'}/${displayData.hvs25 ?? '-'}` },
-    { name: '[입원실] 정신과 폐쇄병동', value: `${displayData.hv40 ?? '-'}/${displayData.hvs24 ?? '-'}` },
-    { name: '[입원실] 분만실', value: `${displayData.hv42 ?? '-'}/${displayData.hvs26 ?? '-'}` },
-    { name: '[기타] 수술실', value: `${displayData.hvoc ?? '-'}/${displayData.hvs22 ?? '-'}` }
+    { name: '일반', value: `${displayData.hvgc ?? '-'}/${displayData.hvs38 ?? '-'}` },
+    { name: '음압격리', value: `${displayData.hv41 ?? '-'}/${displayData.hvs25 ?? '-'}` },
+    { name: '정신과 폐쇄병동', value: `${displayData.hv40 ?? '-'}/${displayData.hvs24 ?? '-'}` },
+    { name: '분만실', value: `${displayData.hv42 ?? '-'}/${displayData.hvs26 ?? '-'}` },
+    { name: '수술실', value: `${displayData.hvoc ?? '-'}/${displayData.hvs22 ?? '-'}` }
   ];
 }
 
@@ -672,14 +681,15 @@ function formatDate(date) {
 
   return `${year}.${month}.${day} ${hour}:${minute}`;
 }
-async function fetchHospitalData(hpid) {
+async function fetchHospitalData(data) {
   try {
     const serviceKey = "Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D";
-
+    const { sidoData, sigunguData } = extractSidoSigungu(data.dutyAddr);
     const params = new URLSearchParams({
-      hpid: hpid,
+      STAGE1: sidoData,
+      STAGE2: sigunguData,
       pageNo: 1,
-      numOfRows: 1,
+      numOfRows: 999,
     });
 
     const url = `https://apis.data.go.kr/B552657/ErmctInfoInqireService/getEmrrmRltmUsefulSckbdInfoInqire?serviceKey=${serviceKey}&${params.toString()}`;
@@ -698,7 +708,24 @@ async function fetchHospitalData(hpid) {
 
     // API 응답 구조에 따라 데이터를 추출
     if (jsonData && jsonData.response && jsonData.response.body && jsonData.response.body.items && jsonData.response.body.items.item) {
-      return jsonData.response.body.items.item; // 병원 데이터를 반환
+      const items = jsonData.response.body.items.item;
+      if (items.length < 1) {
+        alert("해당 병원의 실시간 응급실 정보가 존재하지 않습니다.");
+    } else if (items.length == 0) {
+        if (items.hpid === data.hpid) {
+          return items; // 병원 데이터를 반환
+        } else {
+            alert("해당 병원의 실시간 응급실 정보가 존재하지 않습니다.");
+        }
+    } else {
+        for (const item of items) {
+            if (item.hpid === data.hpid) {
+              return item; // 병원 데이터를 반환
+            }
+        }
+    }
+    
+      
     } else {
       console.error("Unexpected data format:", jsonData);
       return null; // 데이터가 없을 경우 null 반환
@@ -881,4 +908,14 @@ async function getAIAnswer() {
     document.getElementById('loadingBtn').style.display = 'none';
     document.getElementById('aiBtn').style.display = 'block';
   }
+}
+
+
+function extractSidoSigungu(dutyAddr) {
+  const addrParts = dutyAddr.split(' ');
+
+  const sidoData = addrParts[0];
+  const sigunguData = addrParts[1];
+
+  return { sidoData, sigunguData };
 }

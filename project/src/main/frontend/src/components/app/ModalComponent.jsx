@@ -89,18 +89,18 @@ const ModalComponent = ({ visible, onClose, itemData, urlType }) => {
     ];
 
     const data3 = [
-        { key: '16', name: '[중환자실] 일반', value: `${displayData?.hvicc ?? '-'}/${displayData?.hvs17 ?? '-'}` },
-        { key: '17', name: '[중환자실] 내과', value: `${displayData?.hv2 ?? '-'}/${displayData?.hvs06 ?? '-'}` },
-        { key: '18', name: '[중환자실] 외과', value: `${displayData?.hv3 ?? '-'}/${displayData?.hvs07 ?? '-'}` },
-        { key: '19', name: '[중환자실] 흉부외과', value: `${displayData?.hvccc ?? '-'}/${displayData?.hvs16 ?? '-'}` },
-        { key: '20', name: '[중환자실] 신경과', value: `${displayData?.hvcc ?? '-'}/${displayData?.hvs11 ?? '-'}` },
-        { key: '21', name: '[중환자실] 신경외과', value: `${displayData?.hv6 ?? '-'}/${displayData?.hvs12 ?? '-'}` },
-        { key: '22', name: '[중환자실] 외상', value: `${displayData?.hv9 ?? '-'}/${displayData?.hvs14 ?? '-'}` },
-        { key: '23', name: '[중환자실] 화상', value: `${displayData?.hv8 ?? '-'}/${displayData?.hvs13 ?? '-'}` },
-        { key: '24', name: '[중환자실] 소아', value: `${displayData?.hv32 ?? '-'}/${displayData?.hvs09 ?? '-'}` },
-        { key: '25', name: '[중환자실] 신생아', value: `${displayData?.hvncc ?? '-'}/${displayData?.hvs08 ?? '-'}` },
-        { key: '26', name: '[중환자실] 심장내과', value: `${displayData?.hv34 ?? '-'}/${displayData?.hvs15 ?? '-'}` },
-        { key: '27', name: '[중환자실] 음압격리', value: `${displayData?.hv35 ?? '-'}/${displayData?.hvs18 ?? '-'}` },
+        { key: '16', name: ' 일반', value: `${displayData?.hvicc ?? '-'}/${displayData?.hvs17 ?? '-'}` },
+        { key: '17', name: ' 내과', value: `${displayData?.hv2 ?? '-'}/${displayData?.hvs06 ?? '-'}` },
+        { key: '18', name: ' 외과', value: `${displayData?.hv3 ?? '-'}/${displayData?.hvs07 ?? '-'}` },
+        { key: '19', name: ' 흉부외과', value: `${displayData?.hvccc ?? '-'}/${displayData?.hvs16 ?? '-'}` },
+        { key: '20', name: ' 신경과', value: `${displayData?.hvcc ?? '-'}/${displayData?.hvs11 ?? '-'}` },
+        { key: '21', name: ' 신경외과', value: `${displayData?.hv6 ?? '-'}/${displayData?.hvs12 ?? '-'}` },
+        { key: '22', name: ' 외상', value: `${displayData?.hv9 ?? '-'}/${displayData?.hvs14 ?? '-'}` },
+        { key: '23', name: ' 화상', value: `${displayData?.hv8 ?? '-'}/${displayData?.hvs13 ?? '-'}` },
+        { key: '24', name: ' 소아', value: `${displayData?.hv32 ?? '-'}/${displayData?.hvs09 ?? '-'}` },
+        { key: '25', name: ' 신생아', value: `${displayData?.hvncc ?? '-'}/${displayData?.hvs08 ?? '-'}` },
+        { key: '26', name: ' 심장내과', value: `${displayData?.hv34 ?? '-'}/${displayData?.hvs15 ?? '-'}` },
+        { key: '27', name: ' 음압격리', value: `${displayData?.hv35 ?? '-'}/${displayData?.hvs18 ?? '-'}` },
     ];
 
     const data4 = [
