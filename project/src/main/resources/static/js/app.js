@@ -29,8 +29,8 @@ const map = new ol.Map({
 });
 
 let myLocation = {
-  longitude : null,
-  latitude : null,
+  longitude: null,
+  latitude: null,
 };
 
 // Bootstrap 모달 객체 생성
@@ -74,9 +74,15 @@ function setEvent() {
     getSigunguData(selectedBjcd);
   });
 
-  document.getElementById('searchBtn').addEventListener('click',() => {
+  document.getElementById('searchBtn').addEventListener('click', () => {
     search();
   });
+
+  document.getElementById('aiBtn').addEventListener('click', (e) => {
+    e.target.style.display = 'none';
+    document.getElementById('loadingBtn').style.display = 'block';
+    getAIAnswer();
+  })
 
 
 
@@ -95,7 +101,7 @@ async function search() {
   try {
     const serviceKey =
       "Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D";
-    
+
     // URL 및 파라미터 설정
     const params = new URLSearchParams({
       Q0: sidoSelect.value,
@@ -104,7 +110,7 @@ async function search() {
       numOfRows: 999,
       QN: searchInput.value,
     });
-    
+
     const url = `https://apis.data.go.kr/B552657/ErmctInfoInqireService/${urlType.value}?serviceKey=${serviceKey}&${params.toString()}`;
 
     const response = await fetch(url, {
@@ -187,11 +193,11 @@ function getLocationAndMoveMap() {
 
 // 지도 레이어 삭제
 function removeLayer(name) {
-    map.getAllLayers().forEach(layer => {
-        if (layer && layer.get('name') == name) {
-            map.removeLayer(layer);
-        }
-    });
+  map.getAllLayers().forEach(layer => {
+    if (layer && layer.get('name') == name) {
+      map.removeLayer(layer);
+    }
+  });
 
 }
 // 시군구 옵션 업데이트 함수
@@ -228,11 +234,11 @@ async function getSigunguData(bjcd) {
 
   try {
     const response = await fetch(`/api/admcode?bjcd=${bjcd}`);
-    
+
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
-    
+
     const data = await response.json();
     if (data) {
       const sigunguList = data.map((item) => item.name);
@@ -280,6 +286,8 @@ function drawMarkerWithSearch(searchList) {
   // 기존 마커 레이어 제거
   removeLayer("markerLayer");
   removeLayer("routeLayer");
+
+  searchList = Array.isArray(searchList) ? searchList : [searchList];
 
   const markerVectorSource = new ol.source.Vector();
   const markerVectorLayer = new ol.layer.Vector({
@@ -474,10 +482,42 @@ async function getRouteData(myLocation, destination) {
 
 
 
+// 병상 가용 상태에 따른 CSS 클래스를 반환하는 함수
+function getBedAvailabilityClass(available, total) {
+  if (total === 0 || available === '-') return 'card-busy';  // 데이터 없음 또는 사용 불가
+  const rate = (available / total) * 100;
 
-// 병원 상세 정보 표시 함수
+  if (rate <= 20) return 'card-busy';       // 혼잡 (빨강)
+  if (rate <= 60) return 'card-normal';     // 보통 (노랑)
+  return 'card-available';                  // 여유 (파랑)
+}
+
+// 병상 정보를 가로로 나열된 카드로 생성하는 함수
+function createBedCardsSection(title, data) {
+  const cards = data.map((bed) => {
+    const [available, total] = bed.value.split('/').map(Number);
+    const cardClass = getBedAvailabilityClass(available, total);
+
+    return `
+          <div class="col-md-4 mb-3">
+              <div class="card ${cardClass}">
+                  <div class="card-body text-center">
+                      <h5 class="card-title">${bed.name}</h5>
+                      <p class="card-text">가용/전체: ${available}/${total}</p>
+                  </div>
+              </div>
+          </div>
+      `;
+  }).join('');
+
+  return `
+      <h6>${title}</h6>
+      <div class="row">${cards}</div>
+  `;
+}
+
+// 병원 상세 정보 표시 함수 수정
 function showHospitalModal(item) {
-  // 병원 데이터 가져오기
   fetchHospitalData(item.hpid).then((data) => {
     const displayData = data || item;
 
@@ -486,16 +526,16 @@ function showHospitalModal(item) {
 
     // 기본 정보 HTML 생성
     const modalBodyContent = `
-      <div class="info-item">
-        <p><strong>주소:</strong> ${item.dutyAddr || '-'}</p>
-        <p><strong>응급실:</strong> ${displayData.dutyTel3 || '-'}</p>
-        <p><strong>당직의:</strong> ${displayData.hv1 || '-'}</p>
-        <p><strong>소아 당직의:</strong> ${displayData.hv12 || '-'}</p>
-        <p><strong>최근 업데이트 시간:</strong> ${formatDate(displayData.hvidate) || '-'}</p>
-      </div>
-    `;
+          <div class="info-item">
+              <p><strong>주소:</strong> ${item.dutyAddr || '-'}</p>
+              <p><strong>응급실:</strong> ${displayData.dutyTel3 || '-'}</p>
+              <p><strong>당직의:</strong> ${displayData.hv1 || '-'}</p>
+              <p><strong>소아 당직의:</strong> ${displayData.hv12 || '-'}</p>
+              <p><strong>최근 업데이트 시간:</strong> ${formatDate(displayData.hvidate) || '-'}</p>
+          </div>
+      `;
 
-    // 가용 장비 여부 리스트 생성 (Bootstrap 카드와 리스트 그룹 활용)
+    // 장비 가용 여부 카드 생성
     const equipmentList = [
       { label: "CT 가용", available: displayData.hvctayn },
       { label: "MRI 가용", available: displayData.hvmriayn },
@@ -511,36 +551,36 @@ function showHospitalModal(item) {
     ];
 
     const equipmentAvailability = `
-      <div class="card mb-3">
-        <div class="card-header text-white" style="background-color: #001f3f;">
-          장비 가용 여부
-        </div>
-        <div class="card-body">
-          <ul class="list-group list-group-flush">
-            ${equipmentList.map(equipment => `
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                ${equipment.label}
-                <span class="badge bg-${equipment.available === 'Y' ? 'success' : 'danger'}">
-                  ${equipment.available === 'Y' ? '사용 가능' : '사용 불가'}
-                </span>
-              </li>
-            `).join('')}
-          </ul>
-        </div>
-      </div>
-    `;
+          <div class="card mb-3">
+              <div class="card-header text-white" style="background-color: #001f3f;">
+                  장비 가용 여부
+              </div>
+              <div class="card-body">
+                  <ul class="list-group list-group-flush">
+                      ${equipmentList.map(equipment => `
+                          <li class="list-group-item d-flex justify-content-between align-items-center">
+                              ${equipment.label}
+                              <span class="badge bg-${equipment.available === 'Y' ? 'success' : 'danger'}">
+                                  ${equipment.available === 'Y' ? '사용 가능' : '사용 불가'}
+                              </span>
+                          </li>
+                      `).join('')}
+                  </ul>
+              </div>
+          </div>
+      `;
 
-    // 병상 정보 테이블 생성
-    const tableContent = `
-      <h5>병상 정보</h5>
-      ${createTableSection('응급실', getEmergencyData(displayData))}
-      ${createTableSection('응급전용', getEmergencyExclusiveData(displayData))}
-      ${createTableSection('중환자실', getICUData(displayData))}
-      ${createTableSection('기타', getOtherData(displayData))}
-    `;
+    // 병상 정보 카드 생성
+    const bedCardsContent = `
+          <h5>병상 정보</h5>
+          ${createBedCardsSection('응급실', getEmergencyData(displayData))}
+          ${createBedCardsSection('응급전용', getEmergencyExclusiveData(displayData))}
+          ${createBedCardsSection('중환자실', getICUData(displayData))}
+          ${createBedCardsSection('기타', getOtherData(displayData))}
+      `;
 
     // 모달 내용 삽입
-    document.getElementById('modalBodyContent').innerHTML = modalBodyContent + equipmentAvailability + tableContent;
+    document.getElementById('modalBodyContent').innerHTML = modalBodyContent + equipmentAvailability + bedCardsContent;
 
     // 모달 표시
     const hospitalModal = new bootstrap.Modal(document.getElementById('hospitalModal'));
@@ -637,7 +677,7 @@ function formatDate(date) {
 async function fetchHospitalData(hpid) {
   try {
     const serviceKey = "Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D";
-    
+
     const params = new URLSearchParams({
       hpid: hpid,
       pageNo: 1,
@@ -645,7 +685,7 @@ async function fetchHospitalData(hpid) {
     });
 
     const url = `https://apis.data.go.kr/B552657/ErmctInfoInqireService/getEmrrmRltmUsefulSckbdInfoInqire?serviceKey=${serviceKey}&${params.toString()}`;
-    
+
     const response = await fetch(url, {
       headers: {
         "Accept": "application/json", // JSON 형식의 응답을 요청
@@ -728,7 +768,7 @@ function drawMarkerWithSearch(searchList) {
     const nameDiv = document.createElement("div");
     nameDiv.innerHTML = `<strong style="color: black;">${dutyName}</strong>`;
     nameDiv.style.marginRight = "10px";
-    
+
     // 이름 클릭 시 모달 띄우기
     nameDiv.addEventListener("click", () => showHospitalModal(item));
 
@@ -767,4 +807,80 @@ function drawMarkerWithSearch(searchList) {
   // 마커 범위 맞춤
   const extent = markerVectorSource.getExtent();
   map.getView().fit(extent, { padding: [100, 100, 100, 100] });
+}
+
+
+
+async function getAIAnswer() {
+  const usr_lat = myLocation.latitude;
+  const usr_lon = myLocation.longitude;
+  const question = document.getElementById('aiInput').value;
+
+  const API_KEY = ""; // 여기에 OpenAI API 키를 입력하세요
+  const apiUrl = "https://api.openai.com/v1/chat/completions";
+  const defaultQuestion = `
+  너는 대한민국 전국 응급의료기관 정보 조회 서비스에서 사용되는 API 역할을 한다. 사용자가 증상과 병명을 입력하면 다음과 같은 방식으로 응답해야 한다:
+
+  1. 사용자의 증상을 바탕으로 가능한 병명을 추측하여 제시해야 한다. 추측한 병명과 함께 그 이유도 설명한다.
+  2. 사용자의 위치 정보는 다음과 같다
+  { "usr_location" : {
+      "usr_lon": ${usr_lon},
+      "usr_lat": ${usr_lat} 
+  }
+      다음 사용자 위치정보(usr_location) 사용해 근처 병원의 이름과 좌표를 알려줘야 한다. 단, 사용자의 위치 정보(usr_lon, usr_lat) null인 경우 근처 병원을 추천하지 않고, 병원 정보는 null로 응답한다.
+  3. 사용자의 입력이 병명이나 증상과 관련되지 않은 경우, "병명이나 증상을 입력해주세요."라고 응답한다.
+  4. 사용자가 증상을 설명했음에도 추측하기 어렵다면 "해당증상 만으로는 병명을 파악하기 어렵습니다. 더 자세히 설명해주세요" 라고 응답한다.
+  응답은 **JSON 형식**이어야 하며, 다음과 같은 구조를 따른다:
+
+  {
+      "result": {
+      "message": "{추측한 병명과 이유}",
+      "medical": {
+          "name": "{병원 이름}",
+          "lon": "{병원의 경도}",
+          "lat": "{병원의 위도}"
+      }
+      }
+  }
+
+  사용자가 입력한 내용:`;
+
+  console.log(defaultQuestion);
+  if (!question.trim()) return; // 질문이 비어있으면 아무 작업도 하지 않음
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4",
+        messages: [{ role: "user", content: defaultQuestion + question }],
+      }),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      if (result.choices && result.choices[0].message.content) {
+        const jsonResponse = JSON.parse(result.choices[0].message.content);
+        const aiResponse = document.getElementById('aiResponse');
+        console.log(jsonResponse);
+        console.log(typeof jsonResponse);
+
+        aiResponse.innerHTML = jsonResponse.result.message;
+      } else {
+        console.log("응답 받은 값이 없음.");
+      }
+    } else {
+      console.error("Error response from API:", response.statusText);
+    }
+
+  } catch (error) {
+    console.error("Error calling ChatGPT API", error);
+  } finally {
+    document.getElementById('loadingBtn').style.display = 'none';
+    document.getElementById('aiBtn').style.display = 'block';
+  }
 }

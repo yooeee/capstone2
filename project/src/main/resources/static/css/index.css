@@ -126,7 +126,7 @@ code {
 /* OLMap Styles */
 .ol-map-container {
   width: 100%;
-  height: calc(100vh - 56px); /* navbar를 제외한 전체 높이 */
+  height: calc(100vh - 0px);
   position: relative; /* 내 위치 조회 버튼 배치를 위해 필요 */
 }
 
@@ -183,9 +183,7 @@ code {
   max-width: 100%;
 }
 
-.sidemenu-select-box {
-  margin: 16px;
-}
+
 
 .sidemenu-search-box {
   display: flex;
@@ -228,4 +226,19 @@ code {
 .topbar-title {
   margin-left: 20px;
   font-size: 18px;
+}
+/* 상태에 따른 색상 클래스 */
+.card-busy {
+  background-color: #e74c3c; /* 빨강 - 혼잡 */
+  color: white;
+}
+
+.card-normal {
+  background-color: #f1c40f; /* 노랑 - 보통 */
+  color: white;
+}
+
+.card-available {
+  background-color: #3498db; /* 파랑 - 여유 */
+  color: white;
 }

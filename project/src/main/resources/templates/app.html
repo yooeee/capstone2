@@ -69,23 +69,27 @@
                 </div>
 
                 <!-- AI 결과 응답 창 -->
-                <div class="mb-3">
+                <div class="mb-3" style="max-height: 150px;">
                     <label class="form-label" style="color: #cfd8dc;">AI 응답</label>
-                    <div id="chatgpt-response" class="alert alert-info" style="background-color: #00264d; color: #cfd8dc; border: none;">
+                    <div id="aiResponse" class="alert alert-info" style="background-color: #00264d; color: #cfd8dc; border: none; overflow-y: auto; max-height: 120px; height: 120px;">
                         AI의 응답이 표시됩니다.
                     </div>
                 </div>
 
                 <!-- AI 결과 입력 창 -->
                 <div class="mb-3">
-                    <label for="chatgpt-input" class="form-label" style="color: #cfd8dc;">AI 질문 입력</label>
-                    <textarea id="chatgpt-input" class="form-control" rows="3" placeholder="현재 느끼는 증상을 입력해 주세요."></textarea>
+                    <label for="aiInput" class="form-label" style="color: #cfd8dc;">AI 질문 입력</label>
+                    <textarea id="aiInput" class="form-control" rows="3" placeholder="현재 느끼는 증상을 입력해 주세요."></textarea>
                 </div>
 
                 <!-- AI 입력 전송 버튼 -->
-                <button id="chatgpt-submit" class="btn btn-primary w-100">
-                    <span id="chatgpt-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                <button id="aiBtn" class="btn btn-primary w-100">
+                    <span  class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                     질문하기
+                </button>
+                <button id="loadingBtn"  style="display: none;" class="btn btn-primary" type="button" disabled>
+                    <span  class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    분석중
                 </button>
 
                 <div class="text-center mt-auto pt-3" style="color: #cfd8dc;">
@@ -95,9 +99,6 @@
 
             <!-- 지도 영역 -->
             <div class="col">
-                <nav class="navbar" style="background-color: #001f3f;">
-                    <span class="navbar-brand mb-0 h1 mx-3" style="color: white;">응급실 실시간 가용병상 정보 조회</span>
-                </nav>
                 <div id="map" class="ol-map-container">
                     <!-- 내 위치 조회 버튼 -->
                     <button id="locationBtn" class="location-button">내 위치 조회</button>
