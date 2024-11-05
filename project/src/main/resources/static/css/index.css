@@ -242,3 +242,8 @@ code {
   background-color: #3498db; /* 파랑 - 여유 */
   color: white;
 }
+
+.card-no-data {
+  background-color: #95a5a6; /* 회색 - 데이터 없음 */
+  color: white;
+}

@@ -484,35 +484,34 @@ async function getRouteData(myLocation, destination) {
 
 // 병상 가용 상태에 따른 CSS 클래스를 반환하는 함수
 function getBedAvailabilityClass(available, total) {
-  if (total === 0 || available === '-') return 'card-busy';  // 데이터 없음 또는 사용 불가
+  if (total === 0 || available === '-' || total === '-') return 'card-no-data';  // 데이터 없음 또는 사용 불가
   const rate = (available / total) * 100;
 
   if (rate <= 20) return 'card-busy';       // 혼잡 (빨강)
   if (rate <= 60) return 'card-normal';     // 보통 (노랑)
   return 'card-available';                  // 여유 (파랑)
 }
-
 // 병상 정보를 가로로 나열된 카드로 생성하는 함수
 function createBedCardsSection(title, data) {
   const cards = data.map((bed) => {
-    const [available, total] = bed.value.split('/').map(Number);
+    const [available, total] = bed.value.split('/').map(val => isNaN(Number(val)) ? '-' : Number(val));
     const cardClass = getBedAvailabilityClass(available, total);
 
     return `
-          <div class="col-md-4 mb-3">
-              <div class="card ${cardClass}">
-                  <div class="card-body text-center">
-                      <h5 class="card-title">${bed.name}</h5>
-                      <p class="card-text">가용/전체: ${available}/${total}</p>
-                  </div>
-              </div>
+      <div class="col-md-4 mb-3">
+        <div class="card ${cardClass}">
+          <div class="card-body text-center">
+            <p class="card-title" style="font:14px;" >${bed.name}<p>
+            <p class="card-text" style="font:14px;">${available}/${total}</p>
           </div>
-      `;
+        </div>
+      </div>
+    `;
   }).join('');
 
   return `
-      <h6>${title}</h6>
-      <div class="row">${cards}</div>
+    <h6>${title}</h6>
+    <div class="row">${cards}</div>
   `;
 }
 
@@ -601,57 +600,56 @@ function createTableSection(title, data) {
     </table>
   `;
 }
-
 // 병상 정보 데이터 생성 함수들
 function getEmergencyData(displayData) {
   return [
-    { name: '[응급실] 일반(응급실일반병상)', value: `${displayData.hvec || '-'}/${displayData.hvs01 || '-'}` },
-    { name: '[응급실] 코호트 격리', value: `${displayData.hv27 || '-'}/${displayData.hvs59 || '-'}` },
-    { name: '[응급실] 음압 격리 병상', value: `${displayData.hv29 || '-'}/${displayData.hvs03 || '-'}` },
-    { name: '[응급실] 일반 격리 병상', value: `${displayData.hv30 || '-'}/${displayData.hvs04 || '-'}` },
-    { name: '[응급실] 소아', value: `${displayData.hv28 || '-'}/${displayData.hvs02 || '-'}` },
-    { name: '[응급실] 소아 음압 격리', value: `${displayData.hv15 || '-'}/${displayData.hvs48 || '-'}` },
-    { name: '[응급실] 소아일반격리', value: `${displayData.hv16 || '-'}/${displayData.hvs49 || '-'}` }
+    { name: '[응급실] 일반(응급실일반병상)', value: `${displayData.hvec ?? '-'}/${displayData.hvs01 ?? '-'}` },
+    { name: '[응급실] 코호트 격리', value: `${displayData.hv27 ?? '-'}/${displayData.hvs59 ?? '-'}` },
+    { name: '[응급실] 음압 격리 병상', value: `${displayData.hv29 ?? '-'}/${displayData.hvs03 ?? '-'}` },
+    { name: '[응급실] 일반 격리 병상', value: `${displayData.hv30 ?? '-'}/${displayData.hvs04 ?? '-'}` },
+    { name: '[응급실] 소아', value: `${displayData.hv28 ?? '-'}/${displayData.hvs02 ?? '-'}` },
+    { name: '[응급실] 소아 음압 격리', value: `${displayData.hv15 ?? '-'}/${displayData.hvs48 ?? '-'}` },
+    { name: '[응급실] 소아일반격리', value: `${displayData.hv16 ?? '-'}/${displayData.hvs49 ?? '-'}` }
   ];
 }
 
 function getEmergencyExclusiveData(displayData) {
   return [
-    { name: '[응급전용] 중환자실 음압격리', value: `${displayData.hv17 || '-'}/${displayData.hvs50 || '-'}` },
-    { name: '[응급전용] 중환자실 일반격리', value: `${displayData.hv18 || '-'}/${displayData.hvs51 || '-'}` },
-    { name: '[응급전용] 입원실 음압격리', value: `${displayData.hv19 || '-'}/${displayData.hvs52 || '-'}` },
-    { name: '[응급전용] 입원실 일반격리', value: `${displayData.hv21 || '-'}/${displayData.hvs53 || '-'}` },
-    { name: '[응급전용] 중환자실', value: `${displayData.hv31 || '-'}/${displayData.hvs05 || '-'}` },
-    { name: '[응급전용] 소아중환자실', value: `${displayData.hv33 || '-'}/${displayData.hvs10 || '-'}` },
-    { name: '[응급전용] 입원실', value: `${displayData.hv36 || '-'}/${displayData.hvs19 || '-'}` },
-    { name: '[응급전용] 소아입원실', value: `${displayData.hv37 || '-'}/${displayData.hvs20 || '-'}` }
+    { name: '[응급전용] 중환자실 음압격리', value: `${displayData.hv17 ?? '-'}/${displayData.hvs50 ?? '-'}` },
+    { name: '[응급전용] 중환자실 일반격리', value: `${displayData.hv18 ?? '-'}/${displayData.hvs51 ?? '-'}` },
+    { name: '[응급전용] 입원실 음압격리', value: `${displayData.hv19 ?? '-'}/${displayData.hvs52 ?? '-'}` },
+    { name: '[응급전용] 입원실 일반격리', value: `${displayData.hv21 ?? '-'}/${displayData.hvs53 ?? '-'}` },
+    { name: '[응급전용] 중환자실', value: `${displayData.hv31 ?? '-'}/${displayData.hvs05 ?? '-'}` },
+    { name: '[응급전용] 소아중환자실', value: `${displayData.hv33 ?? '-'}/${displayData.hvs10 ?? '-'}` },
+    { name: '[응급전용] 입원실', value: `${displayData.hv36 ?? '-'}/${displayData.hvs19 ?? '-'}` },
+    { name: '[응급전용] 소아입원실', value: `${displayData.hv37 ?? '-'}/${displayData.hvs20 ?? '-'}` }
   ];
 }
 
 function getICUData(displayData) {
   return [
-    { name: '[중환자실] 일반', value: `${displayData.hvicc || '-'}/${displayData.hvs17 || '-'}` },
-    { name: '[중환자실] 내과', value: `${displayData.hv2 || '-'}/${displayData.hvs06 || '-'}` },
-    { name: '[중환자실] 외과', value: `${displayData.hv3 || '-'}/${displayData.hvs07 || '-'}` },
-    { name: '[중환자실] 흉부외과', value: `${displayData.hvccc || '-'}/${displayData.hvs16 || '-'}` },
-    { name: '[중환자실] 신경과', value: `${displayData.hvcc || '-'}/${displayData.hvs11 || '-'}` },
-    { name: '[중환자실] 신경외과', value: `${displayData.hv6 || '-'}/${displayData.hvs12 || '-'}` },
-    { name: '[중환자실] 외상', value: `${displayData.hv9 || '-'}/${displayData.hvs14 || '-'}` },
-    { name: '[중환자실] 화상', value: `${displayData.hv8 || '-'}/${displayData.hvs13 || '-'}` },
-    { name: '[중환자실] 소아', value: `${displayData.hv32 || '-'}/${displayData.hvs09 || '-'}` },
-    { name: '[중환자실] 신생아', value: `${displayData.hvncc || '-'}/${displayData.hvs08 || '-'}` },
-    { name: '[중환자실] 심장내과', value: `${displayData.hv34 || '-'}/${displayData.hvs15 || '-'}` },
-    { name: '[중환자실] 음압격리', value: `${displayData.hv35 || '-'}/${displayData.hvs18 || '-'}` }
+    { name: '[중환자실] 일반', value: `${displayData.hvicc ?? '-'}/${displayData.hvs17 ?? '-'}` },
+    { name: '[중환자실] 내과', value: `${displayData.hv2 ?? '-'}/${displayData.hvs06 ?? '-'}` },
+    { name: '[중환자실] 외과', value: `${displayData.hv3 ?? '-'}/${displayData.hvs07 ?? '-'}` },
+    { name: '[중환자실] 흉부외과', value: `${displayData.hvccc ?? '-'}/${displayData.hvs16 ?? '-'}` },
+    { name: '[중환자실] 신경과', value: `${displayData.hvcc ?? '-'}/${displayData.hvs11 ?? '-'}` },
+    { name: '[중환자실] 신경외과', value: `${displayData.hv6 ?? '-'}/${displayData.hvs12 ?? '-'}` },
+    { name: '[중환자실] 외상', value: `${displayData.hv9 ?? '-'}/${displayData.hvs14 ?? '-'}` },
+    { name: '[중환자실] 화상', value: `${displayData.hv8 ?? '-'}/${displayData.hvs13 ?? '-'}` },
+    { name: '[중환자실] 소아', value: `${displayData.hv32 ?? '-'}/${displayData.hvs09 ?? '-'}` },
+    { name: '[중환자실] 신생아', value: `${displayData.hvncc ?? '-'}/${displayData.hvs08 ?? '-'}` },
+    { name: '[중환자실] 심장내과', value: `${displayData.hv34 ?? '-'}/${displayData.hvs15 ?? '-'}` },
+    { name: '[중환자실] 음압격리', value: `${displayData.hv35 ?? '-'}/${displayData.hvs18 ?? '-'}` }
   ];
 }
 
 function getOtherData(displayData) {
   return [
-    { name: '[입원실] 일반', value: `${displayData.hvgc || '-'}/${displayData.hvs38 || '-'}` },
-    { name: '[입원실] 음압격리', value: `${displayData.hv41 || '-'}/${displayData.hvs25 || '-'}` },
-    { name: '[입원실] 정신과 폐쇄병동', value: `${displayData.hv40 || '-'}/${displayData.hvs24 || '-'}` },
-    { name: '[입원실] 분만실', value: `${displayData.hv42 || '-'}/${displayData.hvs26 || '-'}` },
-    { name: '[기타] 수술실', value: `${displayData.hvoc || '-'}/${displayData.hvs22 || '-'}` }
+    { name: '[입원실] 일반', value: `${displayData.hvgc ?? '-'}/${displayData.hvs38 ?? '-'}` },
+    { name: '[입원실] 음압격리', value: `${displayData.hv41 ?? '-'}/${displayData.hvs25 ?? '-'}` },
+    { name: '[입원실] 정신과 폐쇄병동', value: `${displayData.hv40 ?? '-'}/${displayData.hvs24 ?? '-'}` },
+    { name: '[입원실] 분만실', value: `${displayData.hv42 ?? '-'}/${displayData.hvs26 ?? '-'}` },
+    { name: '[기타] 수술실', value: `${displayData.hvoc ?? '-'}/${displayData.hvs22 ?? '-'}` }
   ];
 }
 
@@ -827,7 +825,7 @@ async function getAIAnswer() {
       "usr_lon": ${usr_lon},
       "usr_lat": ${usr_lat} 
   }
-      다음 사용자 위치정보(usr_location) 사용해 근처 병원의 이름과 좌표를 알려줘야 한다. 단, 사용자의 위치 정보(usr_lon, usr_lat) null인 경우 근처 병원을 추천하지 않고, 병원 정보는 null로 응답한다.
+      다음 사용자 위치정보(usr_location) 사용해 근처 5병원의 이름과 좌표를 알려줘야 한다. 단, 사용자의 위치 정보(usr_lon, usr_lat) null인 경우 근처 병원을 추천하지 않고, 병원 정보는 null로 응답한다.
   3. 사용자의 입력이 병명이나 증상과 관련되지 않은 경우, "병명이나 증상을 입력해주세요."라고 응답한다.
   4. 사용자가 증상을 설명했음에도 추측하기 어렵다면 "해당증상 만으로는 병명을 파악하기 어렵습니다. 더 자세히 설명해주세요" 라고 응답한다.
   응답은 **JSON 형식**이어야 하며, 다음과 같은 구조를 따른다:
