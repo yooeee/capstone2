@@ -1,6 +1,6 @@
 // 기본 지도 설정
 const baseMap = new ol.source.XYZ({
-  url: "http://api.vworld.kr/req/wmts/1.0.0/F9DAD4D2-2AEA-343D-A6AA-CD5521D300EF/Base/{z}/{y}/{x}.png",
+  url: "http://api.vworld.kr/req/wmts/1.0.0/B0AD4088-CA61-382A-8F7F-A4B7CB606909/Base/{z}/{y}/{x}.png",
   crossOrigin: "anonymous",
   transition: 0,
 });
@@ -768,7 +768,7 @@ async function getAIAnswer() {
 
   {
       "result": {
-          "message": "{추측한 병명과 이유}",
+          "message": "{추측한 병명과 이유만 작성한다.}",
           "medical": ${hospitals ? JSON.stringify(hospitals) : "null"}
       }
   }
@@ -807,7 +807,6 @@ async function getAIAnswer() {
             const hospitalsList = jsonResponse.result.medical.map(hospital => `
               <li>${hospital.name} (위도: ${hospital.lat}, 경도: ${hospital.lon})</li>
             `).join('');
-            aiResponse.innerHTML += `<h3>추천 병원:</h3><ul>${hospitalsList}</ul>`;
 
             // 병원 마커 지도에 추가
             addAIHospitalMarkers(jsonResponse.result.medical);
@@ -883,10 +882,8 @@ async function getNearbyHospitals(lat, lon) {
   }
 }
 
-
 function addAIHospitalMarkers(hospitals) {
   removeAllLayer();
-  // ChatGPT 응답 병원 마커를 위한 벡터 소스 및 레이어 생성
   const aiHospitalVectorSource = new ol.source.Vector();
   const aiHospitalVectorLayer = new ol.layer.Vector({
     source: aiHospitalVectorSource,
@@ -894,35 +891,93 @@ function addAIHospitalMarkers(hospitals) {
   });
   map.addLayer(aiHospitalVectorLayer);
 
-
-  
-
   hospitals.forEach(hospital => {
     const { name, lon, lat } = hospital;
     const markerCoords = ol.proj.fromLonLat([parseFloat(lon), parseFloat(lat)]);
 
-    // 마커 생성
     const marker = new ol.Feature({
       geometry: new ol.geom.Point(markerCoords),
       name: "aiHospitalMarker",
       data: hospital,
     });
 
-    // 마커 스타일 정의 (파란색 아이콘)
     marker.setStyle(
       new ol.style.Style({
         image: new ol.style.Icon({
           anchor: [0.5, 1],
-          src: "/images/location.png", // 파란색 병원 아이콘 이미지 경로
+          src: "/images/location.png",
           scale: 0.05,
         }),
       })
     );
 
+    // 팝업 오버레이 생성
+    const popupOverlay = new ol.Overlay({
+      positioning: "bottom-center",
+      stopEvent: true,
+      offset: [0, -10],
+    });
+
+    const popoverDiv = document.createElement("div");
+    popoverDiv.className = "ol-popup-custom";
+    popoverDiv.style.backgroundColor = "white";
+    popoverDiv.style.padding = "5px 10px";
+    popoverDiv.style.border = "1px solid #4096ff";
+    popoverDiv.style.borderRadius = "4px";
+    popoverDiv.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
+    popoverDiv.style.display = "flex";
+    popoverDiv.style.alignItems = "center";
+
+    const nameDiv = document.createElement("div");
+    nameDiv.innerHTML = `<strong style="color: black;">${name}</strong>`;
+    nameDiv.style.marginRight = "10px";
+
+    const routeButton = document.createElement("button");
+    routeButton.textContent = "길찾기";
+    routeButton.style.backgroundColor = "#4096ff";
+    routeButton.style.color = "white";
+    routeButton.style.border = "none";
+    routeButton.style.padding = "5px";
+    routeButton.style.cursor = "pointer";
+    routeButton.style.borderRadius = "4px";
+
+    // 길찾기 버튼 클릭 이벤트
+    routeButton.addEventListener("click", () => {
+      if (myLocation) {
+        // 선택된 마커와 팝업을 제외한 모든 마커와 팝업 제거
+        aiHospitalVectorSource.getFeatures().forEach((feature) => {
+          if (feature !== marker) {
+            aiHospitalVectorSource.removeFeature(feature); // 선택된 마커 외 제거
+          }
+        });
+
+        // 모든 팝업 오버레이 제거
+        map.getOverlays().clear();
+
+        // 선택된 팝업만 다시 추가
+        map.addOverlay(popupOverlay);
+
+        // 선택된 마커에 대해 길찾기 실행
+        getRouteData(myLocation, { latitude: lat, longitude: lon });
+      } else {
+        alert("내 위치를 먼저 조회해주세요.");
+      }
+    });
+
+    popoverDiv.appendChild(nameDiv);
+    popoverDiv.appendChild(routeButton);
+
+    popupOverlay.setElement(popoverDiv);
+    map.addOverlay(popupOverlay);
+    popupOverlay.setPosition(markerCoords);
     aiHospitalVectorSource.addFeature(marker);
   });
 
+  // 모든 마커의 범위로 지도를 맞춤
+  const extent = aiHospitalVectorSource.getExtent();
+  map.getView().fit(extent, { padding: [100, 100, 100, 100] });
 }
+
 
 
 // 지도 모든레이어 삭제
@@ -930,4 +985,5 @@ function removeAllLayer() {
   removeLayer("markerLayer");
   removeLayer("routeLayer");
   removeLayer("aiHospitalLayer");
+  routeInfoDiv.style.display = 'none';
 }

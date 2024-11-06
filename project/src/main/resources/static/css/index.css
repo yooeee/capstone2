@@ -42,16 +42,14 @@ code {
 
 /* 닫기 버튼 */
 .modal-header .btn-close {
-  background-color: #ff5e5e; /* 닫기 버튼을 빨간색으로 변경 */
+  background-color: #0d6efd;
   color: white;
   font-size: 20px;
   border-radius: 50%;
   padding: 5px;
   transition: all 0.3s ease;
 }
-.modal-header .btn-close:hover {
-  background-color: #ff3b3b; /* 호버 시 색상 변화 */
-}
+
 
 /* 모달 본문 */
 .modal-body {
@@ -99,15 +97,11 @@ code {
 }
 
 .modal-footer .btn-secondary {
-  background-color: #2ecc71;
   border: none;
   padding: 8px 16px;
   font-size: 16px;
   border-radius: 8px;
   font-weight: bold;
-}
-.modal-footer .btn-secondary:hover {
-  background-color: #27ae60;
 }
 
 /* 최근 업데이트 시간 스타일 */
