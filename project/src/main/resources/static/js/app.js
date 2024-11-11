@@ -45,7 +45,7 @@ routeInfoDiv.style.right = "10px";
 routeInfoDiv.style.backgroundColor = "#001f3f"; // 남색 배경
 routeInfoDiv.style.color = "#ffffff"; // 흰색 글자
 routeInfoDiv.style.padding = "10px";
-routeInfoDiv.style.borderRadius = "8px";
+routeInfoDiv.style.borderRadius = "4px";
 routeInfoDiv.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
 routeInfoDiv.style.display = "none"; // 처음에는 숨김
 routeInfoDiv.style.zIndex = "1000"; // 지도 요소 위에 표시
@@ -100,7 +100,7 @@ async function search() {
 
   try {
     const serviceKey =
-      "";
+      "Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D";
 
     // URL 및 파라미터 설정
     const params = new URLSearchParams({
@@ -332,10 +332,11 @@ function drawMarkerWithSearch(searchList) {
     popoverDiv.style.backgroundColor = "white";
     popoverDiv.style.padding = "5px 10px";
     popoverDiv.style.border = "1px solid #4096ff";
-    popoverDiv.style.borderRadius = "4px";
+    popoverDiv.style.borderRadius = "50px";
     popoverDiv.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
     popoverDiv.style.display = "flex";
     popoverDiv.style.alignItems = "center";
+    popoverDiv.style.cursor = "pointer";
 
     const nameDiv = document.createElement("div");
     nameDiv.innerHTML = `<strong style="color: black;">${dutyName}</strong>`;
@@ -347,14 +348,26 @@ function drawMarkerWithSearch(searchList) {
     // 마커 클릭 이벤트 - 모달 창 띄우기
     marker.on("click", () => showHospitalModal(item));
 
-    const routeButton = document.createElement("button");
-    routeButton.textContent = "길찾기";
-    routeButton.style.backgroundColor = "#4096ff";
-    routeButton.style.color = "white";
-    routeButton.style.border = "none";
-    routeButton.style.padding = "5px";
-    routeButton.style.cursor = "pointer";
-    routeButton.style.borderRadius = "4px";
+// 길찾기 버튼 생성
+const routeButton = document.createElement("button");
+routeButton.innerHTML = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+  </svg> 도착`;
+routeButton.style.backgroundColor = "#4096ff";
+routeButton.style.color = "white";
+routeButton.style.border = "none";
+routeButton.style.padding = "5px";
+routeButton.style.cursor = "pointer";
+routeButton.style.borderRadius = "50px";
+
+// 아이콘과 텍스트의 수직 가운데 정렬
+routeButton.style.display = "flex";
+routeButton.style.alignItems = "center";
+routeButton.style.gap = "5px"; // 아이콘과 텍스트 사이 여백 조절
+
+
+
 
     // 길찾기 버튼 클릭 이벤트
     routeButton.addEventListener("click", () => {
@@ -453,24 +466,32 @@ async function getRouteData(myLocation, destination) {
     routeVectorSource.addFeature(routeLine);
     map.addLayer(routeVectorLayer);
 
-    // 경로 정보 계산 (거리 및 예상 시간)
-    const totalDistanceInKm = (data.routes[0].sections[0].distance / 1000).toFixed(2);
-    const totalDurationInMinutes = Math.floor(data.routes[0].sections[0].duration / 60);
-    const hours = Math.floor(totalDurationInMinutes / 60);
-    const minutes = totalDurationInMinutes % 60;
-    const totalTime = `${hours > 0 ? `${hours}시간 ` : ''}${minutes}분`;
+   // 경로 정보 계산 (거리 및 예상 시간)
+const totalDistanceInKm = (data.routes[0].sections[0].distance / 1000).toFixed(2);
+const totalDurationInMinutes = Math.floor(data.routes[0].sections[0].duration / 60);
+const hours = Math.floor(totalDurationInMinutes / 60);
+const minutes = totalDurationInMinutes % 60;
+const totalTime = `${hours > 0 ? `${hours}시간 ` : ''}${minutes}분`;
 
-    // 경로 정보 표시
-    routeInfoDiv.style.display = "block";
-    routeInfoDiv.innerHTML = `
-      <strong>총 거리:</strong> ${totalDistanceInKm} km<br>
-      <strong>도착 예상 시간:</strong> ${totalTime}
-    `;
+// 도착 예상 시간을 현재 시간에 더해 계산
+const currentTime = new Date();
+const arrivalTime = new Date(currentTime.getTime() + totalDurationInMinutes * 60000);
+const arrivalHours = arrivalTime.getHours().toString().padStart(2, '0');
+const arrivalMinutes = arrivalTime.getMinutes().toString().padStart(2, '0');
+
+// 경로 정보 표시
+routeInfoDiv.style.display = "block";
+routeInfoDiv.innerHTML = `
+  <strong>총 거리:</strong> ${totalDistanceInKm} km<br>
+  <strong>총 소요시간:</strong> ${hours.toString().padStart(2, '0')}시간 ${minutes.toString().padStart(2, '0')}분<br>
+  <strong>도착 예상 시간:</strong> ${arrivalHours}시 ${arrivalMinutes}분
+`;
+
 
     // 경로의 범위에 맞게 지도 설정
     const routeExtent = routeVectorSource.getExtent();
     map.getView().fit(routeExtent, {
-      padding: [100, 100, 100, 100],
+      padding: [150, 150, 150, 150],
       maxZoom: 16,
     });
 
@@ -682,7 +703,7 @@ function formatDate(date) {
 }
 async function fetchHospitalData(data) {
   try {
-    const serviceKey = "";
+    const serviceKey = "Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D";
     const { sidoData, sigunguData } = extractSidoSigungu(data.dutyAddr);
     const params = new URLSearchParams({
       STAGE1: sidoData,
@@ -923,23 +944,34 @@ function addAIHospitalMarkers(hospitals) {
     popoverDiv.style.backgroundColor = "white";
     popoverDiv.style.padding = "5px 10px";
     popoverDiv.style.border = "1px solid #4096ff";
-    popoverDiv.style.borderRadius = "4px";
+    popoverDiv.style.borderRadius = "50px";
     popoverDiv.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
     popoverDiv.style.display = "flex";
     popoverDiv.style.alignItems = "center";
+    popoverDiv.style.cursor = "pointer";
 
     const nameDiv = document.createElement("div");
     nameDiv.innerHTML = `<strong style="color: black;">${name}</strong>`;
     nameDiv.style.marginRight = "10px";
+// 길찾기 버튼 생성
+const routeButton = document.createElement("button");
+routeButton.innerHTML = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+  </svg> 도착`;
+routeButton.style.backgroundColor = "#4096ff";
+routeButton.style.color = "white";
+routeButton.style.border = "none";
+routeButton.style.padding = "5px";
+routeButton.style.cursor = "pointer";
+routeButton.style.borderRadius = "50px";
 
-    const routeButton = document.createElement("button");
-    routeButton.textContent = "길찾기";
-    routeButton.style.backgroundColor = "#4096ff";
-    routeButton.style.color = "white";
-    routeButton.style.border = "none";
-    routeButton.style.padding = "5px";
-    routeButton.style.cursor = "pointer";
-    routeButton.style.borderRadius = "4px";
+// 아이콘과 텍스트의 수직 가운데 정렬
+routeButton.style.display = "flex";
+routeButton.style.alignItems = "center";
+routeButton.style.gap = "5px"; // 아이콘과 텍스트 사이 여백 조절
+
+
 
     // 길찾기 버튼 클릭 이벤트
     routeButton.addEventListener("click", () => {
