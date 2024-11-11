@@ -5,6 +5,13 @@ const baseMap = new ol.source.XYZ({
   transition: 0,
 });
 
+const markerVectorSource = new ol.source.Vector();
+  const markerVectorLayer = new ol.layer.Vector({
+    source: markerVectorSource,
+    name: "markerLayer",
+  });
+
+
 const locationVectorSource = new ol.source.Vector();
 
 const locationVectorLayer = new ol.layer.Vector({
@@ -193,6 +200,8 @@ function getLocationAndMoveMap() {
 
 // 지도 레이어 삭제
 function removeLayer(name) {
+    // 모든 팝업 오버레이 제거
+    map.getOverlays().clear();
   map.getAllLayers().forEach(layer => {
     if (layer && layer.get('name') == name) {
       map.removeLayer(layer);
@@ -288,11 +297,7 @@ function drawMarkerWithSearch(searchList) {
 
   searchList = Array.isArray(searchList) ? searchList : [searchList];
 
-  const markerVectorSource = new ol.source.Vector();
-  const markerVectorLayer = new ol.layer.Vector({
-    source: markerVectorSource,
-    name: "markerLayer",
-  });
+  
   map.addLayer(markerVectorLayer);
 
   searchList.forEach((item) => {
@@ -371,7 +376,7 @@ routeButton.style.gap = "5px"; // 아이콘과 텍스트 사이 여백 조절
 
     // 길찾기 버튼 클릭 이벤트
     routeButton.addEventListener("click", () => {
-      if (myLocation) {
+      if (myLocation.latitude != null && myLocation.longitude != null) {
         // 선택된 마커와 팝업을 제외한 모든 마커와 팝업 제거
         markerVectorSource.getFeatures().forEach((feature) => {
           if (feature !== marker) {
