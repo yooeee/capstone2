@@ -446,17 +446,16 @@ async function getRouteData(myLocation, destination) {
       geometry: new ol.geom.LineString(routePoints),
       name: "routeLine",
     });
-
     routeLine.setStyle([
       new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: "black",
+          color: "rgb(255, 99, 71)", // 토마토 색상
           width: 7,
         }),
       }),
       new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: "green",
+          color: "rgba(255, 255, 255, 0.7)", // 반투명 흰색
           width: 4,
         }),
       }),
