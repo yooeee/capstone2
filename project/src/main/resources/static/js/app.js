@@ -332,6 +332,7 @@ function drawMarkerWithSearch(searchList) {
       offset: [0, -10],
     });
 
+
     const popoverDiv = document.createElement("div");
     popoverDiv.className = "ol-popup-custom";
     popoverDiv.style.backgroundColor = "white";
@@ -404,6 +405,7 @@ function drawMarkerWithSearch(searchList) {
     popupOverlay.setElement(popoverDiv);
     map.addOverlay(popupOverlay);
     popupOverlay.setPosition(markerCoords);
+  popupOverlay.setOffset([0, 25]); // 팝업 오버레이를 아래로 10px 이동
   });
 
   // 모든 마커의 범위로 지도를 맞춤
@@ -761,7 +763,6 @@ async function fetchHospitalData(data) {
   }
 }
 
-
 async function getAIAnswer() {
   const usr_lat = myLocation.latitude;
   const usr_lon = myLocation.longitude;
@@ -782,27 +783,20 @@ async function getAIAnswer() {
   너는 대한민국 전국 응급의료기관 정보 조회 서비스에서 사용되는 API 역할을 한다. 사용자가 증상과 병명을 입력하면 다음과 같은 방식으로 응답해야 한다:
 
   1. 사용자의 증상을 바탕으로 가능한 병명을 추측하여 제시해야 한다. 추측한 병명과 함께 그 이유도 설명한다.
-  2. 사용자의 위치 정보는 다음과 같다
-  { "usr_location" : {
-      "usr_lon": ${usr_lon},
-      "usr_lat": ${usr_lat} 
-  }}
-  다음 사용자 위치정보(usr_location)를 사용해 근처 5병원의 이름과 좌표를 알려줘야 한다. 단, 사용자의 위치 정보(usr_lon, usr_lat) null인 경우 근처 병원을 추천하지 않고, 병원 정보는 null로 응답한다.
-  3. 사용자의 입력이 병명이나 증상과 관련되지 않은 경우, "병명이나 증상을 입력해주세요."라고 응답한다.
-  4. 사용자가 증상을 설명했음에도 추측하기 어렵다면 "해당 증상 만으로는 병명을 파악하기 어렵습니다. 더 자세히 설명해주세요" 라고 응답한다.
-  응답은 **JSON 형식**이어야 하며, 다음과 같은 구조를 따른다:
-
-  {
-      "result": {
-          "message": "{추측한 병명과 이유만 작성한다.}",
-          "medical": ${hospitals ? JSON.stringify(hospitals) : "null"}
-      }
-  }
-
+  2. 사용자의 입력이 병명이나 증상과 관련되지 않은 경우, "병명이나 증상을 입력해주세요."라고 응답한다.
+  3. 사용자가 증상을 설명했음에도 추측하기 어렵다면 "해당 증상 만으로는 병명을 파악하기 어렵습니다. 더 자세히 설명해주세요" 라고 응답한다.
   사용자가 입력한 내용: ${question}
   `;
 
   console.log(defaultQuestion);
+  const params = {
+    model: "gpt-4",
+    messages: [{ role: "user", content: defaultQuestion }],
+    temperature: 0.2, // 응답의 창의성 조절
+    top_p: 1.0, // nucleus sampling
+    frequency_penalty: 0.0, // 자주 등장하는 단어의 반복 방지
+    presence_penalty: 0.0 // 새로운 주제의 등장 장려
+  };
 
   try {
     const response = await fetch(apiUrl, {
@@ -811,35 +805,26 @@ async function getAIAnswer() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${API_KEY}`,
       },
-      body: JSON.stringify({
-        model: "gpt-4",
-        messages: [{ role: "user", content: defaultQuestion }],
-      }),
+      body: JSON.stringify(params),
     });
 
     if (response.ok) {
       const result = await response.json();
       if (result.choices && result.choices[0].message.content) {
-        try {
-          const jsonResponse = JSON.parse(result.choices[0].message.content);
-          const aiResponse = document.getElementById('aiResponse');
-          console.log(jsonResponse);
-          console.log(typeof jsonResponse);
+        const aiResponse = document.getElementById('aiResponse');
+        aiResponse.innerHTML = result.choices[0].message.content; // 응답을 aiResponse에 직접 할당
 
-          aiResponse.innerHTML = jsonResponse.result.message;
+        // 병원 정보 표시
+        // if (result.choices[0].message.medical) {
+        //   const hospitalsList = result.choices[0].message.medical.map(hospital => `
+        //     <li>${hospital.name} (위도: ${hospital.lat}, 경도: ${hospital.lon})</li>
+        //   `).join('');
 
-          // 병원 정보 표시
-          if (jsonResponse.result.medical) {
-            const hospitalsList = jsonResponse.result.medical.map(hospital => `
-              <li>${hospital.name} (위도: ${hospital.lat}, 경도: ${hospital.lon})</li>
-            `).join('');
-
-            // 병원 마커 지도에 추가
-            addAIHospitalMarkers(jsonResponse.result.medical);
-          }
-        } catch (parseError) {
-          console.error("JSON 파싱 오류:", parseError);
-          document.getElementById('aiResponse').innerHTML = "응답 데이터를 처리하는 중 오류가 발생했습니다.";
+        //   // 병원 마커 지도에 추가
+        //   addAIHospitalMarkers(result.choices[0].message.medical);
+        // }
+        if(hospitals){
+          addAIHospitalMarkers(hospitals);
         }
       } else {
         console.log("응답 받은 값이 없음.");
@@ -857,7 +842,6 @@ async function getAIAnswer() {
 }
 
 
-
 function extractSidoSigungu(dutyAddr) {
   const addrParts = dutyAddr.split(' ');
 
@@ -871,6 +855,7 @@ function extractSidoSigungu(dutyAddr) {
 async function getNearbyHospitals(lat, lon) {
   const radius = 5000; // 반경 5km
   const overpassUrl = "https://overpass-api.de/api/interpreter";
+  
 
   const query = `
     [out:json];
