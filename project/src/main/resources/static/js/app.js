@@ -441,22 +441,22 @@ async function getRouteData(myLocation, destination) {
       routePoints.push(ol.proj.fromLonLat([vertexes[i], vertexes[i + 1]]));
     }
 
-    // 경로 라인 생성
-    const routeLine = new ol.Feature({
+     // 경로 라인 생성
+     const routeLine = new ol.Feature({
       geometry: new ol.geom.LineString(routePoints),
       name: "routeLine",
     });
     routeLine.setStyle([
       new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: "rgb(255, 99, 71)", // 토마토 색상
-          width: 7,
+          color: "rgb(0, 123, 255)", // 파란색으로 변경하여 더 직관적으로
+          width: 8, // 두께를 약간 증가시켜 시각적으로 강조
         }),
       }),
       new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: "rgba(255, 255, 255, 0.7)", // 반투명 흰색
-          width: 4,
+          color: "rgba(0, 123, 255, 0.5)", // 반투명 파란색으로 변경
+          width: 5, // 두께를 약간 증가시켜 시각적으로 강조
         }),
       }),
     ]);
