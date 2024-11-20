@@ -16,12 +16,11 @@
     <div class="container-fluid h-100">
         <div class="row h-100">
             <!-- 사이드바 메뉴 -->
-            <div class="col-3 d-flex flex-column p-3" style="max-width: 300px; background-color: #001f3f; color: white;">
-                <h6 class="text-center mb-4">전국 응급의료기관 정보 조회</h6>
+            <div class="col-3 d-flex flex-column p-3" style="max-width: 300px; background-color: #ffffff; color: white;">
 
                 <!-- 시도 및 시군구 선택 -->
                 <div class="mb-3">
-                    <label for="sido-select" class="form-label" style="color: #cfd8dc;">시도 선택</label>
+                    <label for="sido-select" class="form-label" style="color: #000000; font-weight: bold;">시도 선택</label>
                     <select id="sido-select" class="form-select">
                         <option value="sido" disabled selected>시도 선택</option>
                         <option value="">전체</option>
@@ -51,17 +50,18 @@
 
                   <!-- 분류 선택 -->
                   <div class="sidemenu-select-box mb-3">
-                    <label for="urlType-select" class="form-label" style="color: #cfd8dc;">분류 선택</label>
+                    <label for="urlType-select" class="form-label" style="color: #000000; font-weight: bold;">분류 선택</label>
                     <select id="urlTypeSelect" class="form-select" onchange="setUrlType(this.value)">
                         <option value="getEgytListInfoInqire" selected>응급의료기관 목록정보 조회</option>
                         <option value="getStrmListInfoInqire">외상센터 목록정보 조회</option>
+                        <option value="getHsptlMdcncListInfoInqire">병‧의원 목록정보 조회</option>
                         <!-- 추가 분류 옵션을 여기에 추가 -->
                     </select>
                 </div>
 
                 <!-- 기관명 검색 -->
                 <div class="mb-3">
-                    <label for="search-input" class="form-label" style="color: #cfd8dc;">기관명 검색</label>
+                    <label for="search-input" class="form-label" style="color: #000000; font-weight: bold;">기관명 검색</label>
                     <div class="input-group">
                         <input type="text" id="searchInput" class="form-control" placeholder="기관명을 입력하세요">
                         <button id="searchBtn" class="btn btn-primary">검색</button>
@@ -71,29 +71,23 @@
 
                 <!-- AI 결과 응답 창 -->
                 <div class="mb-3" style="max-height: 150px;">
-                    <label class="form-label" style="color: #cfd8dc;">AI 응답</label>
-                    <div id="aiResponse" class="alert alert-info" style="background-color: #00264d; color: #cfd8dc; border: none; overflow-y: auto; max-height: 120px; height: 120px;">
+                    <label class="form-label" style="color: #000000; font-weight: bold; ">진단 AI</label>
+                    <div id="aiResponse" class="alert alert-info" style="background-color: #ffffff; border-color: rgb(189, 186, 186); color: #000000;  overflow-y: auto; max-height: 120px; height: 120px;">
                         AI의 응답이 표시됩니다.
                     </div>
                 </div>
 
                 <!-- AI 결과 입력 창 -->
                 <div class="mb-3">
-                    <label for="aiInput" class="form-label" style="color: #cfd8dc;">AI 질문 입력</label>
-                    <textarea id="aiInput" class="form-control" rows="3" placeholder="현재 느끼는 증상을 입력해 주세요."></textarea>
-                </div>
+                  <div class="input-group">
+                      <input type="text" id="aiInput" class="form-control" placeholder="증상을 입력하세요">
+                      <button id="aiBtn" class="btn btn-primary">질문</button>
+                      <button id="loadingBtn" style="display: none;" class="btn btn-primary" type="button" disabled>분석중</button>
+                  </div>
+              </div>
 
-                <!-- AI 입력 전송 버튼 -->
-                <button id="aiBtn" class="btn btn-primary w-100">
-                    <span  class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                    질문하기
-                </button>
-                <button id="loadingBtn"  style="display: none;" class="btn btn-primary" type="button" disabled>
-                    <span  class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    분석중
-                </button>
 
-                <div class="text-center mt-auto pt-3" style="color: #cfd8dc;">
+                <div class="text-center mt-auto pt-3" style="color: #000000;">
                     <small>Copyright © 2024</small>
                 </div>
             </div>
@@ -129,24 +123,33 @@
       </div>
     </div>
   </div>
+
+
+
+
   
   <!-- Specialty Modal -->
 <div class="modal fade" id="specialtyModal" tabindex="-1" aria-labelledby="specialtyModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="specialtyModalLabel">병원 세부 정보</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header text-white">
+        <h5 class="modal-title" id="specialtyModalLabel">병원 세부 정보</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="info-item">
+          <p><strong>병원 이름:</strong> <span id="modalDutyName">정보 없음</span></p>
+          <p><strong>주소:</strong> <span id="modalDutyAddr">정보 없음</span></p>
+          <p><strong>전화번호:</strong> <span id="modalDutyTel1">정보 없음</span></p>
+          <p><strong>진료 과목:</strong> <span id="modalDgidIdName">정보 없음</span></p>
         </div>
-        <div class="modal-body" id="specialtyModalBody">
-          <!-- 동적으로 채워질 내용 -->
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
       </div>
     </div>
   </div>
+</div>
 
   
 

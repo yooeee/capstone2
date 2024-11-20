@@ -8,8 +8,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   height: 100vh;
   overflow: hidden;
-  background-color: #001f3f; /* 전체 배경 남색 */
-  color: white;
+  background-color: #ffffff; /* 배경을 흰색으로 */
+  color: #000000; /* 텍스트를 검은색으로 */
 }
 
 code {
@@ -26,11 +26,11 @@ code {
 
 /* 모달 헤더 */
 .modal-header {
-  background-color: #001f3f; /* 기존 헤더 배경 유지 */
-  color: white;
+  background-color: #ffffff; /* 배경을 흰색으로 변경 */
+  color: #000000; /* 텍스트 색상 검은색으로 */
   padding: 24px;
   position: relative;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* 모달 제목 */
@@ -38,25 +38,25 @@ code {
   font-size: 28px;
   font-weight: bold;
   margin: 0;
+  color: #000000; /* 텍스트 색상 검은색으로 */
 }
 
 /* 닫기 버튼 */
 .modal-header .btn-close {
   background-color: #0d6efd;
-  color: white;
+  color: #ffffff;
   font-size: 20px;
   border-radius: 50%;
   padding: 5px;
   transition: all 0.3s ease;
 }
 
-
 /* 모달 본문 */
 .modal-body {
   padding: 24px;
-  background-color: #f8f9fa; /* 기존 본문 배경 유지 */
-  color: black;
-  border-radius: 0 0 20px 20px; /* 아래 모서리 둥글게 */
+  background-color: #ffffff; /* 배경을 흰색으로 변경 */
+  color: #000000; /* 텍스트 색상 검은색으로 */
+  border-radius: 0 0 20px 20px;
 }
 
 /* 정보 항목 스타일 */
@@ -65,6 +65,7 @@ code {
   margin-bottom: 16px;
   border-bottom: 1px solid #ddd;
 }
+
 .info-item .info-label {
   font-weight: bold;
   color: #3498db;
@@ -77,31 +78,24 @@ code {
   padding: 0;
   margin: 0;
 }
+
 .modal-body li {
   padding: 8px;
   border-radius: 8px;
   background-color: #eef2f5;
   margin-bottom: 5px;
-  color: #2c3e50;
+  color: #000000; /* 텍스트 색상 검은색으로 */
   font-weight: 500;
 }
 
 /* 모달 푸터 */
 .modal-footer {
-  background-color: #001f3f;
-  color: white;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: #ffffff; /* 배경을 흰색으로 변경 */
+  color: #000000; /* 텍스트 색상 검은색으로 */
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding: 16px;
   display: flex;
   justify-content: flex-end;
-}
-
-.modal-footer .btn-secondary {
-  border: none;
-  padding: 8px 16px;
-  font-size: 16px;
-  border-radius: 8px;
-  font-weight: bold;
 }
 
 /* 최근 업데이트 시간 스타일 */
@@ -121,54 +115,47 @@ code {
 .ol-map-container {
   width: 100%;
   height: calc(100vh - 0px);
-  position: relative; /* 내 위치 조회 버튼 배치를 위해 필요 */
+  position: relative;
 }
 
-/* 내 위치 조회 버튼 스타일 */
 .location-button {
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: #001f3f;
-  color: white;
+  background-color: #ffffff;
+  border-color: rgb(189, 186, 186);
+  color: rgb(0, 0, 0); /* 텍스트 검은색 */
+  font-weight: bold;
   border: none;
   padding: 10px 15px;
   border-radius: 5px;
   cursor: pointer;
   font-size: 14px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000; /* 지도 위에 표시되도록 우선순위 설정 */
+  z-index: 1000;
 }
 
-.location-button:hover {
-  background-color: #003366;
-}
+
 
 /* SideMenu Styles */
 .sidemenu-box {
   margin: 5%;
 }
 
-/* 사이드바와 메인 콘텐츠 영역 스타일 */
 .sidebar-content, .main-content {
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  color: #001f3f;
+  color: #000000; /* 텍스트 색상 검은색으로 */
 }
 
 .logo {
   font-size: 16px;
   height: 32px;
   margin: 16px;
-  color: white;
+  color: #000000; /* 텍스트 색상 검은색으로 */
   text-align: center;
   font-weight: bolder;
-}
-
-.sidemenu-admcode {
-  display: flex;
-  margin: 16px;
 }
 
 .sidemenu-admcode .sdsgg {
@@ -176,8 +163,6 @@ code {
   width: auto;
   max-width: 100%;
 }
-
-
 
 .sidemenu-search-box {
   display: flex;
@@ -192,7 +177,7 @@ code {
 .result-list {
   margin: 5%;
   border: whitesmoke 1px solid;
-  color: white;
+  color: #000000; /* 텍스트 색상 검은색으로 */
 }
 
 .sidemenu-footer {
@@ -200,8 +185,8 @@ code {
   bottom: 0;
   width: 100%;
   padding: 16px;
-  background: #001529;
-  color: white;
+  background: #ffffff; /* 배경을 흰색으로 변경 */
+  color: #000000; /* 텍스트 색상 검은색으로 */
   text-align: center;
 }
 
@@ -214,30 +199,51 @@ code {
 /* TopBar Styles */
 .site-layout-background {
   padding: 0;
-  background: #fff;
+  background: #ffffff; /* 배경을 흰색으로 변경 */
 }
 
 .topbar-title {
   margin-left: 20px;
   font-size: 18px;
+  color: #000000; /* 텍스트 색상 검은색으로 */
 }
+
 /* 상태에 따른 색상 클래스 */
 .card-busy {
   background-color: #e74c3c; /* 빨강 - 혼잡 */
-  color: white;
+  color: #000000; /* 텍스트 색상 검은색으로 */
 }
 
 .card-normal {
   background-color: #f1c40f; /* 노랑 - 보통 */
-  color: white;
+  color: #000000; /* 텍스트 색상 검은색으로 */
 }
 
 .card-available {
   background-color: #3498db; /* 파랑 - 여유 */
-  color: white;
+  color: #000000; /* 텍스트 색상 검은색으로 */
 }
 
 .card-no-data {
   background-color: #95a5a6; /* 회색 - 데이터 없음 */
-  color: white;
+  color: #000000; /* 텍스트 색상 검은색으로 */
+}
+
+.modal2-header {
+  border-bottom: 1px solid #ddd;
+}
+
+.modal2-body .info-item p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #000000; /* 텍스트 색상 검은색으로 */
+}
+
+.modal2-body .info-item p strong {
+  color: #000000; /* 텍스트 색상 검은색으로 */
+}
+
+.modal2-footer {
+  border-top: 1px solid #ddd;
 }

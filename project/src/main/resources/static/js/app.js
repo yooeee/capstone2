@@ -101,7 +101,7 @@ async function search() {
   const sigunguSelect = document.getElementById("sigungu-select");
   const searchInput = document.getElementById("searchInput");
   const urlType = document.getElementById("urlTypeSelect");
-
+  let url = "";
   if (sidoSelect.value === "sido" || sigunguSelect.value === "sigungu") {
     alert("지역을 선택해주세요.");
     return false;
@@ -120,7 +120,12 @@ async function search() {
       QN: searchInput.value,
     });
 
-    const url = `https://apis.data.go.kr/B552657/ErmctInfoInqireService/${urlType.value}?serviceKey=${serviceKey}&${params.toString()}`;
+    if(urlType.value === "getHsptlMdcncListInfoInqire"){
+      getHospitals(sidoSelect.value, sigunguSelect.value);
+      return;
+    }
+
+    url = `https://apis.data.go.kr/B552657/ErmctInfoInqireService/${urlType.value}?serviceKey=${serviceKey}&${params.toString()}`;
 
     const response = await fetch(url, {
       headers: {
@@ -686,6 +691,7 @@ function createBedCardsSection(title, data) {
 
   return `
     <h6>${title}</h6>
+    <hr>
     <div class="row">${cards}</div>
   `;
 }
@@ -773,32 +779,24 @@ ${createBedCardsSection('기타', getOtherData(displayData))}
 
 // 병원 세부 진료과 정보 표시 함수
 function showSpecialtyModal(jsonData) {
-  // 필요한 데이터 추출
+  // 데이터가 없을 경우 기본값 설정
   const dgidIdName = jsonData.dgidIdName || "정보 없음";
   const dutyAddr = jsonData.dutyAddr || "정보 없음";
   const dutyName = jsonData.dutyName || "정보 없음";
   const dutyTel1 = jsonData.dutyTel1 || "정보 없음";
 
-  // 모달 헤더 설정
+  // 각 HTML 요소에 데이터 삽입
   document.getElementById("specialtyModalLabel").innerText = dutyName || "병원 세부 정보";
-
-  // 모달 본문 HTML 생성
-  const modalBodyContent = `
-    <div class="info-item">
-      <p><strong>병원 이름:</strong> ${dutyName}</p>
-      <p><strong>주소:</strong> ${dutyAddr}</p>
-      <p><strong>전화번호:</strong> ${dutyTel1}</p>
-      <p><strong>진료 과목:</strong> ${dgidIdName}</p>
-    </div>
-  `;
-
-  // 모달 본문에 삽입
-  document.getElementById("specialtyModalBody").innerHTML = modalBodyContent;
+  document.getElementById("modalDutyName").innerText = dutyName;
+  document.getElementById("modalDutyAddr").innerText = dutyAddr;
+  document.getElementById("modalDutyTel1").innerText = dutyTel1;
+  document.getElementById("modalDgidIdName").innerText = dgidIdName;
 
   // 모달 표시
   const specialtyModal = new bootstrap.Modal(document.getElementById("specialtyModal"));
   specialtyModal.show();
 }
+
 
 
 // 병상 정보 데이터 섹션 생성 함수
