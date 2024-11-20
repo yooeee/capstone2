@@ -11,7 +11,6 @@ const markerVectorLayer = new ol.layer.Vector({
   name: "markerLayer",
 });
 
-
 const locationVectorSource = new ol.source.Vector();
 
 const locationVectorLayer = new ol.layer.Vector({
@@ -20,7 +19,7 @@ const locationVectorLayer = new ol.layer.Vector({
 });
 
 const map = new ol.Map({
-  target: 'map',
+  target: "map",
   layers: [
     new ol.layer.Tile({
       source: baseMap,
@@ -39,17 +38,19 @@ let myLocation = {
   longitude: null,
   latitude: null,
   city: null,
-  borough : null
+  borough: null,
 };
 
 // Bootstrap 모달 객체 생성
-const hospitalModal = new bootstrap.Modal(document.getElementById('hospitalModal'));
+const hospitalModal = new bootstrap.Modal(
+  document.getElementById("hospitalModal")
+);
 
 // 경로 정보 표시용 div 추가 (지도 우측 하단에 위치)
 const routeInfoDiv = document.createElement("div");
 routeInfoDiv.className = "route-info-div";
 routeInfoDiv.style.position = "absolute";
-routeInfoDiv.style.bottom = "10px";  // 하단으로 위치 변경
+routeInfoDiv.style.bottom = "10px"; // 하단으로 위치 변경
 routeInfoDiv.style.right = "10px";
 routeInfoDiv.style.backgroundColor = "#001f3f"; // 남색 배경
 routeInfoDiv.style.color = "#ffffff"; // 흰색 글자
@@ -60,8 +61,7 @@ routeInfoDiv.style.display = "none"; // 처음에는 숨김
 routeInfoDiv.style.zIndex = "1000"; // 지도 요소 위에 표시
 document.getElementById("map").appendChild(routeInfoDiv);
 
-
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   init();
   setEvent();
 });
@@ -71,9 +71,8 @@ function init() {
 }
 
 function setEvent() {
-
   // 내 위치조회 버튼
-  document.getElementById('locationBtn').addEventListener('click', () => {
+  document.getElementById("locationBtn").addEventListener("click", () => {
     getLocationAndMoveMap();
   });
 
@@ -83,18 +82,15 @@ function setEvent() {
     getSigunguData(selectedBjcd);
   });
 
-  document.getElementById('searchBtn').addEventListener('click', () => {
+  document.getElementById("searchBtn").addEventListener("click", () => {
     search();
   });
 
-  document.getElementById('aiBtn').addEventListener('click', (e) => {
-    e.target.style.display = 'none';
-    document.getElementById('loadingBtn').style.display = 'block';
+  document.getElementById("aiBtn").addEventListener("click", (e) => {
+    e.target.style.display = "none";
+    document.getElementById("loadingBtn").style.display = "block";
     getAIAnswer();
-  })
-
-
-
+  });
 }
 async function search() {
   const sidoSelect = document.getElementById("sido-select");
@@ -120,17 +116,19 @@ async function search() {
       QN: searchInput.value,
     });
 
-    if(urlType.value === "getHsptlMdcncListInfoInqire"){
+    if (urlType.value === "getHsptlMdcncListInfoInqire") {
       getHospitals(sidoSelect.value, sigunguSelect.value);
       return;
     }
 
-    url = `https://apis.data.go.kr/B552657/ErmctInfoInqireService/${urlType.value}?serviceKey=${serviceKey}&${params.toString()}`;
+    url = `https://apis.data.go.kr/B552657/ErmctInfoInqireService/${
+      urlType.value
+    }?serviceKey=${serviceKey}&${params.toString()}`;
 
     const response = await fetch(url, {
       headers: {
-        "Accept": "application/json" // JSON 응답을 요청하는 헤더
-      }
+        Accept: "application/json", // JSON 응답을 요청하는 헤더
+      },
     });
 
     if (!response.ok) {
@@ -150,8 +148,6 @@ async function search() {
     console.error("Error fetching the data:", error);
   }
 }
-
-
 
 // 현재 위치 조회 및 지도에 표시
 function getLocationAndMoveMap() {
@@ -175,8 +171,8 @@ function getLocationAndMoveMap() {
       const locationMarkerStyle = new ol.style.Style({
         image: new ol.style.Circle({
           radius: 6,
-          fill: new ol.style.Fill({ color: 'red' }),
-          stroke: new ol.style.Stroke({ color: 'white', width: 2 }),
+          fill: new ol.style.Fill({ color: "red" }),
+          stroke: new ol.style.Stroke({ color: "white", width: 2 }),
         }),
       });
 
@@ -216,7 +212,7 @@ async function fetchAddressFromNominatim(latitude, longitude) {
     const data = await response.json();
 
     if (data.address) {
-      const { city, borough } = data.address; 
+      const { city, borough } = data.address;
       myLocation.city = city;
       myLocation.borough = borough;
       console.log(myLocation);
@@ -228,24 +224,22 @@ async function fetchAddressFromNominatim(latitude, longitude) {
   }
 }
 
-
 // 지도 레이어 삭제
 function removeLayer(name) {
   // 모든 팝업 오버레이 제거
   map.getOverlays().clear();
-  map.getAllLayers().forEach(layer => {
-    if (layer && layer.get('name') == name) {
+  map.getAllLayers().forEach((layer) => {
+    if (layer && layer.get("name") == name) {
       map.removeLayer(layer);
     }
   });
-
 }
 // 시군구 옵션 업데이트 함수
 function setSigunguOptions(sigunguList) {
   const sigunguSelect = document.getElementById("sigungu-select");
 
   // 기존 옵션을 모두 삭제
-  sigunguSelect.innerHTML = '';
+  sigunguSelect.innerHTML = "";
 
   // 기본 "전체" 옵션 추가
   const defaultOption = document.createElement("option");
@@ -289,7 +283,6 @@ async function getSigunguData(bjcd) {
   }
 }
 
-
 // XML 문자열을 JSON으로 변환하는 함수
 function xmlToJson(xml) {
   const obj = {};
@@ -302,7 +295,8 @@ function xmlToJson(xml) {
   // XML 요소가 있는 경우
   if (xml.nodeType === 1 && xml.childNodes.length > 0) {
     for (const child of xml.childNodes) {
-      if (child.nodeType === 1) { // ELEMENT_NODE
+      if (child.nodeType === 1) {
+        // ELEMENT_NODE
         const childName = child.nodeName;
         const childJson = xmlToJson(child);
 
@@ -327,7 +321,6 @@ function drawMarkerWithSearch(searchList) {
   removeAllLayer();
 
   searchList = Array.isArray(searchList) ? searchList : [searchList];
-
 
   map.addLayer(markerVectorLayer);
 
@@ -362,7 +355,6 @@ function drawMarkerWithSearch(searchList) {
       stopEvent: true,
       offset: [0, -10],
     });
-
 
     const popoverDiv = document.createElement("div");
     popoverDiv.className = "ol-popup-custom";
@@ -403,9 +395,6 @@ function drawMarkerWithSearch(searchList) {
     routeButton.style.alignItems = "center";
     routeButton.style.gap = "5px"; // 아이콘과 텍스트 사이 여백 조절
 
-
-
-
     // 길찾기 버튼 클릭 이벤트
     routeButton.addEventListener("click", () => {
       if (myLocation.latitude != null && myLocation.longitude != null) {
@@ -436,7 +425,7 @@ function drawMarkerWithSearch(searchList) {
     popupOverlay.setElement(popoverDiv);
     map.addOverlay(popupOverlay);
     popupOverlay.setPosition(markerCoords);
-  popupOverlay.setOffset([0, 25]); // 팝업 오버레이를 아래로 10px 이동
+    popupOverlay.setOffset([0, 25]); // 팝업 오버레이를 아래로 10px 이동
   });
 
   // 모든 마커의 범위로 지도를 맞춤
@@ -444,14 +433,12 @@ function drawMarkerWithSearch(searchList) {
   map.getView().fit(extent, { padding: [100, 100, 100, 100] });
 }
 
-
 // 검색결과 마커 그리기 함수
 function drawMarkerWithAiAnswer(searchList) {
   // 기존 마커 레이어 제거
   removeAllLayer();
 
   searchList = Array.isArray(searchList) ? searchList : [searchList];
-
 
   map.addLayer(markerVectorLayer);
 
@@ -486,7 +473,6 @@ function drawMarkerWithAiAnswer(searchList) {
       stopEvent: true,
       offset: [0, -10],
     });
-
 
     const popoverDiv = document.createElement("div");
     popoverDiv.className = "ol-popup-custom";
@@ -527,9 +513,6 @@ function drawMarkerWithAiAnswer(searchList) {
     routeButton.style.alignItems = "center";
     routeButton.style.gap = "5px"; // 아이콘과 텍스트 사이 여백 조절
 
-
-
-
     // 길찾기 버튼 클릭 이벤트
     routeButton.addEventListener("click", () => {
       if (myLocation.latitude != null && myLocation.longitude != null) {
@@ -560,14 +543,13 @@ function drawMarkerWithAiAnswer(searchList) {
     popupOverlay.setElement(popoverDiv);
     map.addOverlay(popupOverlay);
     popupOverlay.setPosition(markerCoords);
-  popupOverlay.setOffset([0, 25]); // 팝업 오버레이를 아래로 10px 이동
+    popupOverlay.setOffset([0, 25]); // 팝업 오버레이를 아래로 10px 이동
   });
 
   // 모든 마커의 범위로 지도를 맞춤
   const extent = markerVectorSource.getExtent();
   map.getView().fit(extent, { padding: [100, 100, 100, 100] });
 }
-
 
 // 경로 데이터를 가져와 지도에 표시하고, 경로 정보를 routeInfoDiv에 업데이트
 async function getRouteData(myLocation, destination) {
@@ -590,13 +572,15 @@ async function getRouteData(myLocation, destination) {
     let routePoints = [];
 
     // 경로 데이터를 기반으로 좌표 추출
-    const vertexes = data.routes[0].sections[0].roads.flatMap((road) => road.vertexes);
+    const vertexes = data.routes[0].sections[0].roads.flatMap(
+      (road) => road.vertexes
+    );
     for (let i = 0; i < vertexes.length; i += 2) {
       routePoints.push(ol.proj.fromLonLat([vertexes[i], vertexes[i + 1]]));
     }
 
-     // 경로 라인 생성
-     const routeLine = new ol.Feature({
+    // 경로 라인 생성
+    const routeLine = new ol.Feature({
       geometry: new ol.geom.LineString(routePoints),
       name: "routeLine",
     });
@@ -627,26 +611,33 @@ async function getRouteData(myLocation, destination) {
     map.addLayer(routeVectorLayer);
 
     // 경로 정보 계산 (거리 및 예상 시간)
-    const totalDistanceInKm = (data.routes[0].sections[0].distance / 1000).toFixed(2);
-    const totalDurationInMinutes = Math.floor(data.routes[0].sections[0].duration / 60);
+    const totalDistanceInKm = (
+      data.routes[0].sections[0].distance / 1000
+    ).toFixed(2);
+    const totalDurationInMinutes = Math.floor(
+      data.routes[0].sections[0].duration / 60
+    );
     const hours = Math.floor(totalDurationInMinutes / 60);
     const minutes = totalDurationInMinutes % 60;
-    const totalTime = `${hours > 0 ? `${hours}시간 ` : ''}${minutes}분`;
+    const totalTime = `${hours > 0 ? `${hours}시간 ` : ""}${minutes}분`;
 
     // 도착 예상 시간을 현재 시간에 더해 계산
     const currentTime = new Date();
-    const arrivalTime = new Date(currentTime.getTime() + totalDurationInMinutes * 60000);
-    const arrivalHours = arrivalTime.getHours().toString().padStart(2, '0');
-    const arrivalMinutes = arrivalTime.getMinutes().toString().padStart(2, '0');
+    const arrivalTime = new Date(
+      currentTime.getTime() + totalDurationInMinutes * 60000
+    );
+    const arrivalHours = arrivalTime.getHours().toString().padStart(2, "0");
+    const arrivalMinutes = arrivalTime.getMinutes().toString().padStart(2, "0");
 
     // 경로 정보 표시
     routeInfoDiv.style.display = "block";
     routeInfoDiv.innerHTML = `
   <strong>총 거리:</strong> ${totalDistanceInKm} km<br>
-  <strong>총 소요시간:</strong> ${hours.toString().padStart(2, '0')}시간 ${minutes.toString().padStart(2, '0')}분<br>
+  <strong>총 소요시간:</strong> ${hours
+    .toString()
+    .padStart(2, "0")}시간 ${minutes.toString().padStart(2, "0")}분<br>
   <strong>도착 예상 시간:</strong> ${arrivalHours}시 ${arrivalMinutes}분
 `;
-
 
     // 경로의 범위에 맞게 지도 설정
     const routeExtent = routeVectorSource.getExtent();
@@ -654,30 +645,30 @@ async function getRouteData(myLocation, destination) {
       padding: [150, 150, 150, 150],
       maxZoom: 16,
     });
-
   } catch (error) {
     console.error("Error fetching route data:", error);
   }
 }
 
-
-
 // 병상 가용 상태에 따른 CSS 클래스를 반환하는 함수
 function getBedAvailabilityClass(available, total) {
-  if (total === 0 || available === '-' || total === '-') return 'card-no-data';  // 데이터 없음 또는 사용 불가
+  if (total === 0 || available === "-" || total === "-") return "card-no-data"; // 데이터 없음 또는 사용 불가
   const rate = (available / total) * 100;
 
-  if (rate <= 20) return 'card-busy';       // 혼잡 (빨강)
-  if (rate <= 60) return 'card-normal';     // 보통 (노랑)
-  return 'card-available';                  // 여유 (파랑)
+  if (rate <= 20) return "card-busy"; // 혼잡 (빨강)
+  if (rate <= 60) return "card-normal"; // 보통 (노랑)
+  return "card-available"; // 여유 (파랑)
 }
 // 병상 정보를 가로로 나열된 카드로 생성하는 함수
 function createBedCardsSection(title, data) {
-  const cards = data.map((bed) => {
-    const [available, total] = bed.value.split('/').map(val => isNaN(Number(val)) ? '-' : Number(val));
-    const cardClass = getBedAvailabilityClass(available, total);
+  const cards = data
+    .map((bed) => {
+      const [available, total] = bed.value
+        .split("/")
+        .map((val) => (isNaN(Number(val)) ? "-" : Number(val)));
+      const cardClass = getBedAvailabilityClass(available, total);
 
-    return `
+      return `
       <div class="col-md-4 mb-3">
         <div class="card ${cardClass}">
           <div class="card-body text-center">
@@ -687,7 +678,8 @@ function createBedCardsSection(title, data) {
         </div>
       </div>
     `;
-  }).join('');
+    })
+    .join("");
 
   return `
     <h6>${title}</h6>
@@ -702,16 +694,19 @@ function showHospitalModal(item) {
     const displayData = data || item;
 
     // 모달 헤더 설정
-    document.getElementById('hospitalModalLabel').innerText = displayData.dutyName || '병원 정보';
+    document.getElementById("hospitalModalLabel").innerText =
+      displayData.dutyName || "병원 정보";
 
     // 기본 정보 HTML 생성
     const modalBodyContent = `
           <div class="info-item">
-              <p><strong>주소:</strong> ${item.dutyAddr || '-'}</p>
-              <p><strong>응급실:</strong> ${displayData.dutyTel3 || '-'}</p>
-              <p><strong>당직의:</strong> ${displayData.hv1 || '-'}</p>
-              <p><strong>소아 당직의:</strong> ${displayData.hv12 || '-'}</p>
-              <p><strong>최근 업데이트 시간:</strong> ${formatDate(displayData.hvidate) || '-'}</p>
+              <p><strong>주소:</strong> ${item.dutyAddr || "-"}</p>
+              <p><strong>응급실:</strong> ${displayData.dutyTel3 || "-"}</p>
+              <p><strong>당직의:</strong> ${displayData.hv1 || "-"}</p>
+              <p><strong>소아 당직의:</strong> ${displayData.hv12 || "-"}</p>
+              <p><strong>최근 업데이트 시간:</strong> ${
+                formatDate(displayData.hvidate) || "-"
+              }</p>
           </div>
       `;
 
@@ -727,7 +722,7 @@ function showHospitalModal(item) {
       { label: "ECMO 가용", available: displayData.hvecmoayn },
       { label: "고압산소치료기 가용", available: displayData.hvoxyayn },
       { label: "중심체온조절유도기 가용", available: displayData.hvhypoayn },
-      { label: "구급차 가용", available: displayData.hvamyn }
+      { label: "구급차 가용", available: displayData.hvamyn },
     ];
 
     const equipmentAvailability = `
@@ -737,14 +732,26 @@ function showHospitalModal(item) {
               </div>
               <div class="card-body">
                   <ul class="list-group list-group-flush">
-                      ${equipmentList.map(equipment => `
+                      ${equipmentList
+                        .map(
+                          (equipment) => `
                           <li class="list-group-item d-flex justify-content-between align-items-center">
                               ${equipment.label}
-                              <span class="badge bg-${equipment.available === 'Y' ? 'success' : 'danger'}">
-                                  ${equipment.available === 'Y' ? '사용 가능' : '사용 불가'}
+                              <span class="badge bg-${
+                                equipment.available === "Y"
+                                  ? "success"
+                                  : "danger"
+                              }">
+                                  ${
+                                    equipment.available === "Y"
+                                      ? "사용 가능"
+                                      : "사용 불가"
+                                  }
                               </span>
                           </li>
-                      `).join('')}
+                      `
+                        )
+                        .join("")}
                   </ul>
               </div>
           </div>
@@ -761,18 +768,20 @@ function showHospitalModal(item) {
     <span class="badge card-no-data">미제공</span>
   </div>
 </div>
-${createBedCardsSection('응급실', getEmergencyData(displayData))}
-${createBedCardsSection('응급전용', getEmergencyExclusiveData(displayData))}
-${createBedCardsSection('중환자실', getICUData(displayData))}
-${createBedCardsSection('기타', getOtherData(displayData))}
+${createBedCardsSection("응급실", getEmergencyData(displayData))}
+${createBedCardsSection("응급전용", getEmergencyExclusiveData(displayData))}
+${createBedCardsSection("중환자실", getICUData(displayData))}
+${createBedCardsSection("기타", getOtherData(displayData))}
 `;
 
-
     // 모달 내용 삽입
-    document.getElementById('modalBodyContent').innerHTML = modalBodyContent + equipmentAvailability + bedCardsContent;
+    document.getElementById("modalBodyContent").innerHTML =
+      modalBodyContent + equipmentAvailability + bedCardsContent;
 
     // 모달 표시
-    const hospitalModal = new bootstrap.Modal(document.getElementById('hospitalModal'));
+    const hospitalModal = new bootstrap.Modal(
+      document.getElementById("hospitalModal")
+    );
     hospitalModal.show();
   });
 }
@@ -786,24 +795,25 @@ function showSpecialtyModal(jsonData) {
   const dutyTel1 = jsonData.dutyTel1 || "정보 없음";
 
   // 각 HTML 요소에 데이터 삽입
-  document.getElementById("specialtyModalLabel").innerText = dutyName || "병원 세부 정보";
+  document.getElementById("specialtyModalLabel").innerText =
+    dutyName || "병원 세부 정보";
   document.getElementById("modalDutyName").innerText = dutyName;
   document.getElementById("modalDutyAddr").innerText = dutyAddr;
   document.getElementById("modalDutyTel1").innerText = dutyTel1;
   document.getElementById("modalDgidIdName").innerText = dgidIdName;
 
   // 모달 표시
-  const specialtyModal = new bootstrap.Modal(document.getElementById("specialtyModal"));
+  const specialtyModal = new bootstrap.Modal(
+    document.getElementById("specialtyModal")
+  );
   specialtyModal.show();
 }
 
-
-
 // 병상 정보 데이터 섹션 생성 함수
 function createTableSection(title, data) {
-  const rows = data.map(
-    (item) => `<tr><td>${item.name}</td><td>${item.value}</td></tr>`
-  ).join('');
+  const rows = data
+    .map((item) => `<tr><td>${item.name}</td><td>${item.value}</td></tr>`)
+    .join("");
   return `
     <h6>${title}</h6>
     <table class="table table-bordered">
@@ -815,62 +825,156 @@ function createTableSection(title, data) {
 // 병상 정보 데이터 생성 함수들
 function getEmergencyData(displayData) {
   return [
-    { name: '일반(응급실일반병상)', value: `${displayData.hvec ?? '-'}/${displayData.hvs01 ?? '-'}` },
-    { name: '코호트 격리', value: `${displayData.hv27 ?? '-'}/${displayData.hvs59 ?? '-'}` },
-    { name: '음압 격리 병상', value: `${displayData.hv29 ?? '-'}/${displayData.hvs03 ?? '-'}` },
-    { name: '일반 격리 병상', value: `${displayData.hv30 ?? '-'}/${displayData.hvs04 ?? '-'}` },
-    { name: '소아', value: `${displayData.hv28 ?? '-'}/${displayData.hvs02 ?? '-'}` },
-    { name: '소아 음압 격리', value: `${displayData.hv15 ?? '-'}/${displayData.hvs48 ?? '-'}` },
-    { name: '소아일반격리', value: `${displayData.hv16 ?? '-'}/${displayData.hvs49 ?? '-'}` }
+    {
+      name: "일반(응급실일반병상)",
+      value: `${displayData.hvec ?? "-"}/${displayData.hvs01 ?? "-"}`,
+    },
+    {
+      name: "코호트 격리",
+      value: `${displayData.hv27 ?? "-"}/${displayData.hvs59 ?? "-"}`,
+    },
+    {
+      name: "음압 격리 병상",
+      value: `${displayData.hv29 ?? "-"}/${displayData.hvs03 ?? "-"}`,
+    },
+    {
+      name: "일반 격리 병상",
+      value: `${displayData.hv30 ?? "-"}/${displayData.hvs04 ?? "-"}`,
+    },
+    {
+      name: "소아",
+      value: `${displayData.hv28 ?? "-"}/${displayData.hvs02 ?? "-"}`,
+    },
+    {
+      name: "소아 음압 격리",
+      value: `${displayData.hv15 ?? "-"}/${displayData.hvs48 ?? "-"}`,
+    },
+    {
+      name: "소아일반격리",
+      value: `${displayData.hv16 ?? "-"}/${displayData.hvs49 ?? "-"}`,
+    },
   ];
 }
 
 function getEmergencyExclusiveData(displayData) {
   return [
-    { name: '중환자실 음압격리', value: `${displayData.hv17 ?? '-'}/${displayData.hvs50 ?? '-'}` },
-    { name: '중환자실 일반격리', value: `${displayData.hv18 ?? '-'}/${displayData.hvs51 ?? '-'}` },
-    { name: '입원실 음압격리', value: `${displayData.hv19 ?? '-'}/${displayData.hvs52 ?? '-'}` },
-    { name: '입원실 일반격리', value: `${displayData.hv21 ?? '-'}/${displayData.hvs53 ?? '-'}` },
-    { name: '중환자실', value: `${displayData.hv31 ?? '-'}/${displayData.hvs05 ?? '-'}` },
-    { name: '소아중환자실', value: `${displayData.hv33 ?? '-'}/${displayData.hvs10 ?? '-'}` },
-    { name: '입원실', value: `${displayData.hv36 ?? '-'}/${displayData.hvs19 ?? '-'}` },
-    { name: '소아입원실', value: `${displayData.hv37 ?? '-'}/${displayData.hvs20 ?? '-'}` }
+    {
+      name: "중환자실 음압격리",
+      value: `${displayData.hv17 ?? "-"}/${displayData.hvs50 ?? "-"}`,
+    },
+    {
+      name: "중환자실 일반격리",
+      value: `${displayData.hv18 ?? "-"}/${displayData.hvs51 ?? "-"}`,
+    },
+    {
+      name: "입원실 음압격리",
+      value: `${displayData.hv19 ?? "-"}/${displayData.hvs52 ?? "-"}`,
+    },
+    {
+      name: "입원실 일반격리",
+      value: `${displayData.hv21 ?? "-"}/${displayData.hvs53 ?? "-"}`,
+    },
+    {
+      name: "중환자실",
+      value: `${displayData.hv31 ?? "-"}/${displayData.hvs05 ?? "-"}`,
+    },
+    {
+      name: "소아중환자실",
+      value: `${displayData.hv33 ?? "-"}/${displayData.hvs10 ?? "-"}`,
+    },
+    {
+      name: "입원실",
+      value: `${displayData.hv36 ?? "-"}/${displayData.hvs19 ?? "-"}`,
+    },
+    {
+      name: "소아입원실",
+      value: `${displayData.hv37 ?? "-"}/${displayData.hvs20 ?? "-"}`,
+    },
   ];
 }
 
 function getICUData(displayData) {
   return [
-    { name: '일반', value: `${displayData.hvicc ?? '-'}/${displayData.hvs17 ?? '-'}` },
-    { name: '내과', value: `${displayData.hv2 ?? '-'}/${displayData.hvs06 ?? '-'}` },
-    { name: '외과', value: `${displayData.hv3 ?? '-'}/${displayData.hvs07 ?? '-'}` },
-    { name: '흉부외과', value: `${displayData.hvccc ?? '-'}/${displayData.hvs16 ?? '-'}` },
-    { name: '신경과', value: `${displayData.hvcc ?? '-'}/${displayData.hvs11 ?? '-'}` },
-    { name: '신경외과', value: `${displayData.hv6 ?? '-'}/${displayData.hvs12 ?? '-'}` },
-    { name: '외상', value: `${displayData.hv9 ?? '-'}/${displayData.hvs14 ?? '-'}` },
-    { name: '화상', value: `${displayData.hv8 ?? '-'}/${displayData.hvs13 ?? '-'}` },
-    { name: '소아', value: `${displayData.hv32 ?? '-'}/${displayData.hvs09 ?? '-'}` },
-    { name: '신생아', value: `${displayData.hvncc ?? '-'}/${displayData.hvs08 ?? '-'}` },
-    { name: '심장내과', value: `${displayData.hv34 ?? '-'}/${displayData.hvs15 ?? '-'}` },
-    { name: '음압격리', value: `${displayData.hv35 ?? '-'}/${displayData.hvs18 ?? '-'}` }
+    {
+      name: "일반",
+      value: `${displayData.hvicc ?? "-"}/${displayData.hvs17 ?? "-"}`,
+    },
+    {
+      name: "내과",
+      value: `${displayData.hv2 ?? "-"}/${displayData.hvs06 ?? "-"}`,
+    },
+    {
+      name: "외과",
+      value: `${displayData.hv3 ?? "-"}/${displayData.hvs07 ?? "-"}`,
+    },
+    {
+      name: "흉부외과",
+      value: `${displayData.hvccc ?? "-"}/${displayData.hvs16 ?? "-"}`,
+    },
+    {
+      name: "신경과",
+      value: `${displayData.hvcc ?? "-"}/${displayData.hvs11 ?? "-"}`,
+    },
+    {
+      name: "신경외과",
+      value: `${displayData.hv6 ?? "-"}/${displayData.hvs12 ?? "-"}`,
+    },
+    {
+      name: "외상",
+      value: `${displayData.hv9 ?? "-"}/${displayData.hvs14 ?? "-"}`,
+    },
+    {
+      name: "화상",
+      value: `${displayData.hv8 ?? "-"}/${displayData.hvs13 ?? "-"}`,
+    },
+    {
+      name: "소아",
+      value: `${displayData.hv32 ?? "-"}/${displayData.hvs09 ?? "-"}`,
+    },
+    {
+      name: "신생아",
+      value: `${displayData.hvncc ?? "-"}/${displayData.hvs08 ?? "-"}`,
+    },
+    {
+      name: "심장내과",
+      value: `${displayData.hv34 ?? "-"}/${displayData.hvs15 ?? "-"}`,
+    },
+    {
+      name: "음압격리",
+      value: `${displayData.hv35 ?? "-"}/${displayData.hvs18 ?? "-"}`,
+    },
   ];
 }
 
 function getOtherData(displayData) {
   return [
-    { name: '일반', value: `${displayData.hvgc ?? '-'}/${displayData.hvs38 ?? '-'}` },
-    { name: '음압격리', value: `${displayData.hv41 ?? '-'}/${displayData.hvs25 ?? '-'}` },
-    { name: '정신과 폐쇄병동', value: `${displayData.hv40 ?? '-'}/${displayData.hvs24 ?? '-'}` },
-    { name: '분만실', value: `${displayData.hv42 ?? '-'}/${displayData.hvs26 ?? '-'}` },
-    { name: '수술실', value: `${displayData.hvoc ?? '-'}/${displayData.hvs22 ?? '-'}` }
+    {
+      name: "일반",
+      value: `${displayData.hvgc ?? "-"}/${displayData.hvs38 ?? "-"}`,
+    },
+    {
+      name: "음압격리",
+      value: `${displayData.hv41 ?? "-"}/${displayData.hvs25 ?? "-"}`,
+    },
+    {
+      name: "정신과 폐쇄병동",
+      value: `${displayData.hv40 ?? "-"}/${displayData.hvs24 ?? "-"}`,
+    },
+    {
+      name: "분만실",
+      value: `${displayData.hv42 ?? "-"}/${displayData.hvs26 ?? "-"}`,
+    },
+    {
+      name: "수술실",
+      value: `${displayData.hvoc ?? "-"}/${displayData.hvs22 ?? "-"}`,
+    },
   ];
 }
 
 // 장비 가용 여부 항목 생성 함수
 function createAvailabilityItem(label, available) {
-  return `<li>${label}: ${available === 'Y' ? 'Y' : 'N'}</li>`;
+  return `<li>${label}: ${available === "Y" ? "Y" : "N"}</li>`;
 }
-
-
 
 // 날짜 포맷 함수
 function formatDate(date) {
@@ -886,7 +990,8 @@ function formatDate(date) {
 }
 async function fetchHospitalData(data) {
   try {
-    const serviceKey = "Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D";
+    const serviceKey =
+      "Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D";
     const { sidoData, sigunguData } = extractSidoSigungu(data.dutyAddr);
     const params = new URLSearchParams({
       STAGE1: sidoData,
@@ -899,7 +1004,7 @@ async function fetchHospitalData(data) {
 
     const response = await fetch(url, {
       headers: {
-        "Accept": "application/json", // JSON 형식의 응답을 요청
+        Accept: "application/json", // JSON 형식의 응답을 요청
       },
     });
 
@@ -910,7 +1015,13 @@ async function fetchHospitalData(data) {
     const jsonData = await response.json();
 
     // API 응답 구조에 따라 데이터를 추출
-    if (jsonData && jsonData.response && jsonData.response.body && jsonData.response.body.items && jsonData.response.body.items.item) {
+    if (
+      jsonData &&
+      jsonData.response &&
+      jsonData.response.body &&
+      jsonData.response.body.items &&
+      jsonData.response.body.items.item
+    ) {
       const items = jsonData.response.body.items.item;
       if (items.length < 1) {
         alert("해당 병원의 실시간 응급실 정보가 존재하지 않습니다.");
@@ -927,8 +1038,6 @@ async function fetchHospitalData(data) {
           }
         }
       }
-
-
     } else {
       console.error("Unexpected data format:", jsonData);
       return null; // 데이터가 없을 경우 null 반환
@@ -942,13 +1051,13 @@ async function fetchHospitalData(data) {
 async function getAIAnswer() {
   const usr_lat = myLocation.latitude;
   const usr_lon = myLocation.longitude;
-  const question = document.getElementById('aiInput').value;
+  const question = document.getElementById("aiInput").value;
 
-  const API_KEY = ""; // OpenAI API 키 입력
+  const API_KEY =
+    ""; // OpenAI API 키 입력
   const apiUrl = "https://api.openai.com/v1/chat/completions";
 
   if (!question.trim()) return; // 질문이 비어있으면 아무 작업도 하지 않음
-
 
   const defaultQuestion = `
 너는 대한민국 의사 역할을 수행한다. 사용자가 입력한 증상과 병명을 기반으로 아래의 규칙을 따라 응답해야 한다.
@@ -972,7 +1081,6 @@ async function getAIAnswer() {
 사용자가 입력한 내용: "${question}"  
 `;
 
-
   console.log(defaultQuestion);
   const params = {
     model: "gpt-4",
@@ -980,7 +1088,7 @@ async function getAIAnswer() {
     temperature: 0.2, // 응답의 창의성 조절
     top_p: 1.0, // 모델이 다음에 생성할 단어를 선택할 때, 그 선택이 얼마나 다양할지를 결정, 높을수록 일관적.
     frequency_penalty: 0.0, // 자주 등장하는 단어의 반복성
-    presence_penalty: 0.0 // 새로운 주제의 등장 장려
+    presence_penalty: 0.0, // 새로운 주제의 등장 장려
     // stop: [""], // ""단어는 제외하고 응답
   };
 
@@ -999,33 +1107,30 @@ async function getAIAnswer() {
       if (result.choices && result.choices[0].message.content) {
         const jsonContent = JSON.parse(result.choices[0].message.content) || [];
         const department = jsonContent.department;
-      const aiResponse = document.getElementById('aiResponse');
-      aiResponse.innerHTML = jsonContent.message; 
+        const aiResponse = document.getElementById("aiResponse");
+        aiResponse.innerHTML = jsonContent.message;
 
         // 외부 API를 통해 병원 정보 조회
         let hospitals = null;
         if (usr_lat && usr_lon) {
           hospitals = await getHospitals(myLocation.city, myLocation.borough);
         }
-
       } else {
         console.log("응답 받은 값이 없음.");
       }
     } else {
       console.error("Error response from API:", response.statusText);
     }
-
   } catch (error) {
     console.error("Error calling ChatGPT API", error);
   } finally {
-    document.getElementById('loadingBtn').style.display = 'none';
-    document.getElementById('aiBtn').style.display = 'block';
+    document.getElementById("loadingBtn").style.display = "none";
+    document.getElementById("aiBtn").style.display = "block";
   }
 }
 
-
 function extractSidoSigungu(dutyAddr) {
-  const addrParts = dutyAddr.split(' ');
+  const addrParts = dutyAddr.split(" ");
 
   const sidoData = addrParts[0];
   const sigunguData = addrParts[1];
@@ -1078,7 +1183,6 @@ function extractSidoSigungu(dutyAddr) {
 // }
 
 async function getHospitals(city, borough) {
-
   try {
     const serviceKey =
       "Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D";
@@ -1095,8 +1199,8 @@ async function getHospitals(city, borough) {
 
     const response = await fetch(url, {
       headers: {
-        "Accept": "application/json" // JSON 응답을 요청하는 헤더
-      }
+        Accept: "application/json", // JSON 응답을 요청하는 헤더
+      },
     });
 
     if (!response.ok) {
@@ -1117,11 +1221,7 @@ async function getHospitals(city, borough) {
   }
 }
 
-
-
-
-
-function addAIHospitalMarkers(hospitals,department) {
+function addAIHospitalMarkers(hospitals, department) {
   removeAllLayer();
   const aiHospitalVectorSource = new ol.source.Vector();
   const aiHospitalVectorLayer = new ol.layer.Vector({
@@ -1130,7 +1230,7 @@ function addAIHospitalMarkers(hospitals,department) {
   });
   map.addLayer(aiHospitalVectorLayer);
 
-  hospitals.forEach(hospital => {
+  hospitals.forEach((hospital) => {
     const { name, lon, lat } = hospital;
     const markerCoords = ol.proj.fromLonLat([parseFloat(lon), parseFloat(lat)]);
 
@@ -1190,14 +1290,22 @@ function addAIHospitalMarkers(hospitals,department) {
     routeButton.style.gap = "5px"; // 아이콘과 텍스트 사이 여백 조절
 
     nameDiv.addEventListener("click", () => {
-      window.open(`https://map.naver.com/p/search/${encodeURIComponent(name)}?c=10.00,0,0,0,dh`, '_blank');
+      window.open(
+        `https://map.naver.com/p/search/${encodeURIComponent(
+          name
+        )}?c=10.00,0,0,0,dh`,
+        "_blank"
+      );
     });
 
     marker.on("click", () => {
-      window.open(`https://map.naver.com/p/search/${encodeURIComponent(name)}?c=10.00,0,0,0,dh`, '_blank');
+      window.open(
+        `https://map.naver.com/p/search/${encodeURIComponent(
+          name
+        )}?c=10.00,0,0,0,dh`,
+        "_blank"
+      );
     });
-
-
 
     // 길찾기 버튼 클릭 이벤트
     routeButton.addEventListener("click", () => {
@@ -1236,12 +1344,10 @@ function addAIHospitalMarkers(hospitals,department) {
   map.getView().fit(extent, { padding: [100, 100, 100, 100] });
 }
 
-
-
 // 지도 모든레이어 삭제
 function removeAllLayer() {
   removeLayer("markerLayer");
   removeLayer("routeLayer");
   removeLayer("aiHospitalLayer");
-  routeInfoDiv.style.display = 'none';
+  routeInfoDiv.style.display = "none";
 }

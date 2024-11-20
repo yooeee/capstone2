@@ -8,7 +8,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   height: 100vh;
   overflow: hidden;
-  background-color: #ffffff; /* 배경을 흰색으로 */
+  background-color: #f9fafb; /* 배경을 #f9fafb로 변경 */
   color: #000000; /* 텍스트를 검은색으로 */
 }
 
@@ -26,7 +26,7 @@ code {
 
 /* 모달 헤더 */
 .modal-header {
-  background-color: #ffffff; /* 배경을 흰색으로 변경 */
+  background-color: #f9fafb; /* 배경을 #f9fafb로 변경 */
   color: #000000; /* 텍스트 색상 검은색으로 */
   padding: 24px;
   position: relative;
@@ -54,7 +54,7 @@ code {
 /* 모달 본문 */
 .modal-body {
   padding: 24px;
-  background-color: #ffffff; /* 배경을 흰색으로 변경 */
+  background-color: #f9fafb; /* 배경을 #f9fafb로 변경 */
   color: #000000; /* 텍스트 색상 검은색으로 */
   border-radius: 0 0 20px 20px;
 }
@@ -90,7 +90,7 @@ code {
 
 /* 모달 푸터 */
 .modal-footer {
-  background-color: #ffffff; /* 배경을 흰색으로 변경 */
+  background-color: #f9fafb; /* 배경을 #f9fafb로 변경 */
   color: #000000; /* 텍스트 색상 검은색으로 */
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding: 16px;
@@ -135,15 +135,13 @@ code {
   z-index: 1000;
 }
 
-
-
 /* SideMenu Styles */
 .sidemenu-box {
   margin: 5%;
 }
 
 .sidebar-content, .main-content {
-  background-color: white;
+  background-color: #f9fafb; /* 배경을 #f9fafb로 변경 */
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   color: #000000; /* 텍스트 색상 검은색으로 */
@@ -185,7 +183,7 @@ code {
   bottom: 0;
   width: 100%;
   padding: 16px;
-  background: #ffffff; /* 배경을 흰색으로 변경 */
+  background: #f9fafb; /* 배경을 #f9fafb로 변경 */
   color: #000000; /* 텍스트 색상 검은색으로 */
   text-align: center;
 }
@@ -199,7 +197,7 @@ code {
 /* TopBar Styles */
 .site-layout-background {
   padding: 0;
-  background: #ffffff; /* 배경을 흰색으로 변경 */
+  background: #f9fafb; /* 배경을 #f9fafb로 변경 */
 }
 
 .topbar-title {
