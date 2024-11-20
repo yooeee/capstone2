@@ -38,6 +38,8 @@ const map = new ol.Map({
 let myLocation = {
   longitude: null,
   latitude: null,
+  city: null,
+  borough : null
 };
 
 // Bootstrap 모달 객체 생성
@@ -146,8 +148,6 @@ async function search() {
 
 
 
-
-
 // 현재 위치 조회 및 지도에 표시
 function getLocationAndMoveMap() {
   if (!navigator.geolocation) {
@@ -156,7 +156,7 @@ function getLocationAndMoveMap() {
   }
 
   navigator.geolocation.getCurrentPosition(
-    (position) => {
+    async (position) => {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
       myLocation.latitude = latitude;
@@ -171,7 +171,7 @@ function getLocationAndMoveMap() {
         image: new ol.style.Circle({
           radius: 6,
           fill: new ol.style.Fill({ color: 'red' }),
-          stroke: new ol.style.Stroke({ color: 'white', width: 2 })
+          stroke: new ol.style.Stroke({ color: 'white', width: 2 }),
         }),
       });
 
@@ -191,12 +191,38 @@ function getLocationAndMoveMap() {
         zoom: 15, // 적절한 줌 레벨로 설정
         duration: 1000,
       });
+
+      // 역지오코딩으로 주소 가져오기
+      fetchAddressFromNominatim(latitude, longitude);
+      console.log("주소:", address);
     },
     (error) => {
       console.error("오류:", error.message);
     }
   );
 }
+
+// OpenStreetMap Nominatim API로 주소 가져오기
+async function fetchAddressFromNominatim(latitude, longitude) {
+  const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=ko`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.address) {
+      const { city, borough } = data.address; 
+      myLocation.city = city;
+      myLocation.borough = borough;
+      console.log(myLocation);
+    } else {
+      console.error("주소를 찾을 수 없습니다.");
+    }
+  } catch (error) {
+    console.error("API 호출 오류:", error);
+  }
+}
+
 
 // 지도 레이어 삭제
 function removeLayer(name) {
@@ -414,6 +440,129 @@ function drawMarkerWithSearch(searchList) {
 }
 
 
+// 검색결과 마커 그리기 함수
+function drawMarkerWithAiAnswer(searchList) {
+  // 기존 마커 레이어 제거
+  removeAllLayer();
+
+  searchList = Array.isArray(searchList) ? searchList : [searchList];
+
+
+  map.addLayer(markerVectorLayer);
+
+  searchList.forEach((item) => {
+    const { wgs84Lon, wgs84Lat, dutyName } = item;
+    const markerCoords = ol.proj.fromLonLat([wgs84Lon, wgs84Lat]);
+
+    // 마커 생성
+    const marker = new ol.Feature({
+      geometry: new ol.geom.Point(markerCoords),
+      name: "marker",
+      data: item,
+    });
+
+    marker.setStyle(
+      new ol.style.Style({
+        image: new ol.style.Icon({
+          anchor: [0.5, 25],
+          anchorXUnits: "fraction",
+          anchorYUnits: "pixels",
+          src: "/images/location.png",
+          scale: 0.07,
+        }),
+      })
+    );
+
+    markerVectorSource.addFeature(marker);
+
+    // 팝업 오버레이 생성
+    const popupOverlay = new ol.Overlay({
+      positioning: "bottom-center",
+      stopEvent: true,
+      offset: [0, -10],
+    });
+
+
+    const popoverDiv = document.createElement("div");
+    popoverDiv.className = "ol-popup-custom";
+    popoverDiv.style.backgroundColor = "white";
+    popoverDiv.style.padding = "5px 10px";
+    popoverDiv.style.border = "1px solid #4096ff";
+    popoverDiv.style.borderRadius = "50px";
+    popoverDiv.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
+    popoverDiv.style.display = "flex";
+    popoverDiv.style.alignItems = "center";
+    popoverDiv.style.cursor = "pointer";
+
+    const nameDiv = document.createElement("div");
+    nameDiv.innerHTML = `<strong style="color: black;">${dutyName}</strong>`;
+    nameDiv.style.marginRight = "10px";
+
+    // 이름 클릭 이벤트 - 모달 창 띄우기
+    nameDiv.addEventListener("click", () => showSpecialtyModal(item));
+
+    // 마커 클릭 이벤트 - 모달 창 띄우기
+    marker.on("click", () => showSpecialtyModal(item));
+
+    // 길찾기 버튼 생성
+    const routeButton = document.createElement("button");
+    routeButton.innerHTML = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+  </svg> 도착`;
+    routeButton.style.backgroundColor = "#4096ff";
+    routeButton.style.color = "white";
+    routeButton.style.border = "none";
+    routeButton.style.padding = "5px";
+    routeButton.style.cursor = "pointer";
+    routeButton.style.borderRadius = "50px";
+
+    // 아이콘과 텍스트의 수직 가운데 정렬
+    routeButton.style.display = "flex";
+    routeButton.style.alignItems = "center";
+    routeButton.style.gap = "5px"; // 아이콘과 텍스트 사이 여백 조절
+
+
+
+
+    // 길찾기 버튼 클릭 이벤트
+    routeButton.addEventListener("click", () => {
+      if (myLocation.latitude != null && myLocation.longitude != null) {
+        // 선택된 마커와 팝업을 제외한 모든 마커와 팝업 제거
+        markerVectorSource.getFeatures().forEach((feature) => {
+          if (feature !== marker) {
+            markerVectorSource.removeFeature(feature); // 선택된 마커 외 제거
+          }
+        });
+
+        // 모든 팝업 오버레이 제거
+        map.getOverlays().clear();
+
+        // 선택된 팝업만 다시 추가
+        map.addOverlay(popupOverlay);
+
+        // 선택된 마커에 대해 길찾기 실행
+        getRouteData(myLocation, { latitude: wgs84Lat, longitude: wgs84Lon });
+      } else {
+        alert("내 위치를 먼저 조회해주세요.");
+      }
+    });
+
+    // 팝업에 이름과 길찾기 버튼 추가
+    popoverDiv.appendChild(nameDiv);
+    popoverDiv.appendChild(routeButton);
+
+    popupOverlay.setElement(popoverDiv);
+    map.addOverlay(popupOverlay);
+    popupOverlay.setPosition(markerCoords);
+  popupOverlay.setOffset([0, 25]); // 팝업 오버레이를 아래로 10px 이동
+  });
+
+  // 모든 마커의 범위로 지도를 맞춤
+  const extent = markerVectorSource.getExtent();
+  map.getView().fit(extent, { padding: [100, 100, 100, 100] });
+}
+
 
 // 경로 데이터를 가져와 지도에 표시하고, 경로 정보를 routeInfoDiv에 업데이트
 async function getRouteData(myLocation, destination) {
@@ -622,6 +771,36 @@ ${createBedCardsSection('기타', getOtherData(displayData))}
   });
 }
 
+// 병원 세부 진료과 정보 표시 함수
+function showSpecialtyModal(jsonData) {
+  // 필요한 데이터 추출
+  const dgidIdName = jsonData.dgidIdName || "정보 없음";
+  const dutyAddr = jsonData.dutyAddr || "정보 없음";
+  const dutyName = jsonData.dutyName || "정보 없음";
+  const dutyTel1 = jsonData.dutyTel1 || "정보 없음";
+
+  // 모달 헤더 설정
+  document.getElementById("specialtyModalLabel").innerText = dutyName || "병원 세부 정보";
+
+  // 모달 본문 HTML 생성
+  const modalBodyContent = `
+    <div class="info-item">
+      <p><strong>병원 이름:</strong> ${dutyName}</p>
+      <p><strong>주소:</strong> ${dutyAddr}</p>
+      <p><strong>전화번호:</strong> ${dutyTel1}</p>
+      <p><strong>진료 과목:</strong> ${dgidIdName}</p>
+    </div>
+  `;
+
+  // 모달 본문에 삽입
+  document.getElementById("specialtyModalBody").innerHTML = modalBodyContent;
+
+  // 모달 표시
+  const specialtyModal = new bootstrap.Modal(document.getElementById("specialtyModal"));
+  specialtyModal.show();
+}
+
+
 // 병상 정보 데이터 섹션 생성 함수
 function createTableSection(title, data) {
   const rows = data.map(
@@ -772,20 +951,29 @@ async function getAIAnswer() {
 
   if (!question.trim()) return; // 질문이 비어있으면 아무 작업도 하지 않음
 
-  // 외부 API를 통해 병원 정보 조회
-  let hospitals = null;
-  if (usr_lat && usr_lon) {
-    hospitals = await getNearbyHospitals(usr_lat, usr_lon);
-  }
 
   const defaultQuestion = `
-  너는 의사다.
-  사용자가 증상과 병명을 입력하면 다음과 같은 방식으로 응답해야 한다.
-  1. 사용자의 증상을 바탕으로 가능한 병명을 추측하여 제시해야 한다. 추측한 병명과 함께 그 이유도 설명한다.
-  2. 사용자의 입력이 병명이나 증상과 관련되지 않은 경우, "병명이나 증상을 입력해주세요."라고 응답한다.
-  3. 사용자가 증상을 설명했음에도 추측하기 어렵다면 "해당 증상 만으로는 병명을 파악하기 어렵습니다. 더 자세히 설명해주세요" 라고 응답한다.
-  사용자가 입력한 내용: ${question}
-  `;
+너는 대한민국 의사 역할을 수행한다. 사용자가 입력한 증상과 병명을 기반으로 아래의 규칙을 따라 응답해야 한다.
+
+1. 사용자의 증상을 분석하여 가능한 병명을 추측하고, 그 이유를 간결하게 설명한다. 
+
+2. 사용자의 입력이 증상이나 병명과 관련이 없는 경우:
+   - "병명이나 증상을 입력해주세요."라고 응답한다.
+
+3. 사용자가 증상을 설명했으나 추측하기 어려운 경우:
+   - "해당 증상만으로는 병명을 파악하기 어렵습니다. 더 자세히 설명해주세요."라고 응답한다.
+
+4. 응답 형식:
+   - JSON 형식으로 응답.
+   - 예시:
+     {
+       "message": "병명: [추측한 병명], 설명: [추측 이유]",
+      
+     }
+
+사용자가 입력한 내용: "${question}"  
+`;
+
 
   console.log(defaultQuestion);
   const params = {
@@ -811,21 +999,17 @@ async function getAIAnswer() {
     if (response.ok) {
       const result = await response.json();
       if (result.choices && result.choices[0].message.content) {
-        const aiResponse = document.getElementById('aiResponse');
-        aiResponse.innerHTML = result.choices[0].message.content; // 응답을 aiResponse에 직접 할당
+        const jsonContent = JSON.parse(result.choices[0].message.content) || [];
+        const department = jsonContent.department;
+      const aiResponse = document.getElementById('aiResponse');
+      aiResponse.innerHTML = jsonContent.message; 
 
-        // 병원 정보 표시
-        // if (result.choices[0].message.medical) {
-        //   const hospitalsList = result.choices[0].message.medical.map(hospital => `
-        //     <li>${hospital.name} (위도: ${hospital.lat}, 경도: ${hospital.lon})</li>
-        //   `).join('');
-
-        //   // 병원 마커 지도에 추가
-        //   addAIHospitalMarkers(result.choices[0].message.medical);
-        // }
-        if(hospitals){
-          addAIHospitalMarkers(hospitals);
+        // 외부 API를 통해 병원 정보 조회
+        let hospitals = null;
+        if (usr_lat && usr_lon) {
+          hospitals = await getHospitals(myLocation.city, myLocation.borough);
         }
+
       } else {
         console.log("응답 받은 값이 없음.");
       }
@@ -851,49 +1035,95 @@ function extractSidoSigungu(dutyAddr) {
   return { sidoData, sigunguData };
 }
 
+// async function getNearbyHospitals(lat, lon, department) {
+//   const radius = 500000; // 반경 5km
+//   const overpassUrl = "https://overpass-api.de/api/interpreter";
 
-async function getNearbyHospitals(lat, lon) {
-  const radius = 5000; // 반경 5km
-  const overpassUrl = "https://overpass-api.de/api/interpreter";
-  
+//   // department 값에 URL 인코딩을 적용하여 공백 등을 처리
+//   const encodedDepartment = encodeURIComponent(department);
 
-  const query = `
-    [out:json];
-    (
-      node["amenity"="hospital"](around:${radius},${lat},${lon});
-      way["amenity"="hospital"](around:${radius},${lat},${lon});
-      relation["amenity"="hospital"](around:${radius},${lat},${lon});
-    );
-    out center;
-  `;
+//   // 쿼리 문자열 작성
+//   const query = `
+//     [out:json];
+//     (
+//       node["amenity"="hospital"]["specialization"~"${encodedDepartment}"](around:${radius},${lat},${lon});
+//       way["amenity"="hospital"]["specialization"~"${encodedDepartment}"](around:${radius},${lat},${lon});
+//       relation["amenity"="hospital"]["specialization"~"${encodedDepartment}"](around:${radius},${lat},${lon});
+//     );
+//     out center;
+//   `;
+
+//   try {
+//     const response = await fetch(overpassUrl, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/x-www-form-urlencoded"
+//       },
+//       body: `data=${encodeURIComponent(query)}`
+//     });
+
+//     if (response.ok) {
+//       const data = await response.json();
+//       return data.elements.slice(0, 5).map(element => ({
+//         name: element.tags.name || "이름 정보 없음",
+//         lon: element.type === "node" ? element.lon : element.center.lon,
+//         lat: element.type === "node" ? element.lat : element.center.lat,
+//       }));
+//     } else {
+//       console.error("Overpass API 에러:", response.statusText);
+//       return null;
+//     }
+//   } catch (error) {
+//     console.error("병원 데이터 조회 중 오류:", error);
+//     return null;
+//   }
+// }
+
+async function getHospitals(city, borough) {
 
   try {
-    const response = await fetch(overpassUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: `data=${encodeURIComponent(query)}`
+    const serviceKey =
+      "Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D";
+
+    // URL 및 파라미터 설정
+    const params = new URLSearchParams({
+      Q0: city,
+      Q1: borough,
+      pageNo: 1,
+      numOfRows: 25,
     });
 
-    if (response.ok) {
-      const data = await response.json();
-      return data.elements.slice(0, 5).map(element => ({
-        name: element.tags.name || "이름 정보 없음",
-        lon: element.type === "node" ? element.lon : element.center.lon,
-        lat: element.type === "node" ? element.lat : element.center.lat,
-      }));
+    const url = `https://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlMdcncListInfoInqire?serviceKey=${serviceKey}&${params.toString()}`;
+
+    const response = await fetch(url, {
+      headers: {
+        "Accept": "application/json" // JSON 응답을 요청하는 헤더
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    const items = data.response.body.items.item;
+
+    if (items) {
+      drawMarkerWithAiAnswer(items);
+      routeInfoDiv.style.display = "none";
     } else {
-      console.error("Overpass API 에러:", response.statusText);
-      return null;
+      alert("조회 결과 없습니다.");
     }
   } catch (error) {
-    console.error("병원 데이터 조회 중 오류:", error);
-    return null;
+    console.error("Error fetching the data:", error);
   }
 }
 
-function addAIHospitalMarkers(hospitals) {
+
+
+
+
+function addAIHospitalMarkers(hospitals,department) {
   removeAllLayer();
   const aiHospitalVectorSource = new ol.source.Vector();
   const aiHospitalVectorLayer = new ol.layer.Vector({
@@ -960,6 +1190,14 @@ function addAIHospitalMarkers(hospitals) {
     routeButton.style.display = "flex";
     routeButton.style.alignItems = "center";
     routeButton.style.gap = "5px"; // 아이콘과 텍스트 사이 여백 조절
+
+    nameDiv.addEventListener("click", () => {
+      window.open(`https://map.naver.com/p/search/${encodeURIComponent(name)}?c=10.00,0,0,0,dh`, '_blank');
+    });
+
+    marker.on("click", () => {
+      window.open(`https://map.naver.com/p/search/${encodeURIComponent(name)}?c=10.00,0,0,0,dh`, '_blank');
+    });
 
 
 
