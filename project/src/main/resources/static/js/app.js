@@ -52,8 +52,8 @@ routeInfoDiv.className = "route-info-div";
 routeInfoDiv.style.position = "absolute";
 routeInfoDiv.style.bottom = "10px"; // 하단으로 위치 변경
 routeInfoDiv.style.right = "10px";
-routeInfoDiv.style.backgroundColor = "#001f3f"; // 남색 배경
-routeInfoDiv.style.color = "#ffffff"; // 흰색 글자
+routeInfoDiv.style.backgroundColor = "white"; // 남색 배경
+routeInfoDiv.style.color = "black"; // 흰색 글자
 routeInfoDiv.style.padding = "10px";
 routeInfoDiv.style.borderRadius = "4px";
 routeInfoDiv.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
@@ -227,7 +227,7 @@ async function fetchAddressFromNominatim(latitude, longitude) {
 // 지도 레이어 삭제
 function removeLayer(name) {
   // 모든 팝업 오버레이 제거
-  map.getOverlays().clear();
+  
   map.getAllLayers().forEach((layer) => {
     if (layer && layer.get("name") == name) {
       map.removeLayer(layer);
@@ -1350,4 +1350,6 @@ function removeAllLayer() {
   removeLayer("routeLayer");
   removeLayer("aiHospitalLayer");
   routeInfoDiv.style.display = "none";
+  markerVectorSource.clear();
+
 }
