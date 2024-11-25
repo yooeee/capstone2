@@ -700,13 +700,11 @@ function showHospitalModal(item) {
     // 기본 정보 HTML 생성
     const modalBodyContent = `
           <div class="info-item">
-              <p><strong>주소:</strong> ${item.dutyAddr || "-"}</p>
-              <p><strong>응급실:</strong> ${displayData.dutyTel3 || "-"}</p>
-              <p><strong>당직의:</strong> ${displayData.hv1 || "-"}</p>
-              <p><strong>소아 당직의:</strong> ${displayData.hv12 || "-"}</p>
-              <p><strong>최근 업데이트 시간:</strong> ${
-                formatDate(displayData.hvidate) || "-"
-              }</p>
+              <p><strong><img src="/images/address.png" alt="주소" style="margin-right: 8px; height: 1em;">주소:</strong> ${item.dutyAddr || "-"}</p>
+              <p><strong><img src="/images/hospital.png" alt="응급실" style="margin-right: 8px; height: 1em;">응급실:</strong> ${displayData.dutyTel3 || "-"}</p>
+              <p><strong><img src="/images/tel.png" alt="당직의" style="margin-right: 8px; height: 1em;">당직의:</strong> ${displayData.hv1 || "-"}</p>
+              <p><strong><img src="/images/tel.png" alt="소아당직의" style="margin-right: 8px; height: 1em;">소아 당직의:</strong> ${displayData.hv12 || "-"}</p>
+              <p><strong><img src="/images/time.png" alt="업데이트시간" style="margin-right: 8px; height: 1em;">최근 업데이트 시간:</strong> ${formatDate(displayData.hvidate) || "-"}</p>
           </div>
       `;
 
@@ -727,7 +725,7 @@ function showHospitalModal(item) {
 
     const equipmentAvailability = `
           <div class="card mb-3">
-              <div class="card-header text-white" style="background-color: #001f3f;">
+              <div class="card-header" style="background-color: #f9fafb; color: black; font-weight: bold;">
                   장비 가용 여부
               </div>
               <div class="card-body">
@@ -735,7 +733,7 @@ function showHospitalModal(item) {
                       ${equipmentList
                         .map(
                           (equipment) => `
-                          <li class="list-group-item d-flex justify-content-between align-items-center">
+                          <li class=" d-flex justify-content-between align-items-center">
                               ${equipment.label}
                               <span class="badge bg-${
                                 equipment.available === "Y"
@@ -788,25 +786,24 @@ ${createBedCardsSection("기타", getOtherData(displayData))}
 
 // 병원 세부 진료과 정보 표시 함수
 function showSpecialtyModal(jsonData) {
-  // 데이터가 없을 경우 기본값 설정
-  const dgidIdName = jsonData.dgidIdName || "정보 없음";
-  const dutyAddr = jsonData.dutyAddr || "정보 없음";
-  const dutyName = jsonData.dutyName || "정보 없음";
-  const dutyTel1 = jsonData.dutyTel1 || "정보 없음";
+ // 데이터가 없을 경우 기본값 설정
+ const dgidIdName = jsonData.dgidIdName || "정보 없음";
+ const dutyAddr = jsonData.dutyAddr || "정보 없음";
+ const dutyName = jsonData.dutyName || "정보 없음";
+ const dutyTel1 = jsonData.dutyTel1 || "정보 없음";
+ const dutyDivNam = jsonData.dutyDivNam || "정보 없음";
+ const dutyMapimg = jsonData.dutyMapimg || "정보 없음";
 
-  // 각 HTML 요소에 데이터 삽입
-  document.getElementById("specialtyModalLabel").innerText =
-    dutyName || "병원 세부 정보";
-  document.getElementById("modalDutyName").innerText = dutyName;
-  document.getElementById("modalDutyAddr").innerText = dutyAddr;
-  document.getElementById("modalDutyTel1").innerText = dutyTel1;
-  document.getElementById("modalDgidIdName").innerText = dgidIdName;
+ // 각 HTML 요소에 데이터 삽입
+ document.getElementById("specialtyModalLabel").innerText = dutyName || "병원 세부 정보";
+ document.getElementById("modalDutyAddr").innerText = dutyAddr;
+ document.getElementById("modalDutyTel1").innerText = dutyTel1;
+ document.getElementById("modalDutyDivNam").innerText = dutyDivNam;
+ document.getElementById("modalDutyMapimg").innerText = dutyMapimg;
 
-  // 모달 표시
-  const specialtyModal = new bootstrap.Modal(
-    document.getElementById("specialtyModal")
-  );
-  specialtyModal.show();
+ // 모달 표시
+ const specialtyModal = new bootstrap.Modal(document.getElementById("specialtyModal"));
+ specialtyModal.show();
 }
 
 // 병상 정보 데이터 섹션 생성 함수
