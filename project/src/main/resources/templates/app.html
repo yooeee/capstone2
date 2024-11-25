@@ -20,7 +20,10 @@
                 <h4 style="color: black;">응급의료기관 검색</h4>
                 <!-- 시도 및 시군구 선택 -->
                 <div class="mb-3" style="margin-top: 5%;">
+                  <div style="display: flex; align-items: center;">
+                    <img src="/images/area.png" alt="지역 이미지" style="margin-right: 8px; height: 1em;">
                     <label for="sido-select" class="form-label" style="color: #000000; font-weight: bold;">지역 선택</label>
+                  </div>
                     <select id="sido-select" class="form-select">
                         <option value="sido" disabled selected>시도 선택</option>
                         <option value="">전체</option>
@@ -50,7 +53,11 @@
 
                   <!-- 분류 선택 -->
                   <div class="sidemenu-select-box mb-3">
-                    <label for="urlType-select" class="form-label" style="color: #000000; font-weight: bold;">분류 선택</label>
+                    <div style="display: flex; align-items: center;">
+                      <img src="/images/hos.png" alt="분류 이미지" style="margin-right: 8px; height: 1em;">
+                      <label for="urlType-select" class="form-label" style="color: #000000; font-weight: bold;">분류 선택</label>
+                    </div>
+                    
                     <select id="urlTypeSelect" class="form-select" onchange="setUrlType(this.value)">
                         <option value="getEgytListInfoInqire" selected>응급의료기관 목록정보 조회</option>
                         <option value="getStrmListInfoInqire">외상센터 목록정보 조회</option>
@@ -61,19 +68,44 @@
 
                 <!-- 기관명 검색 -->
                 <div class="mb-3">
+                  <div style="display: flex; align-items: center;">
+                    <img src="/images/hos.png" alt="분류 이미지" style="margin-right: 8px; height: 1em;">
                     <label for="search-input" class="form-label" style="color: #000000; font-weight: bold;">기관명 검색</label>
+                  </div>
                     <div class="input-group">
                         <input type="text" id="searchInput" class="form-control" placeholder="기관명을 입력하세요">
                         <button id="searchBtn" class="btn btn-primary">검색</button>
                     </div>
                 </div>
                 
+                <!-- 검색결과 리스트 -->
+                <div class="mb-3">
+                  <div style="display: flex; align-items: center;">
+                    <img src="/images/hos.png" alt="검색결과 이미지" style="margin-right: 8px; height: 1em;">
+                    <label class="form-label" style="color: #000000; font-weight: bold;">검색결과</label>
+                  </div>
+                  <ul id="searchResults" class="search-results list-group">
+          
+                  </ul>
+                </div>
+                
+ 
+                <!-- 페이지 이동 버튼 -->
+                <div class="mb-3" style="display: flex; justify-content: center;">
+                  <button id="prevPageBtn" class="btn btn-secondary" style="margin-right: 8px;">이전</button>
+                  <button id="nextPageBtn" class="btn btn-secondary">다음</button>
+                </div>
+          
+                
 
                 <!-- AI 결과 응답 창 -->
                 <div class="mb-3" style="max-height: 150px;">
+                  <div style="display: flex; align-items: center;">
+                    <img src="/images/talk.png" alt="분류 이미지" style="margin-right: 8px; height: 1em;">
                     <label class="form-label" style="color: #000000; font-weight: bold; ">진단 AI</label>
+                  </div>
                     <div id="aiResponse" class="alert alert-info" style="background-color: #f9fafb; border-color: rgb(189, 186, 186); color: #000000;  overflow-y: auto; max-height: 120px; height: 120px;">
-                        AI의 응답이 표시됩니다.
+                        
                     </div>
                 </div>
 
@@ -87,16 +119,14 @@
               </div>
 
 
-                <div class="text-center mt-auto pt-3" style="color: #000000;">
-                    <small>Copyright © 2024</small>
-                </div>
+         
             </div>
 
             <!-- 지도 영역 -->
             <div class="col">
                 <div id="map" class="ol-map-container">
                     <!-- 내 위치 조회 버튼 -->
-                    <button id="locationBtn" class="location-button">내 위치 조회</button>
+                    <img id="locationBtn" src="/images/my-location.png" alt="내 위치 조회" class="location-button">
                 </div>
             </div>
         </div>
@@ -150,6 +180,18 @@
     </div>
   </div>
 </div>
+
+
+     <!-- 검색결과 템플릿 (숨김처리) -->
+     <template id="searchResultTemplate">
+      <li class="list-group-item d-flex flex-column justify-content-between align-items-start">
+        <!-- 병원 이름 -->
+        <div id="hospital-name" style="font-weight: bold;"></div>
+        <!-- 도로명 주소 -->
+        <div id="hospital-address" style="font-size: 0.9em;"></div>
+        <div id="distance" style="font-size: 0.9em;"></div>
+      </li>
+    </template>
 
   
 
