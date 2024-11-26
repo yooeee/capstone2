@@ -184,7 +184,7 @@ code {
   bottom: 0;
   width: 100%;
   padding: 16px;
-  background: #f9fafb; /* 배경을 #f9fafb로 변경 */
+  background: #f9fafb; /* 배경을 #f9fafb�� 변경 */
   color: #000000; /* 텍스트 색상 검은색으로 */
   text-align: center;
 }
@@ -416,13 +416,13 @@ code {
 .info-row {
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .info-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 12px;
+  width: 24px;
+  height: 24px;
+  margin-right: 14px;
 }
 
 .info-content {
@@ -431,15 +431,15 @@ code {
 }
 
 .info-label {
-  font-size: 13px;
+  font-size: 14px;
   color: #8b95a1;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .info-value {
-  font-size: 15px;
+  font-size: 17px;
   color: #191f28;
-  font-weight: 500;
+  line-height: 1.4;
 }
 
 .section-title {

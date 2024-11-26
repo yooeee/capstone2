@@ -16,93 +16,107 @@
     <div class="container-fluid h-100">
         <div class="row h-100">
             <!-- 사이드바 메뉴 -->
-            <div class="col-3 d-flex flex-column p-3" style="max-width: 300px; background-color: #f9fafb; color: white;">
-                <h4 style="color: black;">응급의료기관 검색</h4>
-                <!-- 시도 및 시군구 선택 -->
-                <div class="mb-3" style="margin-top: 5%;">
-                  <div style="display: flex; align-items: center;">
-                    <img src="/images/area.png" alt="지역 이미지" style="margin-right: 8px; height: 1em;">
-                    <label for="sido-select" class="form-label" style="color: #000000; font-weight: bold;">지역 선택</label>
-                  </div>
-                    <select id="sido-select" class="form-select">
-                        <option value="sido" disabled selected>시도 선택</option>
-                        <option value="">전체</option>
-                        <option data-bjcd="11" value="서울특별시">서울특별시</option>
-                        <option data-bjcd="26" value="부산광역시">부산광역시</option>
-                        <option data-bjcd="27" value="대구광역시">대구광역시</option>
-                        <option data-bjcd="28" value="인천광역시">인천광역시</option>
-                        <option data-bjcd="29" value="광주광역시">광주광역시</option>
-                        <option data-bjcd="30" value="대전광역시">대전광역시</option>
-                        <option data-bjcd="31" value="울산광역시">울산광역시</option>
-                        <option data-bjcd="36" value="세종특별자치시">세종특별자치시</option>
-                        <option data-bjcd="41" value="경기도">경기도</option>
-                        <option data-bjcd="51" value="강원도">강원도</option>
-                        <option data-bjcd="43" value="충청북도">충청북도</option>
-                        <option data-bjcd="44" value="충청남도">충청남도</option>
-                        <option data-bjcd="52" value="전라북도">전라북도</option>
-                        <option data-bjcd="46" value="전라남도">전라남도</option>
-                        <option data-bjcd="47" value="경상북도">경상북도</option>
-                        <option data-bjcd="48" value="경상남도">경상남도</option>
-                        <option data-bjcd="50" value="제주특별자치도">제주특별자치도</option>
-                    </select>
-                    <select id="sigungu-select" class="form-select mt-2">
-                        <option value="sigungu" disabled selected>시군구 선택</option>
-                        <option value="">전체</option>
-                    </select>
-                </div>
+            <div class="col-3 d-flex flex-column p-3" style="max-width: 300px; background-color: #ffffff; height: 100vh;">
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="d-flex align-items-center">
+                            <div style="display: flex; align-items: center;">
+                                <img src="/images/hos.png" alt="병원 이미지" style="margin-right: 8px; height: 2em;">
+                                <div>
+                                    <h4 style="color: #191F28; margin: 0; font-weight: 700; font-size: 24px;">삐뽀 응급실</h4>
+                                    <small style="color: #8B95A1; font-size: 14px;">실시간 응급실 현황</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 시도 및 시군구 선택 -->
+                    <div class="mb-3" style="margin-top: 5%;">
+                      <div style="display: flex; align-items: center;">
+                        <img src="/images/area.png" alt="지역 이미지" style="margin-right: 8px; height: 1em;">
+                        <label for="sido-select" class="form-label" style="color: #000000; font-weight: bold;">지역 선택</label>
+                      </div>
+                        <select id="sido-select" class="form-select">
+                            <option value="sido" disabled selected>시도 선택</option>
+                            <option value="">전체</option>
+                            <option data-bjcd="11" value="서울특별시">서울특별시</option>
+                            <option data-bjcd="26" value="부산광역시">부산광역시</option>
+                            <option data-bjcd="27" value="대구광역시">대구광역시</option>
+                            <option data-bjcd="28" value="인천광역시">인천광역시</option>
+                            <option data-bjcd="29" value="광주광역시">광주광역시</option>
+                            <option data-bjcd="30" value="대전광역시">대전광역시</option>
+                            <option data-bjcd="31" value="울산광역시">울산광역시</option>
+                            <option data-bjcd="36" value="세종특별자치시">세종특별자치시</option>
+                            <option data-bjcd="41" value="경기도">경기도</option>
+                            <option data-bjcd="51" value="강원도">강원도</option>
+                            <option data-bjcd="43" value="충청북도">충청북도</option>
+                            <option data-bjcd="44" value="충청남도">충청남도</option>
+                            <option data-bjcd="52" value="전라북도">전라북도</option>
+                            <option data-bjcd="46" value="전라남도">전라남도</option>
+                            <option data-bjcd="47" value="경상북도">경상북도</option>
+                            <option data-bjcd="48" value="경상남도">경상남도</option>
+                            <option data-bjcd="50" value="제주특별자치도">제주특별자치도</option>
+                        </select>
+                        <select id="sigungu-select" class="form-select mt-2">
+                            <option value="sigungu" disabled selected>시군구 선택</option>
+                            <option value="">전체</option>
+                        </select>
+                    </div>
 
-                  <!-- 분류 선택 -->
-                  <div class="sidemenu-select-box mb-3">
-                    <div style="display: flex; align-items: center;">
-                      <img src="/images/hos.png" alt="분류 이미지" style="margin-right: 8px; height: 1em;">
-                      <label for="urlType-select" class="form-label" style="color: #000000; font-weight: bold;">분류 선택</label>
+                      <!-- 분류 선택 -->
+                      <div class="sidemenu-select-box mb-3">
+                        <div style="display: flex; align-items: center;">
+                          <img src="/images/hos.png" alt="분류 이미지" style="margin-right: 8px; height: 1em;">
+                          <label for="urlType-select" class="form-label" style="color: #000000; font-weight: bold;">분류 선택</label>
+                        </div>
+                        
+                        <select id="urlTypeSelect" class="form-select" onchange="setUrlType(this.value)">
+                            <option value="getEgytListInfoInqire" selected>응급의료기관 목록정보 조회</option>
+                            <option value="getStrmListInfoInqire">외상센터 목록정보 조회</option>
+                            <!-- <option value="getHsptlMdcncListInfoInqire">병‧의원 목록정보 조회</option> -->
+                            <!-- 추가 분류 옵션을 여기에 추가 -->
+                        </select>
+                    </div>
+
+                    <!-- 기관명 검색 -->
+                    <div class="mb-3">
+                        <div style="display: flex; align-items: center;">
+                            <img src="/images/hos.png" alt="분류 이미지" style="margin-right: 8px; height: 1em;">
+                            <label for="search-input" class="form-label" style="color: #000000; font-weight: bold;">기관명 검색</label>
+                        </div>
+                        <div class="input-group" style="border-radius: 6px; overflow: hidden;">
+                            <input type="text" id="searchInput" class="form-control" placeholder="기관명을 입력하세요" style="border: 1px solid #ced4da;">
+                            <button id="searchBtn" class="btn btn-primary" style="border: 1px solid #0d6efd;">검색</button>
+                        </div>
                     </div>
                     
-                    <select id="urlTypeSelect" class="form-select" onchange="setUrlType(this.value)">
-                        <option value="getEgytListInfoInqire" selected>응급의료기관 목록정보 조회</option>
-                        <option value="getStrmListInfoInqire">외상센터 목록정보 조회</option>
-                        <option value="getHsptlMdcncListInfoInqire">병‧의원 목록정보 조회</option>
-                        <!-- 추가 분류 옵션을 여기에 추가 -->
-                    </select>
-                </div>
+        
+                    
 
-                <!-- 기관명 검색 -->
-                <div class="mb-3">
-                  <div style="display: flex; align-items: center;">
-                    <img src="/images/hos.png" alt="분류 이미지" style="margin-right: 8px; height: 1em;">
-                    <label for="search-input" class="form-label" style="color: #000000; font-weight: bold;">기관명 검색</label>
-                  </div>
-                    <div class="input-group">
-                        <input type="text" id="searchInput" class="form-control" placeholder="기관명을 입력하세요">
-                        <button id="searchBtn" class="btn btn-primary">검색</button>
+                    <!-- AI 결과 응답 창 -->
+                    <div class="mb-3" style="max-height: 150px;">
+                      <div style="display: flex; align-items: center;">
+                        <img src="/images/talk.png" alt="분류 이미지" style="margin-right: 8px; height: 1em;">
+                        <label class="form-label" style="color: #000000; font-weight: bold; ">진단 AI</label>
+                      </div>
+                        <div id="aiResponse" class="alert alert-info" style="background-color: #f9fafb; border-color: rgb(189, 186, 186); color: #000000;  overflow-y: auto; max-height: 120px; height: 120px;">
+                            
+                        </div>
                     </div>
-                </div>
-                
-    
-                
 
-                <!-- AI 결과 응답 창 -->
-                <div class="mb-3" style="max-height: 150px;">
-                  <div style="display: flex; align-items: center;">
-                    <img src="/images/talk.png" alt="분류 이미지" style="margin-right: 8px; height: 1em;">
-                    <label class="form-label" style="color: #000000; font-weight: bold; ">진단 AI</label>
-                  </div>
-                    <div id="aiResponse" class="alert alert-info" style="background-color: #f9fafb; border-color: rgb(189, 186, 186); color: #000000;  overflow-y: auto; max-height: 120px; height: 120px;">
-                        
+                    <!-- AI 결과 입력 창 -->
+                    <div class="mb-3">
+                        <div class="input-group" style="border-radius: 6px; overflow: hidden;">
+                            <input type="text" id="aiInput" class="form-control" placeholder="증상을 입력하세요" style="border: 1px solid #ced4da;">
+                            <button id="aiBtn" class="btn btn-primary" style="border: 1px solid #0d6efd;">질문</button>
+                            <button id="loadingBtn" style="display: none;" class="btn btn-primary" type="button" disabled>분석중</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- AI 결과 입력 창 -->
-                <div class="mb-3">
-                  <div class="input-group">
-                      <input type="text" id="aiInput" class="form-control" placeholder="증상을 입력하세요">
-                      <button id="aiBtn" class="btn btn-primary">질문</button>
-                      <button id="loadingBtn" style="display: none;" class="btn btn-primary" type="button" disabled>분석중</button>
-                  </div>
-              </div>
-
-
-         
+                <!-- Footer -->
+                <div class="text-center" style="color: #8b95a1; font-size: 12px; padding: 16px;">
+                    <p class="mb-0">© 2024 응급실 실시간 조회 서비스. <br>All rights reserved.</p>
+                </div>
             </div>
 
             <!-- 지도 영역 -->
@@ -121,7 +135,7 @@
         <!-- 모달 헤더 -->
         <div class="modal-header">
           <h5 class="modal-title" id="hospitalModalLabel">병원 정보</h5>
-          <button type="button" class="btn-close btn-primary" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         
         <!-- 모달 본문 -->

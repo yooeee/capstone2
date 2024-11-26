@@ -1059,6 +1059,14 @@ async function getAIAnswer() {
   const usr_lon = myLocation.longitude;
   const question = document.getElementById("aiInput").value;
 
+    // 위치 데이터 체크 추가
+    if (!usr_lat || !usr_lon) {
+      alert("내 위치를 먼저 조회해주세요.");
+      document.getElementById("loadingBtn").style.display = "none";
+      document.getElementById("aiBtn").style.display = "block";
+      return;
+    }
+
   const API_KEY =
     ""; // OpenAI API 키 입력
   const apiUrl = "https://api.openai.com/v1/chat/completions";
