@@ -403,3 +403,142 @@ code {
   border-top-right-radius: 8px !important;
   border-bottom-right-radius: 8px !important;
 }
+
+/* 추가할 스타일 */
+.hospital-info-container {
+  padding: 24px;
+}
+
+.info-section {
+  margin-bottom: 32px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.info-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 13px;
+  color: #8b95a1;
+  margin-bottom: 4px;
+}
+
+.info-value {
+  font-size: 15px;
+  color: #191f28;
+  font-weight: 500;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #191f28;
+  margin-bottom: 16px;
+}
+
+.equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.equipment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.equipment-item.available {
+  background: #e7f3ff;
+}
+
+.equipment-item.unavailable {
+  background: #f2f4f6;
+}
+
+.equipment-label {
+  font-size: 14px;
+  color: #191f28;
+}
+
+.equipment-status {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.available .equipment-status {
+  color: #3182f6;
+}
+
+.unavailable .equipment-status {
+  color: #8b95a1;
+}
+
+.beds-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.beds-legend {
+  display: flex;
+  gap: 12px;
+}
+
+.badge-item {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #4e5968;
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.badge-dot.busy { background: #ff5b5b; }
+.badge-dot.normal { background: #ffd644; }
+.badge-dot.available { background: #3182f6; }
+.badge-dot.no-data { background: #8b95a1; }
+
+/* 기존 카드 스타일 업데이트 */
+.card {
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.card-body {
+  padding: 16px;
+}
+
+.card-title {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.card-text {
+  font-size: 16px;
+  font-weight: 600;
+}

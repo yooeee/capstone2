@@ -688,101 +688,110 @@ function createBedCardsSection(title, data) {
   `;
 }
 
-// 병원 상세 정보 표시 함수 수정
 function showHospitalModal(item) {
   fetchHospitalData(item).then((data) => {
     const displayData = data || item;
 
     // 모달 헤더 설정
-    document.getElementById("hospitalModalLabel").innerText =
-      displayData.dutyName || "병원 정보";
+    document.getElementById("hospitalModalLabel").innerText = displayData.dutyName || "병원 정보";
 
     // 기본 정보 HTML 생성
     const modalBodyContent = `
+      <div class="hospital-info-container">
+        <div class="info-section">
           <div class="info-item">
-              <p><strong><img src="/images/address.png" alt="주소" style="margin-right: 8px; height: 1em;">주소:</strong> ${item.dutyAddr || "-"}</p>
-              <p><strong><img src="/images/hospital.png" alt="응급실" style="margin-right: 8px; height: 1em;">응급실:</strong> ${displayData.dutyTel3 || "-"}</p>
-              <p><strong><img src="/images/tel.png" alt="당직의" style="margin-right: 8px; height: 1em;">당직의:</strong> ${displayData.hv1 || "-"}</p>
-              <p><strong><img src="/images/tel.png" alt="소아당직의" style="margin-right: 8px; height: 1em;">소아 당직의:</strong> ${displayData.hv12 || "-"}</p>
-              <p><strong><img src="/images/time.png" alt="업데이트시간" style="margin-right: 8px; height: 1em;">최근 업데이트 시간:</strong> ${formatDate(displayData.hvidate) || "-"}</p>
-          </div>
-      `;
-
-    // 장비 가용 여부 카드 생성
-    const equipmentList = [
-      { label: "CT 가용", available: displayData.hvctayn },
-      { label: "MRI 가용", available: displayData.hvmriayn },
-      { label: "혈관촬영기 가용", available: displayData.hvangioayn },
-      { label: "조영촬영기 가용", available: displayData.hvangioayn },
-      { label: "인공호흡기 가용", available: displayData.hvventiayn },
-      { label: "인큐베이터 가용", available: displayData.hvincuayn },
-      { label: "CRRT 가용", available: displayData.hvcrrtayn },
-      { label: "ECMO 가용", available: displayData.hvecmoayn },
-      { label: "고압산소치료기 가용", available: displayData.hvoxyayn },
-      { label: "중심체온조절유도기 가용", available: displayData.hvhypoayn },
-      { label: "구급차 가용", available: displayData.hvamyn },
-    ];
-
-    const equipmentAvailability = `
-          <div class="card mb-3">
-              <div class="card-header" style="background-color: #f9fafb; color: black; font-weight: bold;">
-                  장비 가용 여부
+            <div class="info-row">
+              <img src="/images/address.png" alt="주소" class="info-icon">
+              <div class="info-content">
+                <span class="info-label">주소</span>
+                <span class="info-value">${item.dutyAddr || "-"}</span>
               </div>
-              <div class="card-body">
-                  <ul class="list-group list-group-flush">
-                      ${equipmentList
-                        .map(
-                          (equipment) => `
-                          <li class=" d-flex justify-content-between align-items-center">
-                              ${equipment.label}
-                              <span class="badge bg-${
-                                equipment.available === "Y"
-                                  ? "success"
-                                  : "danger"
-                              }">
-                                  ${
-                                    equipment.available === "Y"
-                                      ? "사용 가능"
-                                      : "사용 불가"
-                                  }
-                              </span>
-                          </li>
-                      `
-                        )
-                        .join("")}
-                  </ul>
+            </div>
+            <div class="info-row">
+              <img src="/images/hospital.png" alt="응급실" class="info-icon">
+              <div class="info-content">
+                <span class="info-label">응급실</span>
+                <span class="info-value">${displayData.dutyTel3 || "-"}</span>
               </div>
+            </div>
+            <div class="info-row">
+              <img src="/images/tel.png" alt="당직의" class="info-icon">
+              <div class="info-content">
+                <span class="info-label">당직의</span>
+                <span class="info-value">${displayData.hv1 || "-"}</span>
+              </div>
+            </div>
+            <div class="info-row">
+              <img src="/images/tel.png" alt="소아당직의" class="info-icon">
+              <div class="info-content">
+                <span class="info-label">소아 당직의</span>
+                <span class="info-value">${displayData.hv12 || "-"}</span>
+              </div>
+            </div>
+            <div class="info-row">
+              <img src="/images/time.png" alt="업데이트시간" class="info-icon">
+              <div class="info-content">
+                <span class="info-label">최근 업데이트</span>
+                <span class="info-value">${formatDate(displayData.hvidate) || "-"}</span>
+              </div>
+            </div>
           </div>
-      `;
+        </div>
 
-    // 병상 정보 카드 생성
-    const bedCardsContent = `
-<div class="d-flex justify-content-between align-items-center">
-  <h5>병상 정보</h5>
-  <div class="d-flex align-items-center">
-    <span class="badge card-busy me-1">혼잡</span>
-    <span class="badge card-normal me-1">보통</span>
-    <span class="badge card-available me-1">여유</span>
-    <span class="badge card-no-data">미제공</span>
-  </div>
-</div>
-${createBedCardsSection("응급실", getEmergencyData(displayData))}
-${createBedCardsSection("응급전용", getEmergencyExclusiveData(displayData))}
-${createBedCardsSection("중환자실", getICUData(displayData))}
-${createBedCardsSection("기타", getOtherData(displayData))}
-`;
+        <div class="equipment-section">
+          <h6 class="section-title">장비 가용 여부</h6>
+          <div class="equipment-grid">
+            ${createEquipmentItems(displayData)}
+          </div>
+        </div>
 
-    // 모달 내용 삽입
-    document.getElementById("modalBodyContent").innerHTML =
-      modalBodyContent + equipmentAvailability + bedCardsContent;
+        <div class="beds-section">
+          <div class="beds-header">
+            <h6 class="section-title">병상 정보</h6>
+            <div class="beds-legend">
+              <span class="badge-item"><span class="badge-dot busy"></span>혼잡</span>
+              <span class="badge-item"><span class="badge-dot normal"></span>보통</span>
+              <span class="badge-item"><span class="badge-dot available"></span>여유</span>
+              <span class="badge-item"><span class="badge-dot no-data"></span>미제공</span>
+            </div>
+          </div>
+          ${createBedCardsSection("응급실", getEmergencyData(displayData))}
+          ${createBedCardsSection("응급전용", getEmergencyExclusiveData(displayData))}
+          ${createBedCardsSection("중환자실", getICUData(displayData))}
+          ${createBedCardsSection("기타", getOtherData(displayData))}
+        </div>
+      </div>
+    `;
 
-    // 모달 표시
-    const hospitalModal = new bootstrap.Modal(
-      document.getElementById("hospitalModal")
-    );
+    document.getElementById("modalBodyContent").innerHTML = modalBodyContent;
+    const hospitalModal = new bootstrap.Modal(document.getElementById("hospitalModal"));
     hospitalModal.show();
   });
 }
+
+
+function createEquipmentItems(data) {
+  const equipmentList = [
+    { label: "CT", key: "hvctayn" },
+    { label: "MRI", key: "hvmriayn" },
+    { label: "혈관촬영기", key: "hvangioayn" },
+    { label: "인공호흡기", key: "hvventiayn" },
+    { label: "인큐베이터", key: "hvincuayn" },
+    { label: "CRRT", key: "hvcrrtayn" },
+    { label: "ECMO", key: "hvecmoayn" },
+    { label: "고압산소치료기", key: "hvoxyayn" },
+    { label: "체온조절유도기", key: "hvhypoayn" },
+    { label: "구급차", key: "hvamyn" }
+  ];
+
+  return equipmentList.map(item => `
+    <div class="equipment-item ${data[item.key] === 'Y' ? 'available' : 'unavailable'}">
+      <span class="equipment-label">${item.label}</span>
+      <span class="equipment-status">${data[item.key] === 'Y' ? '가능' : '불가'}</span>
+    </div>
+  `).join('');
+}
+
 
 // 병원 세부 진료과 정보 표시 함수
 function showSpecialtyModal(jsonData) {
