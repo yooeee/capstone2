@@ -57,7 +57,7 @@ code {
 
 /* 모달 본문 */
 .modal-body {
-  padding: 24px;
+  padding: 16px;
   color: #4e5968;
 }
 
@@ -410,43 +410,48 @@ code {
 }
 
 .info-section {
-  margin-bottom: 32px;
+  margin-bottom: 15px;
 }
 
 .info-row {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  background-color: #f9fafb;
+  border-radius: 8px;
 }
 
 .info-icon {
-  width: 24px;
-  height: 24px;
-  margin-right: 14px;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
 }
 
 .info-content {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .info-label {
-  font-size: 14px;
+  font-size: 12px;
   color: #8b95a1;
-  margin-bottom: 6px;
+  margin-bottom: 1px;
 }
 
 .info-value {
-  font-size: 17px;
+  font-size: 14px;
   color: #191f28;
-  line-height: 1.4;
+  font-weight: 500;
+  line-height: 1.2;
 }
 
 .section-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #191f28;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .equipment-grid {
