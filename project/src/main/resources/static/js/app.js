@@ -50,17 +50,19 @@ const hospitalModal = new bootstrap.Modal(
 const routeInfoDiv = document.createElement("div");
 routeInfoDiv.className = "route-info-div";
 routeInfoDiv.style.position = "absolute";
-routeInfoDiv.style.bottom = "10px"; // 하단으로 위치 변경
-routeInfoDiv.style.right = "10px";
-routeInfoDiv.style.backgroundColor = "white"; // 남색 배경
-routeInfoDiv.style.color = "black"; // 흰색 글자
-routeInfoDiv.style.padding = "10px";
-routeInfoDiv.style.borderRadius = "4px";
-routeInfoDiv.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
-routeInfoDiv.style.display = "none"; // 처음에는 숨김
-routeInfoDiv.style.zIndex = "1000"; // 지도 요소 위에 표시
+routeInfoDiv.style.bottom = "20px"; // 여백 증가
+routeInfoDiv.style.right = "20px"; // 여백 증가
+routeInfoDiv.style.backgroundColor = "#ffffff";
+routeInfoDiv.style.color = "#191f28"; // TOSS 텍스트 컬러
+routeInfoDiv.style.padding = "20px"; // 패딩 증가
+routeInfoDiv.style.borderRadius = "25px"; // 더 부드러운 모서리
+routeInfoDiv.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.12)"; // TOSS 스타일 그림자
+routeInfoDiv.style.display = "none";
+routeInfoDiv.style.zIndex = "1000";
+routeInfoDiv.style.minWidth = "240px"; // 최소 너비 설정
+routeInfoDiv.style.backdropFilter = "blur(8px)"; // 블러 효과 추가
+routeInfoDiv.style.border = "1px solid rgba(0, 0, 0, 0.04)"; // 미세한 테두리 추가
 document.getElementById("map").appendChild(routeInfoDiv);
-
 document.addEventListener("DOMContentLoaded", () => {
   init();
   setEvent();
@@ -449,7 +451,7 @@ function drawMarkerWithAiAnswer(searchList) {
     // 마커 생성
     const marker = new ol.Feature({
       geometry: new ol.geom.Point(markerCoords),
-      name: "marker",
+      name: "aiAnswermarker",
       data: item,
     });
 
@@ -579,25 +581,29 @@ async function getRouteData(myLocation, destination) {
       routePoints.push(ol.proj.fromLonLat([vertexes[i], vertexes[i + 1]]));
     }
 
-    // 경로 라인 생성
-    const routeLine = new ol.Feature({
-      geometry: new ol.geom.LineString(routePoints),
-      name: "routeLine",
-    });
-    routeLine.setStyle([
-      new ol.style.Style({
-        stroke: new ol.style.Stroke({
-          color: "rgb(0, 123, 255)", // 파란색으로 변경하여 더 직관적으로
-          width: 8, // 두께를 약간 증가시켜 시각적으로 강조
-        }),
-      }),
-      new ol.style.Style({
-        stroke: new ol.style.Stroke({
-          color: "rgba(0, 123, 255, 0.5)", // 반투명 파란색으로 변경
-          width: 5, // 두께를 약간 증가시켜 시각적으로 강조
-        }),
-      }),
-    ]);
+ // 경로 라인 생성
+const routeLine = new ol.Feature({
+  geometry: new ol.geom.LineString(routePoints),
+  name: "routeLine",
+});
+
+routeLine.setStyle([
+  // 가장 바깥쪽 라인 (부드러운 그림자 효과)
+  new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: 'rgba(49, 130, 246, 0.2)', // TOSS 파란색의 흐린 그림자
+      width: 12
+    })
+  }),
+  // 중간 라인 (메인 테두리)
+  new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: 'rgba(49, 130, 246, 0.8)', // TOSS 파란색의 테두리
+      width: 6
+    })
+  }),
+
+]);
 
     // 기존 경로 레이어 제거 후 새 경로 추가
     removeLayer("routeLayer");
@@ -632,12 +638,28 @@ async function getRouteData(myLocation, destination) {
     // 경로 정보 표시
     routeInfoDiv.style.display = "block";
     routeInfoDiv.innerHTML = `
-  <strong>총 거리:</strong> ${totalDistanceInKm} km<br>
-  <strong>총 소요시간:</strong> ${hours
-    .toString()
-    .padStart(2, "0")}시간 ${minutes.toString().padStart(2, "0")}분<br>
-  <strong>도착 예상 시간:</strong> ${arrivalHours}시 ${arrivalMinutes}분
-`;
+      <div class="route-info-item">
+        <img src="/images/area.png" alt="거리" class="route-info-icon">
+        <div class="route-info-content">
+          <span class="route-info-label">총 거리</span>
+          <span class="route-info-value">${totalDistanceInKm} km</span>
+        </div>
+      </div>
+      <div class="route-info-item">
+        <img src="/images/time.png" alt="시간" class="route-info-icon">
+        <div class="route-info-content">
+          <span class="route-info-label">총 소요시간</span>
+          <span class="route-info-value">${hours.toString().padStart(2, "0")}시간 ${minutes.toString().padStart(2, "0")}분</span>
+        </div>
+      </div>
+      <div class="route-info-item">
+        <img src="/images/time.png" alt="도착" class="route-info-icon">
+        <div class="route-info-content">
+          <span class="route-info-label">도착 예상 시간</span>
+          <span class="route-info-value">${arrivalHours}시 ${arrivalMinutes}분</span>
+        </div>
+      </div>
+    `;
 
     // 경로의 범위에 맞게 지도 설정
     const routeExtent = routeVectorSource.getExtent();
@@ -792,27 +814,28 @@ function createEquipmentItems(data) {
   `).join('');
 }
 
-
-// 병원 세부 진료과 정보 표시 함수
 function showSpecialtyModal(jsonData) {
- // 데이터가 없을 경우 기본값 설정
- const dgidIdName = jsonData.dgidIdName || "정보 없음";
- const dutyAddr = jsonData.dutyAddr || "정보 없음";
- const dutyName = jsonData.dutyName || "정보 없음";
- const dutyTel1 = jsonData.dutyTel1 || "정보 없음";
- const dutyDivNam = jsonData.dutyDivNam || "정보 없음";
- const dutyMapimg = jsonData.dutyMapimg || "정보 없음";
+  // 데이터가 없을 경우 기본값 설정
+  const displayData = {
+    dutyName: jsonData.dutyName || "정보 없음",
+    dutyAddr: jsonData.dutyAddr || "정보 없음",
+    dutyTel1: jsonData.dutyTel1 || "정보 없음",
+    dutyDivNam: jsonData.dutyDivNam || "정보 없음",
+    dutyMapimg: jsonData.dutyMapimg || "정보 없음"
+  };
 
- // 각 HTML 요소에 데이터 삽입
- document.getElementById("specialtyModalLabel").innerText = dutyName || "병원 세부 정보";
- document.getElementById("modalDutyAddr").innerText = dutyAddr;
- document.getElementById("modalDutyTel1").innerText = dutyTel1;
- document.getElementById("modalDutyDivNam").innerText = dutyDivNam;
- document.getElementById("modalDutyMapimg").innerText = dutyMapimg;
+  // 모달 제목 설정
+  document.getElementById("specialtyModalLabel").innerText = displayData.dutyName;
 
- // 모달 표시
- const specialtyModal = new bootstrap.Modal(document.getElementById("specialtyModal"));
- specialtyModal.show();
+  // 각 정보 항목 업데이트
+  document.getElementById("modalDutyAddr").innerText = displayData.dutyAddr;
+  document.getElementById("modalDutyTel1").innerText = displayData.dutyTel1;
+  document.getElementById("modalDutyDivNam").innerText = displayData.dutyDivNam;
+  document.getElementById("modalDutyMapimg").innerText = displayData.dutyMapimg;
+
+  // 모달 표시
+  const specialtyModal = new bootstrap.Modal(document.getElementById("specialtyModal"));
+  specialtyModal.show();
 }
 
 // 병상 정보 데이터 섹션 생성 함수
@@ -1088,7 +1111,7 @@ async function getAIAnswer() {
    - JSON 형식으로 응답.
    - 예시:
      {
-       "message": "병명: [추측한 병명], 설명: [추측 이유]",
+       "message": "[추측한 병명 및 이유]",
       
      }
 
@@ -1363,7 +1386,10 @@ function removeAllLayer() {
   removeLayer("markerLayer");
   removeLayer("routeLayer");
   removeLayer("aiHospitalLayer");
+  removeLayer("aiAnswermarker");
   routeInfoDiv.style.display = "none";
   markerVectorSource.clear();
+  // 모든 팝업 오버레이 제거
+  map.getOverlays().clear()
 
 }

@@ -151,33 +151,48 @@
     </div>
   </div>
 
-
 <!-- Specialty Modal -->
 <div class="modal fade" id="specialtyModal" tabindex="-1" aria-labelledby="specialtyModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header text-white">
-        <h5 class="modal-title" id="specialtyModalLabel"><img src="/images/hospital.png" alt="병원" style="margin-right: 8px; height: 1em;">병원 세부 정보</h5>
+      <div class="modal-header">
+        <h5 class="modal-title" id="specialtyModalLabel">병원 정보</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class="info-item">
-          <p>
-            <strong><img src="/images/type.png" alt="구분" style="margin-right: 8px; height: 1em;"> 병원 구분:</strong> 
-            <span id="modalDutyDivNam">정보 없음</span>
-          </p>
-          <p>
-            <strong><img src="/images/address.png" alt="주소" style="margin-right: 8px; height: 1em;"> 주소:</strong> 
-            <span id="modalDutyAddr">정보 없음</span>
-          </p>
-          <p>
-            <strong><img src="/images/area.png" alt="위치정보" style="margin-right: 8px; height: 1em;"> 위치 정보:</strong> 
-            <span id="modalDutyMapimg">정보 없음</span>
-          </p>
-          <p>
-            <strong><img src="/images/tel.png" alt="전화" style="margin-right: 8px; height: 1em;"> 전화번호:</strong> 
-            <span id="modalDutyTel1">정보 없음</span>
-          </p>
+        <div class="specialty-info-container">
+          <div class="info-section">
+            <div class="info-item">
+              <div class="info-row">
+                <img src="/images/type.png" alt="구분" class="info-icon">
+                <div class="info-content">
+                  <span class="info-label">병원 구분</span>
+                  <span class="info-value" id="modalDutyDivNam">정보 없음</span>
+                </div>
+              </div>
+              <div class="info-row">
+                <img src="/images/address.png" alt="주소" class="info-icon">
+                <div class="info-content">
+                  <span class="info-label">주소</span>
+                  <span class="info-value" id="modalDutyAddr">정보 없음</span>
+                </div>
+              </div>
+              <div class="info-row">
+                <img src="/images/area.png" alt="위치정보" class="info-icon">
+                <div class="info-content">
+                  <span class="info-label">위치 정보</span>
+                  <span class="info-value" id="modalDutyMapimg">정보 없음</span>
+                </div>
+              </div>
+              <div class="info-row">
+                <img src="/images/tel.png" alt="전화" class="info-icon">
+                <div class="info-content">
+                  <span class="info-label">전화번호</span>
+                  <span class="info-value" id="modalDutyTel1">정보 없음</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
