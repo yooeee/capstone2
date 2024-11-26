@@ -53,7 +53,7 @@ code {
 /* 모달 본문 */
 .modal-body {
   padding: 24px;
-  background-color: #f9fafb; /* 배경을 #f9fafb로 변경 */
+  background-color: white;
   color: #000000; /* 텍스트 색상 검은색으로 */
   border-radius: 0 0 20px 20px;
 }
