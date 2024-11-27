@@ -785,10 +785,6 @@ code {
   border-radius: 4px;
 }
 
-.duty-time-row.closed {
-  color: #8B95A1;
-  background-color: #F2F4F6;
-}
 
 .duty-day {
   min-width: 40px;

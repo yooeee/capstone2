@@ -706,8 +706,6 @@ function createBedCardsSection(title, data) {
     <div class="row">${cards}</div>
   `;
 }
-
-// 진료과목 정보를 가져오는 새로운 함수
 async function fetchHospitalSpecialties(hpid) {
   try {
     const serviceKey = "Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D";
@@ -724,13 +722,31 @@ async function fetchHospitalSpecialties(hpid) {
     }
 
     const data = await response.json();
-    if (data.response?.body?.items?.item?.dgidIdName) {
-      // 쉼표로 구분된 진료과목을 배열로 변환하고 정렬
-      return data.response.body.items.item.dgidIdName
-        .split(',')
-        .map(specialty => specialty.trim())
-        .sort()
-        .join(', ');
+    const item = data.response?.body?.items?.item;
+    
+    if (item) {
+      return {
+        specialties: item.dgidIdName ? item.dgidIdName.split(',').map(s => s.trim()).sort() : [],
+        dutyTime: {
+          dutyTime1s: item.dutyTime1s,
+          dutyTime1c: item.dutyTime1c,
+          dutyTime2s: item.dutyTime2s,
+          dutyTime2c: item.dutyTime2c,
+          dutyTime3s: item.dutyTime3s,
+          dutyTime3c: item.dutyTime3c,
+          dutyTime4s: item.dutyTime4s,
+          dutyTime4c: item.dutyTime4c,
+          dutyTime5s: item.dutyTime5s,
+          dutyTime5c: item.dutyTime5c,
+          dutyTime6s: item.dutyTime6s,
+          dutyTime6c: item.dutyTime6c,
+          dutyTime7s: item.dutyTime7s,
+          dutyTime7c: item.dutyTime7c,
+        },
+        dutyTel1: item.dutyTel1,
+        dutyTel3: item.dutyTel3,
+        dutyInf: item.dutyInf
+      };
     }
     return null;
   } catch (error) {
@@ -740,21 +756,19 @@ async function fetchHospitalSpecialties(hpid) {
 }
 
 function showHospitalModal(item) {
-  // 병원 정보와 진료과목 정보를 동시에 가져오기
   Promise.all([
     fetchHospitalData(item),
     fetchHospitalSpecialties(item.hpid)
-  ]).then(([data, specialties]) => {
+  ]).then(([data, specialtiesData]) => {
     const displayData = data || item;
+    
+    document.getElementById("hospitalModalLabel").innerText = item.dutyName || "병원 정보";
 
-    // 모달 헤더 설정
-    document.getElementById("hospitalModalLabel").innerText = displayData.dutyName || "병원 정보";
-
-    // 기본 정보 HTML 생성
     const modalBodyContent = `
       <div class="hospital-info-container">
         <div class="info-section">
           <div class="info-item">
+            <!-- 주소 정보 -->
             <div class="info-row">
               <img src="/images/address.png" alt="주소" class="info-icon">
               <div class="info-content">
@@ -763,13 +777,14 @@ function showHospitalModal(item) {
               </div>
             </div>
 
-            ${specialties ? `
+            <!-- 진료과목 정보 -->
+            ${specialtiesData?.specialties?.length ? `
               <div class="info-row specialty-row">
                 <img src="/images/type.png" alt="진료과목" class="info-icon">
                 <div class="info-content">
                   <span class="info-label">진료과목</span>
                   <div class="specialty-tags">
-                    ${specialties.split(', ').map(specialty => `
+                    ${specialtiesData.specialties.map(specialty => `
                       <span class="specialty-tag">${specialty}</span>
                     `).join('')}
                   </div>
@@ -777,37 +792,57 @@ function showHospitalModal(item) {
               </div>
             ` : ''}
 
+            <!-- 진료시간 정보 -->
+            <div class="info-row">
+              <img src="/images/time.png" alt="진료시간" class="info-icon">
+              <div class="info-content">
+                <span class="info-label">진료시간</span>
+                <div class="duty-time-container">
+                  ${['월', '화', '수', '목', '금', '토', '일'].map((day, index) => {
+                    const startTime = specialtiesData?.dutyTime[`dutyTime${index + 1}s`];
+                    const closeTime = specialtiesData?.dutyTime[`dutyTime${index + 1}c`];
+                    const timeText = startTime && closeTime ? 
+                      `${String(startTime).padStart(4, '0').replace(/(\d{2})(\d{2})/, '$1:$2')} - 
+                       ${String(closeTime).padStart(4, '0').replace(/(\d{2})(\d{2})/, '$1:$2')}`.trim() : 
+                      '휴진';
+                    return `
+                      <div class="duty-time-row ${!startTime && !closeTime ? 'closed' : ''}">
+                        <span class="duty-day">${day}</span>
+                        <span class="duty-time">${timeText}</span>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            </div>
+
+            <!-- 연락처 정보 -->
             <div class="info-row">
               <img src="/images/hospital.png" alt="응급실" class="info-icon">
               <div class="info-content">
                 <span class="info-label">응급실</span>
-                <span class="info-value">${displayData.dutyTel3 || "-"}</span>
+                <span class="info-value">${specialtiesData?.dutyTel3 || "-"}</span>
               </div>
             </div>
 
             <div class="info-row">
-              <img src="/images/tel.png" alt="당직의" class="info-icon">
+              <img src="/images/tel.png" alt="대표전화" class="info-icon">
               <div class="info-content">
-                <span class="info-label">당직의</span>
-                <span class="info-value">${displayData.hv1 || "-"}</span>
+                <span class="info-label">대표전화</span>
+                <span class="info-value">${specialtiesData?.dutyTel1 || "-"}</span>
               </div>
             </div>
 
-            <div class="info-row">
-              <img src="/images/tel.png" alt="소아당직의" class="info-icon">
-              <div class="info-content">
-                <span class="info-label">소아 당직의</span>
-                <span class="info-value">${displayData.hv12 || "-"}</span>
+            <!-- 공지사항 -->
+            ${specialtiesData?.dutyInf ? `
+              <div class="info-row">
+                <img src="/images/notice.png" alt="공지사항" class="info-icon">
+                <div class="info-content">
+                  <span class="info-label">공지사항</span>
+                  <span class="info-value">${specialtiesData.dutyInf}</span>
+                </div>
               </div>
-            </div>
-
-            <div class="info-row">
-              <img src="/images/time.png" alt="업데이트시간" class="info-icon">
-              <div class="info-content">
-                <span class="info-label">최근 업데이트</span>
-                <span class="info-value">${formatDate(displayData.hvidate) || "-"}</span>
-              </div>
-            </div>
+            ` : ''}
           </div>
         </div>
 
@@ -836,10 +871,7 @@ function showHospitalModal(item) {
       </div>
     `;
 
-    // 모달 내용 업데이트
     document.getElementById("modalBodyContent").innerHTML = modalBodyContent;
-
-    // 모달 표시
     const hospitalModal = new bootstrap.Modal(document.getElementById("hospitalModal"));
     hospitalModal.show();
   }).catch(error => {
@@ -847,7 +879,6 @@ function showHospitalModal(item) {
     alert("병원 정보를 불러오는데 실패했습니다.");
   });
 }
-
 
 
 function createEquipmentItems(data) {
