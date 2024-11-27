@@ -362,6 +362,28 @@ code {
   color: #191f28;
   font-size: 14px;
   line-height: 1.6;
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+/* TOSS 스타일 스크롤바 */
+#aiResponse::-webkit-scrollbar {
+  width: 10px;
+}
+
+#aiResponse::-webkit-scrollbar-track {
+  background: #f8fafc;
+  border-radius: 6px;
+}
+
+#aiResponse::-webkit-scrollbar-thumb {
+  background: #e5e8eb;
+  border: 3px solid #f8fafc;
+  border-radius: 6px;
+}
+
+#aiResponse::-webkit-scrollbar-thumb:hover {
+  background: #d1d6db;
 }
 
 /* 위치 버튼 스타일 */
@@ -668,4 +690,25 @@ code {
   font-size: 15px;
   color: #191f28;
   font-weight: 600;
+}
+
+.duty-time-grid {
+  display: grid;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.duty-time-row {
+  display: flex;
+  gap: 12px;
+}
+
+.duty-time-row .day {
+  font-weight: 500;
+  color: #4e5968;
+  width: 60px;
+}
+
+.duty-time-row .time {
+  color: #191f28;
 }

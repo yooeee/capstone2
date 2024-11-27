@@ -429,10 +429,9 @@ function drawMarkerWithSearch(searchList) {
     popupOverlay.setPosition(markerCoords);
     popupOverlay.setOffset([0, 25]); // 팝업 오버레이를 아래로 10px 이동
   });
-
   // 모든 마커의 범위로 지도를 맞춤
   const extent = markerVectorSource.getExtent();
-  map.getView().fit(extent, { padding: [100, 100, 100, 100] });
+  map.getView().fit(extent, { padding: [100, 100, 100, 100], maxZoom: 14 });
 }
 
 // 검색결과 마커 그리기 함수
@@ -821,7 +820,8 @@ function showSpecialtyModal(jsonData) {
     dutyAddr: jsonData.dutyAddr || "정보 없음",
     dutyTel1: jsonData.dutyTel1 || "정보 없음",
     dutyDivNam: jsonData.dutyDivNam || "정보 없음",
-    dutyMapimg: jsonData.dutyMapimg || "정보 없음"
+    dutyMapimg: jsonData.dutyMapimg || "정보 없음",
+    dutyEtc: jsonData.dutyEtc || "정보 없음"
   };
 
   // 모달 제목 설정
@@ -832,6 +832,27 @@ function showSpecialtyModal(jsonData) {
   document.getElementById("modalDutyTel1").innerText = displayData.dutyTel1;
   document.getElementById("modalDutyDivNam").innerText = displayData.dutyDivNam;
   document.getElementById("modalDutyMapimg").innerText = displayData.dutyMapimg;
+  document.getElementById("modalDutyEtc").innerText = displayData.dutyEtc;
+
+  // 진료시간 업데이트
+  for (let i = 1; i <= 7; i++) {
+    const startTime = jsonData[`dutyTime${i}s`];
+    const closeTime = jsonData[`dutyTime${i}c`];
+    const timeElement = document.getElementById(`dutyTime${i}`);
+    
+    if (startTime && closeTime) {
+      // 숫자를 문자열로 변환하고 패딩 추가
+      const startStr = String(startTime).padStart(4, '0');
+      const closeStr = String(closeTime).padStart(4, '0');
+      
+      // 시간 형식 변환 (예: 1000 -> 10:00)
+      const formattedStart = `${startStr.slice(0, -2)}:${startStr.slice(-2)}`;
+      const formattedClose = `${closeStr.slice(0, -2)}:${closeStr.slice(-2)}`;
+      timeElement.innerText = `${formattedStart} - ${formattedClose}`;
+    } else {
+      timeElement.innerText = "휴진";
+    }
+  }
 
   // 모달 표시
   const specialtyModal = new bootstrap.Modal(document.getElementById("specialtyModal"));
@@ -925,7 +946,7 @@ function getEmergencyExclusiveData(displayData) {
 function getICUData(displayData) {
   return [
     {
-      name: "일반",
+      name: "일반병상",
       value: `${displayData.hvicc ?? "-"}/${displayData.hvs17 ?? "-"}`,
     },
     {
@@ -978,7 +999,7 @@ function getICUData(displayData) {
 function getOtherData(displayData) {
   return [
     {
-      name: "일반",
+      name: "일반병상",
       value: `${displayData.hvgc ?? "-"}/${displayData.hvs38 ?? "-"}`,
     },
     {
