@@ -800,3 +800,23 @@ code {
 .duty-time-row.closed .duty-time {
   color: #8B95A1;
 }
+
+.specialty-row {
+  margin: 15px 0;
+}
+
+.specialty-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.specialty-tag {
+  background-color: #e9ecef;
+  color: #495057;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  white-space: nowrap;
+}

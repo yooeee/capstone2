@@ -903,50 +903,70 @@ function createEquipmentItems(data) {
   `).join('');
 }
 
-function showSpecialtyModal(jsonData) {
-  // 데이터가 없을 경우 기본값 설정
-  const displayData = {
-    dutyName: jsonData.dutyName || "정보 없음",
-    dutyAddr: jsonData.dutyAddr || "정보 없음",
-    dutyTel1: jsonData.dutyTel1 || "정보 없음",
-    dutyDivNam: jsonData.dutyDivNam || "정보 없음",
-    dutyMapimg: jsonData.dutyMapimg || "정보 없음",
-    dutyEtc: jsonData.dutyEtc || "정보 없음"
-  };
+async function showSpecialtyModal(jsonData) {
+  try {
+    // 기존 정보 설정
+    document.getElementById("specialtyModalLabel").innerText = jsonData.dutyName;
+    document.getElementById("modalDutyAddr").innerText = jsonData.dutyAddr;
+    document.getElementById("modalDutyTel1").innerText = jsonData.dutyTel1;
+    document.getElementById("modalDutyDivNam").innerText = jsonData.dutyDivNam;
+    document.getElementById("modalDutyMapimg").innerText = jsonData.dutyMapimg || "-";
+    document.getElementById("modalDutyEtc").innerText = jsonData.dutyEtc || "-";
 
-  // 모달 제목 설정
-  document.getElementById("specialtyModalLabel").innerText = displayData.dutyName;
-
-  // 각 정보 항목 업데이트
-  document.getElementById("modalDutyAddr").innerText = displayData.dutyAddr;
-  document.getElementById("modalDutyTel1").innerText = displayData.dutyTel1;
-  document.getElementById("modalDutyDivNam").innerText = displayData.dutyDivNam;
-  document.getElementById("modalDutyMapimg").innerText = displayData.dutyMapimg;
-  document.getElementById("modalDutyEtc").innerText = displayData.dutyEtc;
-
-  // 진료시간 업데이트
-  for (let i = 1; i <= 7; i++) {
-    const startTime = jsonData[`dutyTime${i}s`];
-    const closeTime = jsonData[`dutyTime${i}c`];
-    const timeElement = document.getElementById(`dutyTime${i}`);
-    
-    if (startTime && closeTime) {
-      // 숫자를 문자열로 변환하고 패딩 추가
-      const startStr = String(startTime).padStart(4, '0');
-      const closeStr = String(closeTime).padStart(4, '0');
+    // 진료시간 설정
+    for (let i = 1; i <= 7; i++) {
+      const startTime = jsonData[`dutyTime${i}s`];
+      const closeTime = jsonData[`dutyTime${i}c`];
+      const timeElement = document.getElementById(`dutyTime${i}`);
       
-      // 시간 형식 변환 (예: 1000 -> 10:00)
-      const formattedStart = `${startStr.slice(0, -2)}:${startStr.slice(-2)}`;
-      const formattedClose = `${closeStr.slice(0, -2)}:${closeStr.slice(-2)}`;
-      timeElement.innerText = `${formattedStart} - ${formattedClose}`;
-    } else {
-      timeElement.innerText = "휴진";
+      if (startTime && closeTime) {
+        const startStr = String(startTime).padStart(4, '0');
+        const closeStr = String(closeTime).padStart(4, '0');
+        
+        const formattedStart = `${startStr.slice(0, -2)}:${startStr.slice(-2)}`;
+        const formattedClose = `${closeStr.slice(0, -2)}:${closeStr.slice(-2)}`;
+        timeElement.innerText = `${formattedStart} - ${formattedClose}`;
+      } else {
+        timeElement.innerText = "휴진";
+      }
     }
-  }
 
-  // 모달 표시
-  const specialtyModal = new bootstrap.Modal(document.getElementById("specialtyModal"));
-  specialtyModal.show();
+    // 진료과목 정보만 새로 가져오기
+    const serviceKey = "Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D";
+    const url = `https://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlBassInfoInqire?serviceKey=${serviceKey}&HPID=${jsonData.hpid}&pageNo=1&numOfRows=10`;
+
+    const response = await fetch(url, {
+      headers: {
+        Accept: "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    const specialties = data.response?.body?.items?.item?.dgidIdName;
+
+    // 진료과목 추가
+    const specialtyContainer = document.getElementById("specialtyContainer");
+    if (specialties) {
+      specialtyContainer.innerHTML = specialties
+        .split(',')
+        .map(s => s.trim())
+        .sort()
+        .map(specialty => `<span class="specialty-tag">${specialty}</span>`)
+        .join('');
+    } else {
+      specialtyContainer.innerHTML = '정보 없음';
+    }
+
+    const specialtyModal = new bootstrap.Modal(document.getElementById("specialtyModal"));
+    specialtyModal.show();
+
+  } catch (error) {
+    console.error("Error fetching specialty data:", error);
+  }
 }
 
 // 병상 정보 데이터 섹션 생성 함수
