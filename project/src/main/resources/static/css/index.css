@@ -712,3 +712,95 @@ code {
 .duty-time-row .time {
   color: #191f28;
 }
+
+.specialty-row {
+  margin: 16px 0;
+}
+
+.specialty-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.specialty-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background-color: #F2F4F6;
+  border-radius: 16px;
+  font-size: 14px;
+  color: #4E5968;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.specialty-tag:hover {
+  background-color: #E5E8EB;
+}
+
+.info-row {
+  padding: 16px;
+  border-bottom: 1px solid #F2F4F6;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 13px;
+  color: #8B95A1;
+}
+
+.info-value {
+  font-size: 15px;
+  color: #191F28;
+  font-weight: 500;
+}
+
+.duty-time-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  background-color: #F8F9FA;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.duty-time-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.duty-time-row.closed {
+  color: #8B95A1;
+  background-color: #F2F4F6;
+}
+
+.duty-day {
+  min-width: 40px;
+  color: #4E5968;
+  font-weight: 600;
+}
+
+.duty-time {
+  color: #191F28;
+  font-weight: 500;
+}
+
+.duty-time-row.closed .duty-time {
+  color: #8B95A1;
+}

@@ -85,7 +85,15 @@ function setEvent() {
   });
 
   document.getElementById("searchBtn").addEventListener("click", () => {
-    search();
+    const sidoSelect = document.getElementById("sido-select");
+    const sigunguSelect = document.getElementById("sigungu-select");
+    if (sidoSelect.value === "sido" || sigunguSelect.value === "sigungu") {
+      alert("지역을 선택해주세요.");
+      return false;
+    }
+    else{
+      search(sidoSelect.value, sigunguSelect.value);
+    }
   });
 
   document.getElementById("aiBtn").addEventListener("click", (e) => {
@@ -94,16 +102,10 @@ function setEvent() {
     getAIAnswer();
   });
 }
-async function search() {
-  const sidoSelect = document.getElementById("sido-select");
-  const sigunguSelect = document.getElementById("sigungu-select");
+async function search(city, borough) {
   const searchInput = document.getElementById("searchInput");
   const urlType = document.getElementById("urlTypeSelect");
   let url = "";
-  if (sidoSelect.value === "sido" || sigunguSelect.value === "sigungu") {
-    alert("지역을 선택해주세요.");
-    return false;
-  }
 
   try {
     const serviceKey =
@@ -111,8 +113,8 @@ async function search() {
 
     // URL 및 파라미터 설정
     const params = new URLSearchParams({
-      Q0: sidoSelect.value,
-      Q1: sigunguSelect.value,
+      Q0: city,
+      Q1: borough,
       pageNo: 1,
       numOfRows: 999,
       QN: searchInput.value,
@@ -188,12 +190,7 @@ function getLocationAndMoveMap() {
       locationVectorSource.clear();
       locationVectorSource.addFeature(locationFeature);
 
-      // 지도 뷰를 현재 위치로 이동
-      map.getView().animate({
-        center: coords,
-        zoom: 15, // 적절한 줌 레벨로 설정
-        duration: 1000,
-      });
+     
 
       // 역지오코딩으로 주소 가져오기
       fetchAddressFromNominatim(latitude, longitude);
@@ -218,6 +215,7 @@ async function fetchAddressFromNominatim(latitude, longitude) {
       myLocation.city = city;
       myLocation.borough = borough;
       console.log(myLocation);
+      search(myLocation.city, myLocation.borough);
     } else {
       console.error("주소를 찾을 수 없습니다.");
     }
@@ -709,8 +707,44 @@ function createBedCardsSection(title, data) {
   `;
 }
 
+// 진료과목 정보를 가져오는 새로운 함수
+async function fetchHospitalSpecialties(hpid) {
+  try {
+    const serviceKey = "Rp3BBPXWUa87%2FSjDhgBJqX1YM9bO7p51NvNrIXjn0h3eWd8Yu%2FLIQzBg7c8S55X815Q5Pn8Dc37iIz8887K%2Ffw%3D%3D";
+    const url = `https://apis.data.go.kr/B552657/ErmctInfoInqireService/getEgytBassInfoInqire?serviceKey=${serviceKey}&HPID=${hpid}&pageNo=1&numOfRows=10`;
+
+    const response = await fetch(url, {
+      headers: {
+        Accept: "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    if (data.response?.body?.items?.item?.dgidIdName) {
+      // 쉼표로 구분된 진료과목을 배열로 변환하고 정렬
+      return data.response.body.items.item.dgidIdName
+        .split(',')
+        .map(specialty => specialty.trim())
+        .sort()
+        .join(', ');
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching hospital specialties:", error);
+    return null;
+  }
+}
+
 function showHospitalModal(item) {
-  fetchHospitalData(item).then((data) => {
+  // 병원 정보와 진료과목 정보를 동시에 가져오기
+  Promise.all([
+    fetchHospitalData(item),
+    fetchHospitalSpecialties(item.hpid)
+  ]).then(([data, specialties]) => {
     const displayData = data || item;
 
     // 모달 헤더 설정
@@ -728,6 +762,21 @@ function showHospitalModal(item) {
                 <span class="info-value">${item.dutyAddr || "-"}</span>
               </div>
             </div>
+
+            ${specialties ? `
+              <div class="info-row specialty-row">
+                <img src="/images/type.png" alt="진료과목" class="info-icon">
+                <div class="info-content">
+                  <span class="info-label">진료과목</span>
+                  <div class="specialty-tags">
+                    ${specialties.split(', ').map(specialty => `
+                      <span class="specialty-tag">${specialty}</span>
+                    `).join('')}
+                  </div>
+                </div>
+              </div>
+            ` : ''}
+
             <div class="info-row">
               <img src="/images/hospital.png" alt="응급실" class="info-icon">
               <div class="info-content">
@@ -735,6 +784,7 @@ function showHospitalModal(item) {
                 <span class="info-value">${displayData.dutyTel3 || "-"}</span>
               </div>
             </div>
+
             <div class="info-row">
               <img src="/images/tel.png" alt="당직의" class="info-icon">
               <div class="info-content">
@@ -742,6 +792,7 @@ function showHospitalModal(item) {
                 <span class="info-value">${displayData.hv1 || "-"}</span>
               </div>
             </div>
+
             <div class="info-row">
               <img src="/images/tel.png" alt="소아당직의" class="info-icon">
               <div class="info-content">
@@ -749,6 +800,7 @@ function showHospitalModal(item) {
                 <span class="info-value">${displayData.hv12 || "-"}</span>
               </div>
             </div>
+
             <div class="info-row">
               <img src="/images/time.png" alt="업데이트시간" class="info-icon">
               <div class="info-content">
@@ -784,11 +836,18 @@ function showHospitalModal(item) {
       </div>
     `;
 
+    // 모달 내용 업데이트
     document.getElementById("modalBodyContent").innerHTML = modalBodyContent;
+
+    // 모달 표시
     const hospitalModal = new bootstrap.Modal(document.getElementById("hospitalModal"));
     hospitalModal.show();
+  }).catch(error => {
+    console.error("Error loading hospital data:", error);
+    alert("병원 정보를 불러오는데 실패했습니다.");
   });
 }
+
 
 
 function createEquipmentItems(data) {
